@@ -1,24 +1,78 @@
-MINDFUL --
+-----------------------
+        MINDFUL 
+-----------------------
+DEMO DAY (Tentative) --> Feb. 16th 
 
+Features are numbered by priority/interest *
+
+MVP (2 WEEK timeline):
+    1. User is able to login to their account via Login Page
+    2. User is able to fill out form to add a purchase to be 'tracked' (within return window)
+    3. User is able to remove tracked item by: designating it a 'hit' or 'miss'
+
+    Make sure to:
+        Write tests as you go!
+        Document rationale along the way (why list vs. dictionary, data structure/algo choice etc.)
+
+2.0 NICE TO HAVES:
+    4. API: Google Maps to provide return location for 'misses'
+    5. API: Twilio SMS Text Message Reminders to return 'misses'
+
+3.0 SHOW OFF:
+    6. User is prompted to reflect on purchase via form
+    7. API: IBM Watson Tone Analyzer for check-in form data
+    8. OAuth to Access Google APIS:
+        https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth
+        https://developers.google.com/identity/protocols/oauth2
+
+
+*********** NEXT STEP: Research your APIs and get keys! ****************
+
+API LINKS:
+
+Tier 1 (For Mindful 2.0):
+    Google Maps: https://developers.google.com/maps
+        Maps Embedded API: https://developers.google.com/maps/documentation/embed/get-started
+    Twilio: https://www.twilio.com/docs/usage/api#explore-the-apis
+        Twilio SMS API: https://www.twilio.com/docs/sms/api
+
+Tier 2 (For Mindful 3.0):
+    IBM Watson Tone Analyzer: https://cloud.ibm.com/docs/tone-analyzer?topic=tone-analyzer-gettingStarted
+
+
+
+-----------------------
+     ABOUT MINDFUL 
+-----------------------
 App that helps you become more mindful about purchases
 Tracks aspects of purchases: Satisfaction, return window, price
 Checks in with user with periodic prompts, forms, etc.
 If user decides to return an item (or sell, donate, gift the item if outside return window) help them plan for their next step!
 Pages of the web app would include: Login, Dashboard (displays a collection of purchases being tracked with Mindful), individual product pages that can be navigated to from the dashboard (shows more data about item), To-Do page that lists game-plan for go-back items, profile page that shows the user Mindful's impact on their purchasing behaviors and data on their 'hits' and 'misses'
 
-Possible APIs for: Text reminders, maps to view return locations, web-scraping retailer data, etc.
+
+-----------------------
+     POSSIBLE APIs 
+-----------------------
+Twilio: Text reminders
 Google Maps: View return locations
 Beautiful Soup: web-scraping retailer data
 D3: Data visualization to show the user Mindful's impact, track 'progression' towards being more mindful about purchases. Provide data visualization in user profile: Saves sizes within brands, this brand runs big/small on you. Which brands have been 'hits' vs 'misses'. 
 IBM Watson: Conduct sentiment analysis on user-submitted mindfulness check-ins
+OAuth: Login authentication for Google APIS
 
-More ideas:
+-----------------------
+     MORE IDEAS
+-----------------------
 Offer backup option if return isn't made for unwanted item. Selling, donating, or gifting the item is still a win!
 Allow user to accumulate some type of "Mindfulness" points for visualization based on app usage. Celebrate their achievements w/ badges or level system.
 Add track delivery page (extra feature)
 Serve weekly, monthly, bi-annual, annual reports
 
 
+-----------------------
+   PROJECT GUIDELINE
+-----------------------
 Project Planning Toolkit --
 https://fellowship.hackbrightacademy.com/materials/resources/project-toolkit-march-2017.pdf
 
@@ -31,14 +85,14 @@ Have a public GitHub repository
 Remember to pin your project repo to your GitHub profile and add the URL to your resume
 Use virtualenv to install and keep track of dependencies
 Remember to add requirements.txt to your git repo
-A complete project should have at least:
 
-A SQL database with at least one table
-One SQLAlchemy class used to query the database
-A Flask server
-1-2 Jinja templates that use template inheritance
-One CSS file
-Bootstrap counts as one CSS file
-One feature that uses JavaScript to manipulate the DOM
-This includes JavaScript frontend libraries, frameworks, and/or code that you write
-One AJAX request
+A complete project should have at least:
+    A SQL database with at least one table
+    One SQLAlchemy class used to query the database
+    A Flask server
+    1-2 Jinja templates that use template inheritance
+    One CSS file
+    Bootstrap counts as one CSS file
+    One feature that uses JavaScript to manipulate the DOM
+    This includes JavaScript frontend libraries, frameworks, and/or code that you write
+    One AJAX request
