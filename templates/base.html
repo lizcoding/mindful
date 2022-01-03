@@ -1,9 +1,13 @@
+<!-- Bootstrap Layot: https://getbootstrap.com/docs/4.3/layout/overview/ -->
+<!-- Bootstrap Images: https://getbootstrap.com/docs/4.3/content/images/ -->
+<!-- Bootstrap Extras: https://getbootstrap.com/docs/4.3/utilities/borders/ -->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   
   <!-- Page Title Block -->
   <title>{% block title %} PAGE TITLE {% endblock %}</title>
@@ -18,14 +22,19 @@
   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 
   <!-- Page-specific JavaScript Block -->
-  {% block js %}{% endblock %}
+  {% block js %} INSERT JS {% endblock %}
 
 </head>
 <body>
-
+  <!-- Header -->
+  <!-- Bootstrap Navbar: https://getbootstrap.com/docs/4.3/components/navbar/ -->
   <div class="header">Mindful</div>
+
   <!-- Page Body Block -->
-  {% block body %} PAGE BODY CONTENT {% endblock %}
+  {% block body %} PAGE CONTENT {% endblock %}
+
+  <!-- Footer -->
+  <!-- Bootstrap Navbar: https://getbootstrap.com/docs/4.3/components/navbar/ -->
   <div class="footer">lizcoding.dev</div>
 
   <!-- Bootstrap JS, jQuery, Popper.js -->
