@@ -40,6 +40,13 @@ Tier 2 (For Mindful 3.0):
     IBM Watson Tone Analyzer: https://cloud.ibm.com/docs/tone-analyzer?topic=tone-analyzer-gettingStarted
 
 
+*********** NEXT STEP: Create Wireframes! ****************
+1. Login: X
+2. Dashboard: X
+3. Item: X
+
+LINK: https://wireframe.cc/pro/edit/506704
+
 
 -----------------------
      ABOUT MINDFUL 
