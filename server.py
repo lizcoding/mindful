@@ -1,5 +1,7 @@
-from flask import Flask, redirect, request, render_template, session
+from flask import Flask, redirect, flash, request, render_template, session
 from jinja2 import StrictUndefined
+from model import connect_to_db
+import crud
 import secrets
 
 
@@ -16,22 +18,65 @@ def show_login():
     return render_template("login.html")
 
 
+@app.route("/create_account", methods=["POST"])
+def register_user():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    user = crud.get_user_by_email(email)
+
+    if user:
+        flash("That email is already associated with an account.")
+    else:
+        crud.create_user(email, password)
+        flash("Account created!")
+    
+    return redirect("/")
+
+
+@app.route("/login", methods=['POST'])
+def handle_login():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    user = crud.get_user_by_email(email)
+
+    if user:
+        if user.email == email and user.password == password:
+            session["user_id"] = user.user_id
+            return redirect("/dashboard")
+    else:
+        flash("Invalid login credentials.")
+    return redirect("/")
+
+
 @app.route("/dashboard")
 def show_dashboard():
+    user = crud.get_user_by_id(session["user_id"])
+    
+    # TO-DO
+
     return render_template("dashboard.html")
 
 
 @app.route("/profile")
 def show_profile():
+    user = crud.get_user_by_id(session["user_id"])
+    
+    # TO-DO
+
     return render_template("profile.html")
 
 
-@app.route("/item/<int:item_id>")
+@app.route("/item/<item_id>")
 def focus_item(item_id):
+    user = crud.get_user_by_id(session["user_id"])
+
+    # TO-DO
+
     return render_template("item.html", item=item_id)
 
 
 if __name__ == "__main__":
+    connect_to_db(app)
     app.run(
         host="0.0.0.0",
         use_reloader=True,

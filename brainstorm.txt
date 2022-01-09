@@ -16,36 +16,37 @@ MVP (2 WEEK timeline):
 
 2.0 NICE TO HAVES:
     4. API: Google Maps to provide return location for 'misses'
-    5. API: Twilio SMS Text Message Reminders to return 'misses'
+    5. User is prompted to reflect on purchase via form
+    6. API: IBM Watson Tone Analyzer for check-in form data
 
 3.0 SHOW OFF:
-    6. User is prompted to reflect on purchase via form
-    7. API: IBM Watson Tone Analyzer for check-in form data
-    8. OAuth to Access Google APIS:
+    7. OAuth to Access Google APIS:
         https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth
         https://developers.google.com/identity/protocols/oauth2
+    8. Security (Login security (username/password), site authentication
+    9. Twilio API for text reminders
+   10. Email reminders
 
 
-*********** NEXT STEP: Research your APIs and get keys! ****************
+*********** APIS + Keys ****************
 
 API LINKS:
 
 Tier 1 (For Mindful 2.0):
     Google Maps: https://developers.google.com/maps
         Maps Embedded API: https://developers.google.com/maps/documentation/embed/get-started
+    IBM Watson Tone Analyzer: https://cloud.ibm.com/docs/tone-analyzer?topic=tone-analyzer-gettingStarted
+
+Tier 2 (For Mindful 3.0):
     Twilio: https://www.twilio.com/docs/usage/api#explore-the-apis
         Twilio SMS API: https://www.twilio.com/docs/sms/api
 
-Tier 2 (For Mindful 3.0):
-    IBM Watson Tone Analyzer: https://cloud.ibm.com/docs/tone-analyzer?topic=tone-analyzer-gettingStarted
 
+*********** WIREFRAME + DATA MODEL ****************
 
-*********** NEXT STEP: Create Wireframes! ****************
-1. Login: X
-2. Dashboard: X
-3. Item: X
+WIREFRAME LINK: https://wireframe.cc/pro/edit/506704
 
-LINK: https://wireframe.cc/pro/edit/506704
+DATA MODEL LINK: https://lucid.app/lucidchart/89198830-5220-4569-9ea9-53d621aa1902/edit?invitationId=inv_8a344602-4da2-43a9-9c7f-af4c15474b57
 
 
 -----------------------
