@@ -14,6 +14,9 @@ class User(db.Model):
     email = db.Column(db.String(), nullable=False, unique=True)
     password = db.Column(db.String(), nullable=False)
 
+    # items = a list of Item objects
+    # plans = a list of Plan objects
+
     def __repr__(self):
         return f"<User user_id={self.user_id} email={self.email}>"
 
@@ -25,8 +28,10 @@ class Retailer(db.Model):
 
     retailer_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
+    # items = a list of Item objects
+
     def __repr__(self):
-        return f"<Rating rating_id={self.rating_id} score={self.score}>"
+        return f"<>"
 
 
 class Item(db.Model):
@@ -37,7 +42,14 @@ class Item(db.Model):
     item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     retailer_id = db.Column(db.Integer, db.ForeignKey("retailers.retailer_id"))
-    
+    # images = a list of Image objects
+    # sentiments = a list of Sentiment objects
+    # descriptors = a list of Descriptor objects
+
+    user = db.relationship("User", backref="items")
+    plan = db.relationship("Plan", backref="items")
+    retailer = db.relationship("Retailer", backref="items")
+
     def __repr__(self):
         return f"<>"
 
@@ -50,6 +62,10 @@ class Plan(db.Model):
     plan_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"))
+
+    # items = a list of Item objects
+
+    user = db.relationship("User", backref="plans")
     
     def __repr__(self):
         return f"<>"
@@ -63,6 +79,8 @@ class Image(db.Model):
     img_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"))
     
+    item = db.relationship("Item", backref="images")
+
     def __repr__(self):
         return f"<>"
 
@@ -74,9 +92,11 @@ class Sentiment(db.Model):
 
     sentiment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"))
+
+    item = db.relationship("Item", backref="sentiments")
     
     def __repr__(self):
-        return f"<Rating rating_id={self.rating_id} score={self.score}>"
+        return f"<>"
 
 
 class Descriptor(db.Model):
@@ -87,9 +107,11 @@ class Descriptor(db.Model):
     descriptor_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     retailer_id = db.Column(db.Integer, db.ForeignKey("retailers.retailer_id"))
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"))
+
+    item = db.relationship("Item", backref="descriptors")
     
     def __repr__(self):
-        return f"<Rating rating_id={self.rating_id} score={self.score}>"
+        return f"<>"
 
 
 def connect_to_db(flask_app, db_uri="postgresql:///ratings", echo=True):
