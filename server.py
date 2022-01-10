@@ -3,6 +3,7 @@ from jinja2 import StrictUndefined
 from model import connect_to_db
 import crud
 import secrets
+import cloudinary
 
 
 app = Flask(__name__)
@@ -12,6 +13,11 @@ app.jinja_env.auto_reload = True
 # Required to use Flask sessions
 app.secret_key = secrets.MINDFUL_KEY
 
+cloudinary.config( 
+  cloud_name = secrets.cloud_name, 
+  api_key = secrets.api_key, 
+  api_secret = secrets.api_secret
+)
 
 @app.route("/")
 def show_login():
@@ -73,6 +79,15 @@ def focus_item(item_id):
     # TO-DO
 
     return render_template("item.html", item=item_id)
+
+
+@app.route("/plan/<plan_id>")
+def focus_item(plan_id):
+    user = crud.get_user_by_id(session["user_id"])
+
+    # TO-DO
+
+    return render_template("plan.html", plan=plan_id)
 
 
 if __name__ == "__main__":
