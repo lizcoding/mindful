@@ -2,11 +2,72 @@
 <!-- Show top (highest priority) 3 items and top 3 plans -->
 
 {% block title %} Dashboard {% endblock %}
-<!-- Bootstrap Cards: https://getbootstrap.com/docs/4.3/components/card/ -->
-<!-- Bootstrap Forms: https://getbootstrap.com/docs/4.3/components/forms/ -->
-<!-- Bootstrap Modal: https://getbootstrap.com/docs/4.3/components/modal/ -->
-<!-- Bootstrap Alerts: https://getbootstrap.com/docs/4.3/components/alerts/ -->
-<!-- Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/ -->
+<!-- 
+Bootstrap Cards: https://getbootstrap.com/docs/4.3/components/card/ 
+Bootstrap Forms: https://getbootstrap.com/docs/4.3/components/forms/
+Bootstrap Modal: https://getbootstrap.com/docs/4.3/components/modal/
+Bootstrap Alerts: https://getbootstrap.com/docs/4.3/components/alerts/
+Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/ 
+-->
 
-{% block content %} {% endblock %}
+{% block content %} 
+    <h1>Dashboard</h1>
+    <h2>Hi, {{ user.first_name }}</h3>
+    
+    {% if tracked_items %}
+    <ul>
+        {% for item in tracked_items %}
+        <li><a href="/item/{{item.item_id}}">{{ item }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>Nothing to see here! Add an item to be tracked.</p>
+    {% endif %}
+
+    {% if plans %}
+    <ul>
+        {% for plan in plans %}
+        <li><a href="/plan/{{plan.plan_id}}">{{ plan }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>No active plans!</p>
+    {% endif %}
+
+    <h3>Add Items</h3>
+    <form action="/add_item" method="POST">
+        <label for="retailer">Retailer: </label>
+        <input type="text" name="retailer" required>
+
+        <label for="return_window">Return Window Policy (Days): </label>
+        <input type="number" name="return_window" required>
+
+        <label for="brand">Brand: </label>
+        <input type="text" name="brand">
+
+        <label for="reminders">Reminders: </label>
+        <input type="checkbox" name="reminders" value="text">
+        <label>Text</label>
+        <input type="checkbox" name="reminders" value="email">
+        <label>Email</label>
+
+        <label for="main_url">Main URL: </label>
+        <input type="url" name="main_url" required>
+
+        <label for="returns_url">Returns URL: </label>
+        <input type="url" name="returns_url" required>
+
+        <!--
+        Accept any file with an image/* MIME type. (Many mobile devices also 
+        let the user take a picture with the camera when this is used.)
+        * TO-DO: Add "required" after Cloudinary integration
+        -->
+        <label for="images">Upload Item Images: </label>
+        <input type="file" name="images" accept="image/*" multiple>
+
+        <button type="submit">Add Item</button>
+    </form>
+
+
+{% endblock %}
 

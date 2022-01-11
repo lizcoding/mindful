@@ -1,0 +1,266 @@
+----------------------------------------------------------------------------------
+PROJECT JOURNAL WEEK 1 -----------------------------------------------------------
+
+1/10: Week 1 - Monday
+    Today's Goals:
+        1. [X] Make Cloudinary account, install library, update requirements.txt and secrets.sh
+        2. [X] Complete model.py (Code SQL Alchemy database objects)
+        3. [X] Flesh out CRUD functions (crud.py)
+        4. [X] Complete Login Route
+
+    Today's Reflection:
+        Accomplished all of today's goals. Today's challenge was referencing the database structure
+        to make sure that the routes, html forms, and crud functions were written correctly. No major
+        bugs or blocks today. Another challenge is staying on task and creating structure for my day.
+        I think I have done a lot of tomorrow's goals already, so I think I might move quickly through
+        the MVP stage and reach Mindful 2.0 ahead of schedule. I will be testing routes tomorrow!
+
+----------------------------------------------------------------------------------
+1/11: Week 1 - Tuesday
+    Today's Goals:
+        1. [ ] Complete Hackbright Cloudinary Walk-Through
+        2. [ ] Complete Item HTML Form (Cloudinary API integration)
+        3. [ ] Complete Plan HTML Form
+    
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/12: Week 1 - Wednesday
+    Today's Goals:
+        1. [ ] Complete Dashboard Route (Cloudinary API integration)
+        2. [ ] Complete Item Route (Cloudinary API integration)
+        3. [ ] Complete Plan Route
+    
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/13: Week 1 - Thursday
+    Today's Goals:
+        1. [ ] Write Route Tests
+        2. [ ] Add Header Navigators
+    
+    Today's Reflection:
+
+
+
+----------------------------------------------------------------------------------
+1/14: Week 1 - Friday
+    Today's Goals:
+        1. [ ] Start research on Google Maps API 
+        2. [ ] Start research on IBM Watson Tone Analyzer
+    
+    Today's Reflection:
+
+
+
+----------------------------------------------------------------------------------
+PROJECT JOURNAL WEEK 2 -----------------------------------------------------------
+
+1/17: Week 2 - Monday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/18: Week 2 - Tuesday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/19: Week 2 - Wednesday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/20: Week 2 - Thursday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/21: Week 2 - Friday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+PROJECT JOURNAL WEEK 3 -----------------------------------------------------------
+
+1/17: Week 3 - Monday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/18: Week 3 - Tuesday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/19: Week 3 - Wednesday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/20: Week 3 - Thursday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/21: Week 3 - Friday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+PROJECT JOURNAL WEEK 4 -----------------------------------------------------------
+
+1/24: Week 4 - Monday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/25: Week 4 - Tuesday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/26: Week 4 - Wednesday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/27: Week 4 - Thursday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/28: Week 4 - Friday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+PROJECT JOURNAL WEEK 5 -----------------------------------------------------------
+
+1/31: Week 5 - Monday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+2/1: Week 5 - Tuesday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+2/2: Week 5 - Wednesday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+2/3: Week 5 - Thursday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+2/4: Week 5 - Friday
+    Today's Goals:
+        1. [ ] 
+        2. [ ] 
+        3. [ ] 
+
+    Today's Reflection:
+
+
+----------------------------------------------------------------------------------

@@ -13,6 +13,7 @@ app.jinja_env.auto_reload = True
 # Required to use Flask sessions
 app.secret_key = secrets.MINDFUL_KEY
 
+# Configure Cloudinary API
 cloudinary.config( 
   cloud_name = secrets.cloud_name, 
   api_key = secrets.api_key, 
@@ -55,39 +56,87 @@ def handle_login():
 
 
 @app.route("/dashboard")
-def show_dashboard():
+def dashboard():
+    if not session.get("user"):
+        return redirect("/")
+
     user = crud.get_user_by_id(session["user_id"])
+    tracked_items = [item for item in user.items if item.decision_status == "Undecided"]
+    plans = user.plans
     
     # TO-DO
-
-    return render_template("dashboard.html")
-
-
-@app.route("/profile")
-def show_profile():
-    user = crud.get_user_by_id(session["user_id"])
     
-    # TO-DO
-
-    return render_template("profile.html")
-
+    return render_template("dashboard.html", user=user, tracked_items=tracked_items, plans=plans)
+    
 
 @app.route("/item/<item_id>")
-def focus_item(item_id):
-    user = crud.get_user_by_id(session["user_id"])
+def item_details(item_id):
+    if not session.get("user"):
+        return redirect("/")
+    item = crud.get_item_by_id(item_id)
 
     # TO-DO
 
-    return render_template("item.html", item=item_id)
+    return render_template("item.html", item=item)
+
+
+@app.route("/add_item", methods=['POST'])
+def add_item():
+    if not session.get("user"):
+        return redirect("/")
+    user = crud.get_user_by_id(session["user_id"])
+    retailer = request.form.get("retailer")
+
+    # TO-DO: Code full Item object instantiation
+    
+    crud.create_item(user.user_id, retailer)
+    return redirect("/dashboard")
+
+
+@app.route("/item/<item_id>/add_detail", methods=['POST'])
+def add_detail(item_id):
+    # if not session.get("user"):
+    #     return redirect("/")
+    # user = crud.get_user_by_id(session["user_id"])
+    # item = crud.get_item_by_id(item_id)
+
+    # # TO-DO: Code full Item object update
+
+    return redirect(f"/item/{item_id}")
+
+
+@app.route("item/<item_id>/add_plan", methods=['POST'])
+def add_plan(item_id):
+    if not session.get("user"):
+        return redirect("/")
+    action = request.form.get("action")
+
+    # TO-DO: Code full Plan object instantiation
+
+    crud.create_plan(item_id, action=action)
+    return redirect("/dashboard")
 
 
 @app.route("/plan/<plan_id>")
-def focus_item(plan_id):
-    user = crud.get_user_by_id(session["user_id"])
-
+def plan_details(plan_id):
+    if not session.get("user"):
+        return redirect("/")
+    plan = crud.get_plan_by_id(plan_id)
+    
     # TO-DO
 
-    return render_template("plan.html", plan=plan_id)
+    return render_template("plan.html", plan=plan)
+
+
+# @app.route("/profile")
+# def show_profile():
+#     if not session.get("user"):
+#         return redirect("/")
+#     user = crud.get_user_by_id(session["user_id"])
+    
+#     # TO-DO
+
+#     return render_template("profile.html")
 
 
 if __name__ == "__main__":

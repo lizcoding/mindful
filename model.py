@@ -57,7 +57,7 @@ class Item(db.Model):
     order_date = db.Column(db.Date)
     delivery_date = db.Column(db.Date)
     order_status = db.Column(db.String(10))
-    decision_status = db.Column(db.String(10))
+    decision_status = db.Column(db.String(10), nullable=False)
     final_sale = db.Column(db.Boolean)
     item_category = db.Column(db.String(10))
     item_type = db.Column(db.String(10))

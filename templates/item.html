@@ -1,8 +1,61 @@
 {% extends 'base.html' %}
 
-{% block title %} {% endblock %}
+{% block title %}Item {{ item.item_id }}{% endblock %}
 
 {% block content %} 
   <!-- Bootstrap Carousel: https://getbootstrap.com/docs/4.3/components/carousel/ -->
+  <h1>Item {{ item.item_id }}</h1>
+  <h2>Details: </h2>
+  <h2>Add Details: </h2>
+  <form action="item/{{item.item_id}}/add_detail" method="POST">
+    <label for="alpha_size">Size: </label>
+    <select name="alpha_size">
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+    </select>
+    <label for="int_size">Size: </label>
+    <input type="number" name="int_size">
 
+    <label for="care">Care: </label>
+    <label>Machine Wash</label>
+    <input type="radio" name="care" value="machine wash">
+    <label>Hand Wash</label>
+    <input type="radio" name="care" value="hand wash">
+    <label>Dryclean Only</label>
+    <input type="radio" name="care" value="dryclean only">
+
+    <label>Materials: </label>
+    <label>Cotton</label><input type="checkbox" name="materials" value="cotton">
+    <label>Wool</label><input type="checkbox" name="materials" value="wool">
+    <label>Leather</label><input type="checkbox" name="materials" value="denim">
+    <label>Faux Leather</label><input type="checkbox" name="materials" value="faux leather">
+    <label>Elastane</label><input type="checkbox" name="materials" value="elastane">
+    <label>Polyester</label><input type="checkbox" name="materials" value="polyester">
+    <label>Acrylic</label><input type="checkbox" name="materials" value="acrylic">
+    <label>Viscose</label><input type="checkbox" name="materials" value="viscose">
+    <label>Silk</label><input type="checkbox" name="materials" value="silk">
+    <label>Cashmere</label><input type="checkbox" name="materials" value="cashmere">
+
+    <button type="submit">Add Care Information</button>
+  </form>
+
+  <h2>Add Plan: </h2>
+  <form action="item/{{item.item_id}}/add_plan" method="POST">
+    <label>Action: </label>
+    <label>Return</label>
+    <input type="radio" name="action" value="return">
+    <label>Keep</label>
+    <input type="radio" name="action" value="keep">
+    <label>Donate</label>
+    <input type="radio" name="action" value="donate">
+    <label>Gift</label>
+    <input type="radio" name="action" value="gift">
+    <label>Resell</label>
+    <input type="radio" name="action" value="resell">
+    
+    <button type="submit">Add Plan</button>
+  </form>
 {% endblock %}

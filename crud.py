@@ -35,13 +35,16 @@ def get_retailer_by_id(retailer_id):
 
 # Item object CRUD functions
 def create_item(user_id, retailer_id):
-    item = Item(user_id=user_id, retailer_id=retailer_id)
+    item = Item(user_id=user_id, retailer_id=retailer_id, decision_status="Undecided")
     db.session.add(item)
     db.session.commit()
     return item
 
 def get_item_by_id(item_id):
     return Item.query.get(item_id)
+    
+# def get_undecided_items(user_id):
+#     return Item.query.filter((Item.user_id == user_id) and (Item.decision_status == "Undecided")).all()
 
 
 # Plan object CRUD functions
