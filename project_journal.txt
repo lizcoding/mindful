@@ -32,6 +32,12 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
             d. [0] Plan
 
     Today's Reflection:
+        Accomplished almost all of today's goals. Getting from form enty to SQLAlchemy object instantiation
+        to pushing objects into the database took longer than expected due to debugging. Figuring out
+        Cloudinary integration also took more time than expected, but I'm happy to have it up and running
+        in one day. The work I did getting the item details routes and pages running hopefully means that
+        tomorrow's work on plan routes and pages will be done quicker. I also need to remember to git commit
+        more often so my commit comments are shorter and more specific.
 
     Push to tomorrow:
         1. [0] Test Plan Routes and Plan CRUD functions
