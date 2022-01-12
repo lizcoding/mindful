@@ -19,12 +19,12 @@ class User(db.Model):
     city = db.Column(db.String(20))
     state = db.Column(db.String(2))
     zip = db.Column(db.String(5))
-    phone_number = db.Column(db.Integer(11))
+    phone_number = db.Column(db.Integer)
     # items = a list of Item objects
     # plans = a list of Plan objects
 
     def __repr__(self):
-        return f"<User user_id={self.user_id} email={self.email}>"
+        return f"<User user_id={self.user_id} email={self.email} first_name={self.first_name}>"
 
 
 class Retailer(db.Model):
@@ -34,9 +34,9 @@ class Retailer(db.Model):
 
     retailer_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
-    main_url = db.Column(db.String(50), nullable=False)
-    returns_url = db.Column(db.String(50), nullable=False)
-    return_window = db.Column(db.Integer(2), nullable=False) # number of days until return
+    main_url = db.Column(db.String(100), nullable=False)
+    returns_url = db.Column(db.String(200), nullable=False)
+    return_window = db.Column(db.Integer, nullable=False) # number of days until return
     # items = a list of Item objects
 
     def __repr__(self):
@@ -51,6 +51,7 @@ class Item(db.Model):
     item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     retailer_id = db.Column(db.Integer, db.ForeignKey("retailers.retailer_id"), nullable=False)
+    item_url = db.Column(db.String(200), nullable=False)
     text_reminder = db.Column(db.Boolean)
     email_reminder = db.Column(db.Boolean)
     entry_date = db.Column(db.Date)
@@ -90,8 +91,6 @@ class Plan(db.Model):
     action = db.Column(db.String(10), nullable=False)
     status = db.Column(db.String(10), nullable=False)
     # items = a list of Item objects
-
-    user = db.relationship("User", backref="plans")
     
     def __repr__(self):
         return f"<Plan plan_id={self.plan_id} item_id={self.item_id} action={self.action} status={self.status}>"
@@ -104,7 +103,7 @@ class Image(db.Model):
 
     img_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"), nullable=False)
-    cloudinary_url = db.Column(db.String(100), nullable=False)
+    cloudinary_url = db.Column(db.String(200))
     
     item = db.relationship("Item", backref="images")
 
@@ -121,7 +120,7 @@ class Sentiment(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"), nullable=False)
     text_entry = db.Column(db.String(100), nullable=False)
     analysis = db.Column(db.String(30), nullable=False)
-    score = db.Column(db.Integer(2), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
 
     item = db.relationship("Item", backref="sentiments")
     
@@ -129,7 +128,7 @@ class Sentiment(db.Model):
         return f"<Sentiment sentiment_id={self.sentiment_id} item_id={self.item_id} score={self.score}>"
 
 
-def connect_to_db(flask_app, db_uri="postgresql:///ratings", echo=True):
+def connect_to_db(flask_app, db_uri="postgresql:///mindful", echo=True):
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
     flask_app.config["SQLALCHEMY_ECHO"] = echo
     flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

@@ -12,6 +12,7 @@ Bootstrap Extras: https://getbootstrap.com/docs/4.3/utilities/borders/
   
   <!-- Page Title Block -->
   <title>{% block title %} PAGE TITLE {% endblock %}</title>
+  <link rel="icon" type="image/x-icon" href="/static/img/balloonicorn.png"/>
 
   <!-- Bootstrap CSS, Base CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -23,7 +24,7 @@ Bootstrap Extras: https://getbootstrap.com/docs/4.3/utilities/borders/
   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 
   <!-- Page-specific JavaScript Block -->
-  {% block js %} INSERT JS {% endblock %}
+  {% block js %}{% endblock %}
 
 </head>
 <body>
@@ -32,11 +33,18 @@ Bootstrap Extras: https://getbootstrap.com/docs/4.3/utilities/borders/
   <div class="header">Mindful</div>
 
   <!-- Page Body Block -->
-  {% block body %} PAGE CONTENT {% endblock %}
+  
+  {% for msg in get_flashed_messages() %}
+    <p class="flash-msg">
+      {{ msg }}
+    </p>
+  {% endfor %}
+
+  {% block content %} PAGE CONTENT {% endblock %}
 
   <!-- Footer -->
   <!-- Bootstrap Navbar: https://getbootstrap.com/docs/4.3/components/navbar/ -->
-  <div class="footer">lizcoding.dev</div>
+  <div class="footer">Mindful 2022 - lizcoding</div>
 
   <!-- Bootstrap JS, jQuery, Popper.js -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

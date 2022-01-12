@@ -18,28 +18,43 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/11: Week 1 - Tuesday
     Today's Goals:
-        1. [ ] Complete Hackbright Cloudinary Walk-Through
-        2. [ ] Complete Item HTML Form (Cloudinary API integration)
-        3. [ ] Complete Plan HTML Form
-    
+        1. [X] Test Routes (Foundation Complete)
+            a. [X] Login
+            b. [X] Dashboard
+            c. [X] Item
+            d. [0] Plan
+        2. [X] Complete Hackbright Cloudinary walk-through
+        3. [X] Cloudinary API image integration
+        4. [X] Test CRUD functions (crud.py)
+            a. [X] User
+            b. [X] Retailer
+            c. [X] Item
+            d. [0] Plan
+
     Today's Reflection:
+
+    Push to tomorrow:
+        1. [0] Test Plan Routes and Plan CRUD functions
 
 
 ----------------------------------------------------------------------------------
 1/12: Week 1 - Wednesday
     Today's Goals:
-        1. [ ] Complete Dashboard Route (Cloudinary API integration)
-        2. [ ] Complete Item Route (Cloudinary API integration)
-        3. [ ] Complete Plan Route
-    
+        1. [ ] Test Plan Routes and Plan CRUD functions
+        2. [ ] Build out HTML
+            a. [ ] Item Details
+            b. [ ] Plan Details
+        3. [ ] Start research on Google Maps API 
+        4. [ ] Add Google Maps API display to Plan Details
+
     Today's Reflection:
 
 
 ----------------------------------------------------------------------------------
 1/13: Week 1 - Thursday
     Today's Goals:
-        1. [ ] Write Route Tests
-        2. [ ] Add Header Navigators
+        1. [ ] Start research on IBM Watson Tone Analyzer
+        2. [ ] Add Watson Tone Analyzer to Item Details 
     
     Today's Reflection:
 
@@ -48,8 +63,11 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/14: Week 1 - Friday
     Today's Goals:
-        1. [ ] Start research on Google Maps API 
-        2. [ ] Start research on IBM Watson Tone Analyzer
+        1. [ ] Write Route Tests
+            a. [ ] Login
+            b. [ ] Dashboard
+            c. [ ] Item Details
+            d. [ ] Plan Details
     
     Today's Reflection:
 

@@ -2,6 +2,7 @@
 
 # from flask.templating import _default_template_ctx_processor
 # from flask_sqlalchemy import _record_queries
+from sqlalchemy.sql.elements import TextClause
 from model import db, User, Retailer, Item, Plan, Image, Sentiment, connect_to_db
 
 
@@ -32,17 +33,35 @@ def create_retailer(name, main_url, returns_url, return_window):
 def get_retailer_by_id(retailer_id):
     return Retailer.query.get(retailer_id)
 
+def get_retailer_by_name(user, name):
+    items = user.items
+    retailers = [item.retailer.name.lower() for item in items]
+    if name.lower() in retailers:
+        return Retailer.query.filter(Retailer.name.ilike(name), Retailer.retailer_id.in_([item.retailer_id for item in items])).first()
+    else:
+        return False
 
 # Item object CRUD functions
-def create_item(user_id, retailer_id):
-    item = Item(user_id=user_id, retailer_id=retailer_id, decision_status="Undecided")
+def create_item(user_id, retailer_id, item_url):
+    item = Item(user_id=user_id, retailer_id=retailer_id, item_url=item_url, decision_status="Undecided")
     db.session.add(item)
     db.session.commit()
     return item
 
 def get_item_by_id(item_id):
     return Item.query.get(item_id)
-    
+
+def set_item_reminders(item, text, email):
+    if text:
+        item.text_reminders = True
+    else:
+        item.text_reminders = False
+    if email:
+        item.email_reminders = True
+    else:
+        item.email_reminders = False
+    db.session.commit()
+
 # def get_undecided_items(user_id):
 #     return Item.query.filter((Item.user_id == user_id) and (Item.decision_status == "Undecided")).all()
 
@@ -59,11 +78,15 @@ def get_plan_by_id(plan_id):
 
 
 # Image object CRUD functions
-def create_image(cloudinary_url):
-    img = Image(cloudinary_url=cloudinary_url)
-    db.session.add(img)
+def create_image(item):
+    img = Image()
+    item.images.append(img)
     db.session.commit()
     return img
+
+def add_image_url(image, url):
+    image.cloudinary_url = url
+    db.session.commit()
 
 def get_image_by_id(img_id):
     return Image.query.get(img_id)

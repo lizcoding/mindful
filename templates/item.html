@@ -5,9 +5,18 @@
 {% block content %} 
   <!-- Bootstrap Carousel: https://getbootstrap.com/docs/4.3/components/carousel/ -->
   <h1>Item {{ item.item_id }}</h1>
-  <h2>Details: </h2>
-  <h2>Add Details: </h2>
-  <form action="item/{{item.item_id}}/add_detail" method="POST">
+  {% for image in item.images %}
+    <img src="{{ image.cloudinary_url }}" height="400px" width="auto">
+  {% endfor %}
+  
+  <div>
+  <h2>Details</h2>
+  </div>
+
+
+  <div>
+  <h3>Add Details</h3>
+  <form action="/item/{{item.item_id}}/add_detail" method="POST">
     <label for="alpha_size">Size: </label>
     <select name="alpha_size">
         <option value="XS">XS</option>
@@ -26,7 +35,8 @@
     <input type="radio" name="care" value="hand wash">
     <label>Dryclean Only</label>
     <input type="radio" name="care" value="dryclean only">
-
+    
+    <div>
     <label>Materials: </label>
     <label>Cotton</label><input type="checkbox" name="materials" value="cotton">
     <label>Wool</label><input type="checkbox" name="materials" value="wool">
@@ -38,12 +48,15 @@
     <label>Viscose</label><input type="checkbox" name="materials" value="viscose">
     <label>Silk</label><input type="checkbox" name="materials" value="silk">
     <label>Cashmere</label><input type="checkbox" name="materials" value="cashmere">
-
+    </div>
+    
     <button type="submit">Add Care Information</button>
   </form>
-
-  <h2>Add Plan: </h2>
-  <form action="item/{{item.item_id}}/add_plan" method="POST">
+  </div>
+  
+  <div>
+  <h3>Add Plan</h3>
+  <form action="/item/{{item.item_id}}/add_plan" method="POST">
     <label>Action: </label>
     <label>Return</label>
     <input type="radio" name="action" value="return">
@@ -55,7 +68,9 @@
     <input type="radio" name="action" value="gift">
     <label>Resell</label>
     <input type="radio" name="action" value="resell">
-    
+
     <button type="submit">Add Plan</button>
   </form>
+  </div>
+
 {% endblock %}

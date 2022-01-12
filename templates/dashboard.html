@@ -31,41 +31,61 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
         {% endfor %}
     </ul>
     {% else %}
-        <p>No active plans!</p>
+        <p>Nothing to see here! No active plans!</p>
     {% endif %}
 
     <h3>Add Items</h3>
-    <form action="/add_item" method="POST">
+    <form action="/add_item" method="POST" enctype="multipart/form-data">
+        <div>
         <label for="retailer">Retailer: </label>
         <input type="text" name="retailer" required>
+        </div>
 
+        <div>
         <label for="return_window">Return Window Policy (Days): </label>
         <input type="number" name="return_window" required>
+        </div>
 
+        <div>
         <label for="brand">Brand: </label>
         <input type="text" name="brand">
+        </div>
 
-        <label for="reminders">Reminders: </label>
-        <input type="checkbox" name="reminders" value="text">
+        <div>
+        <label>Reminders: </label>
         <label>Text</label>
-        <input type="checkbox" name="reminders" value="email">
+        <input type="checkbox" name="text" value="text">
         <label>Email</label>
-
+        <input type="checkbox" name="email" value="email">
+        </div>
+        
+        <div>
         <label for="main_url">Main URL: </label>
-        <input type="url" name="main_url" required>
+        <input type="url" placeholder="https://" pattern="https://.*" name="main_url" required>    
+        </div>
 
+        <div>
         <label for="returns_url">Returns URL: </label>
-        <input type="url" name="returns_url" required>
+        <input type="url" placeholder="https://" pattern="https://.*" name="returns_url" required>
+        </div>
 
+        <div>
+            <label for="returns_url">Item URL: </label>
+            <input type="url" placeholder="https://" pattern="https://.*" name="item_url" required>
+        </div>
+
+        <div>
         <!--
         Accept any file with an image/* MIME type. (Many mobile devices also 
         let the user take a picture with the camera when this is used.)
         * TO-DO: Add "required" after Cloudinary integration
         -->
-        <label for="images">Upload Item Images: </label>
-        <input type="file" name="images" accept="image/*" multiple>
+        <label for="image">Upload Item Images: </label>
+        <input type="file" name="image">
+        </div>
 
-        <button type="submit">Add Item</button>
+        
+        <div><button type="submit">Add Item</button></div>
     </form>
 
 

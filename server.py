@@ -1,40 +1,42 @@
-from flask import Flask, redirect, flash, request, render_template, session
+from flask import (Flask, redirect, flash, request, render_template, session)
 from jinja2 import StrictUndefined
 from model import connect_to_db
+import os
 import crud
-import secrets
-import cloudinary
+import cloudinary.uploader
 
 
 app = Flask(__name__)
 app.jinja_env.undefined = StrictUndefined
-app.jinja_env.auto_reload = True
 
 # Required to use Flask sessions
-app.secret_key = secrets.MINDFUL_KEY
+app.secret_key = os.environ['MINDFUL_KEY']
 
 # Configure Cloudinary API
-cloudinary.config( 
-  cloud_name = secrets.cloud_name, 
-  api_key = secrets.api_key, 
-  api_secret = secrets.api_secret
-)
+CLOUD_NAME = os.environ['CLOUD_NAME']
+CLOUDINARY_KEY = os.environ['CLOUD_KEY']
+CLOUDINARY_SECRET = os.environ['CLOUD_SECRET']
+
 
 @app.route("/")
-def show_login():
-    return render_template("login.html")
+def login():
+    if session.get("user_id"):
+        return redirect("/dashboard")
+    else:
+        return render_template("login.html")
 
 
 @app.route("/create_account", methods=["POST"])
 def register_user():
     email = request.form.get("email")
-    password = request.form.get("password")
     user = crud.get_user_by_email(email)
 
     if user:
         flash("That email is already associated with an account.")
     else:
-        crud.create_user(email, password)
+        password = request.form.get("password")
+        first_name = request.form.get("first_name")
+        crud.create_user(email, password, first_name)
         flash("Account created!")
     
     return redirect("/")
@@ -52,17 +54,18 @@ def handle_login():
             return redirect("/dashboard")
     else:
         flash("Invalid login credentials.")
-    return redirect("/")
+        return redirect("/")
 
 
 @app.route("/dashboard")
 def dashboard():
-    if not session.get("user"):
+    if not session.get("user_id"):
         return redirect("/")
 
     user = crud.get_user_by_id(session["user_id"])
     tracked_items = [item for item in user.items if item.decision_status == "Undecided"]
-    plans = user.plans
+    # TO-DO 
+    plans = [ ]
     
     # TO-DO
     
@@ -71,7 +74,7 @@ def dashboard():
 
 @app.route("/item/<item_id>")
 def item_details(item_id):
-    if not session.get("user"):
+    if not session.get("user_id"):
         return redirect("/")
     item = crud.get_item_by_id(item_id)
 
@@ -82,20 +85,39 @@ def item_details(item_id):
 
 @app.route("/add_item", methods=['POST'])
 def add_item():
-    if not session.get("user"):
+    if not session.get("user_id"):
         return redirect("/")
-    user = crud.get_user_by_id(session["user_id"])
-    retailer = request.form.get("retailer")
-
-    # TO-DO: Code full Item object instantiation
     
-    crud.create_item(user.user_id, retailer)
+    user = crud.get_user_by_id(session["user_id"])
+    item_url = request.form.get("item_url") 
+    retailer_name = request.form.get("retailer")
+    
+    if not crud.get_retailer_by_name(user, retailer_name):
+        main_url = request.form.get("main_url")
+        returns_url = request.form.get("returns_url")
+        return_window = int(request.form.get("return_window"))
+        retailer = crud.create_retailer(name=retailer_name, main_url=main_url, returns_url=returns_url, return_window=return_window)
+    else:
+        retailer = crud.get_retailer_by_name(user, retailer_name)
+    
+    item = crud.create_item(user.user_id, retailer.retailer_id, item_url)
+    
+    text = request.form.get("text")
+    email = request.form.get("email")
+    crud.set_item_reminders(item, text, email)
+
+    file = request.files["image"]
+    image = crud.create_image(item)
+    result = cloudinary.uploader.upload(file, api_key=CLOUDINARY_KEY, api_secret=CLOUDINARY_SECRET, cloud_name=CLOUD_NAME)
+    img_url = result['secure_url']
+    crud.add_image_url(image, img_url)
+
     return redirect("/dashboard")
 
 
 @app.route("/item/<item_id>/add_detail", methods=['POST'])
 def add_detail(item_id):
-    # if not session.get("user"):
+    # if not session.get("user_id"):
     #     return redirect("/")
     # user = crud.get_user_by_id(session["user_id"])
     # item = crud.get_item_by_id(item_id)
@@ -105,9 +127,9 @@ def add_detail(item_id):
     return redirect(f"/item/{item_id}")
 
 
-@app.route("item/<item_id>/add_plan", methods=['POST'])
+@app.route("/item/<item_id>/add_plan", methods=['POST'])
 def add_plan(item_id):
-    if not session.get("user"):
+    if not session.get("user_id"):
         return redirect("/")
     action = request.form.get("action")
 
@@ -119,7 +141,7 @@ def add_plan(item_id):
 
 @app.route("/plan/<plan_id>")
 def plan_details(plan_id):
-    if not session.get("user"):
+    if not session.get("user_id"):
         return redirect("/")
     plan = crud.get_plan_by_id(plan_id)
     
@@ -141,9 +163,4 @@ def plan_details(plan_id):
 
 if __name__ == "__main__":
     connect_to_db(app)
-    app.run(
-        host="0.0.0.0",
-        use_reloader=True,
-        use_debugger=True,
-    )
-
+    app.run(host="0.0.0.0", debug=True)
