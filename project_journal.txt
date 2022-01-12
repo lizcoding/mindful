@@ -47,11 +47,12 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 1/12: Week 1 - Wednesday
     Today's Goals:
         1. [ ] Test Plan Routes and Plan CRUD functions
-        2. [ ] Build out HTML
+        2. [ ] Build Add Item Detail Route
+        3. [ ] Build out HTML
             a. [ ] Item Details
             b. [ ] Plan Details
-        3. [ ] Start research on Google Maps API 
-        4. [ ] Add Google Maps API display to Plan Details
+        4. [ ] Start research on Google Maps API 
+        5. [ ] Add Google Maps API display to Plan Details
 
     Today's Reflection:
 
@@ -60,7 +61,7 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 1/13: Week 1 - Thursday
     Today's Goals:
         1. [ ] Start research on IBM Watson Tone Analyzer
-        2. [ ] Add Watson Tone Analyzer to Item Details 
+        2. [ ] Start/Finish Watson integration with Item Details 
     
     Today's Reflection:
 

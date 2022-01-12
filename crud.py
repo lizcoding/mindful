@@ -62,6 +62,15 @@ def set_item_reminders(item, text, email):
         item.email_reminders = False
     db.session.commit()
 
+def set_item_details(item, materials, size, care):
+    if materials:
+        item.materials = materials
+    if size:
+        item.size = size
+    if care:
+        item.care = care
+    db.session.commit()
+
 # def get_undecided_items(user_id):
 #     return Item.query.filter((Item.user_id == user_id) and (Item.decision_status == "Undecided")).all()
 

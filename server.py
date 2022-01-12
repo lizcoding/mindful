@@ -117,12 +117,37 @@ def add_item():
 
 @app.route("/item/<item_id>/add_detail", methods=['POST'])
 def add_detail(item_id):
-    # if not session.get("user_id"):
-    #     return redirect("/")
-    # user = crud.get_user_by_id(session["user_id"])
-    # item = crud.get_item_by_id(item_id)
+    if not session.get("user_id"):
+        return redirect("/")
+    
 
-    # # TO-DO: Code full Item object update
+    # TO-DO: Code full Item object update
+    
+    cotton = request.form.get("cotton")
+    wool = request.form.get("wool")
+    leather = request.form.get("leather")
+    faux_leather = request.form.get("faux_leather")
+    elastane = request.form.get("elastane")
+    polyester = request.form.get("polyester")
+    acrylic = request.form.get("acrylic")
+    viscose = request.form.get("viscose")
+    silk = request.form.get("wool")
+    cashmere = request.form.get("wool")
+    
+    form_values = [cotton, wool, leather, faux_leather, elastane,
+                        polyester, acrylic, viscose, silk, cashmere]
+            
+    materials = f'{[material for material in form_values if material]}'
+    num_size = request.form.get("int_size")
+    str_size = request.form.get("alpha_size")
+    if num_size:
+        size = num_size
+    else:
+        size = str_size
+    care = request.form.get("care")
+
+    item = crud.get_item_by_id(item_id)
+    crud.set_item_details(item, materials, size, care)
 
     return redirect(f"/item/{item_id}")
 

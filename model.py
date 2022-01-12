@@ -66,10 +66,8 @@ class Item(db.Model):
     country_sizing = db.Column(db.String(3))
     size = db.Column(db.String(10))
     color = db.Column(db.String(10))
-    machine_washable = db.Column(db.Boolean)
-    hand_wash = db.Column(db.Boolean)
-    dryclean_only = db.Column(db.Boolean)
-    materials = db.Column(db.String(50))
+    care = db.Column(db.String(20)) # Changed care Booleans to string 
+    materials = db.Column(db.String(100)) # Change to String(100)
     # images = a list of Image objects
     # sentiments = a list of Sentiment objects
 
