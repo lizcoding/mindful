@@ -3,11 +3,15 @@ from jinja2 import StrictUndefined
 from model import connect_to_db
 import os
 import crud
+import datetime
 import cloudinary.uploader
 
-
+# TO-DO: Change "Status" when plan has been added + when plan has been executed
+# TO-DO: Add "Days Left" displays in the Dashboard
+# TO-DO: Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
 app = Flask(__name__)
 app.jinja_env.undefined = StrictUndefined
+app.jinja_env.filters['zip'] = zip
 
 # Required to use Flask sessions
 app.secret_key = os.environ['MINDFUL_KEY']
@@ -50,6 +54,8 @@ def handle_login():
 
     if user:
         if user.email == email and user.password == password:
+            today = datetime.date.today().isoformat()
+            session["today"] = today
             session["user_id"] = user.user_id
             return redirect("/dashboard")
     else:
@@ -62,10 +68,21 @@ def dashboard():
     if not session.get("user_id"):
         return redirect("/")
     user = crud.get_user_by_id(session["user_id"])
+    # Make sure tracked items is ordered by return_deadline
     tracked_items = [item for item in user.items if item.decision_status == "Undecided"]
     plans = [item.plan for item in user.items if item.plan]
-
-    return render_template("dashboard.html", user=user, tracked_items=tracked_items, plans=plans)
+    
+    today = session.get("today")
+    today_list =[int(num) for num in today.split('-')]
+    deltas = []
+    
+    for item in tracked_items:
+        return_deadline = item.return_deadline
+        delta = return_deadline - datetime.date(today_list[0], today_list[1], today_list[2])
+        deltas.append(delta)
+    
+    today = session.get("today")
+    return render_template("dashboard.html", user=user, tracked_items=tracked_items, plans=plans, today=today, deltas=deltas)
     
 
 @app.route("/item/<item_id>")
@@ -152,6 +169,7 @@ def add_plan(item_id):
     if not crud.get_item_by_id(item_id).plan:
         action = request.form.get("action")
         crud.create_plan(item_id, action=action)
+        flash("Plan created!")
     else:
         flash("This item had a plan in progress.")
 

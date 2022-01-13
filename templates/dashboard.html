@@ -17,8 +17,19 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
     <h4>Items</h4>
     {% if tracked_items %}
     <ul>
-        {% for item in tracked_items %}
-        <li><a href="/item/{{item.item_id}}">{{ item }}</a></li>
+        {% for item, days_left in tracked_items|zip(deltas) %}
+            <div id="{{item.item_id}}" class="dashboard">
+            <img src="{{ item.images[0].cloudinary_url }}" height="400px" width="auto">
+            <li><a href="/item/{{item.item_id}}">{{ item }}</a></li>
+            <li>Today: {{today}}</li>
+            <li>Return Deadline: {{item.return_deadline}}</li>
+            {% if days_left.days >= 0 %}
+                <li>Days left before return deadline: {{days_left.days}} </li>
+                {% if days_left.days == 0 %}
+                    <p style="color:red;">Must return this item today!</p>
+                {% endif %}
+            {% endif %}
+            </div>
         {% endfor %}
     </ul>
     {% else %}

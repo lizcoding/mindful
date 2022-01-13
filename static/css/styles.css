@@ -2,6 +2,10 @@ body {
     margin: 10px;
 }
 
+a {
+    outline: none;
+}
+
 .footer {
     display: flex;
     flex-direction: column;
