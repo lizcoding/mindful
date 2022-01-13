@@ -42,7 +42,12 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
         <label for="retailer">Retailer: </label>
         <input type="text" name="retailer" required>
         </div>
-
+        
+        <div>
+            <label for="brand">Brand: </label>
+            <input type="text" name="brand" required>
+        </div>
+        
         <div>
         <label for="return_window">Return Window Policy (Days): </label>
         <input type="number" name="return_window" required>
@@ -54,9 +59,15 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
         </div>
 
         <div>
-        <label for="brand">Brand: </label>
-        <input type="text" name="brand" required>
+            <label>Returns can be made: </label>
+            <label>In-person</label>
+            <input type="radio" name="return_type" value="in person" required>
+            <label>By Mail</label>
+            <input type="radtio" name="return_type" value="by mail" required>
+            <label>Both</label>
+            <input type="radtio" name="return_type" value="both" required>
         </div>
+
 
         <div>
         <label>Reminders: </label>

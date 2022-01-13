@@ -6,26 +6,27 @@ DEMO DAY (Tentative) --> Feb. 16th
 Features are numbered by priority/interest *
 
 MVP (2 WEEK timeline):
-    1. User is able to login to their account via Login Page
-    2. User is able to fill out form to add a purchase to be 'tracked' (within return window)
-    3. User is able to remove tracked item by: designating it a 'hit' or 'miss'
+    1. [X] User is able to login to their account via Login Page
+    2. [X] User is able to fill out form to add a purchase to be 'tracked' (within return window)
+    3. [ ] User is able to remove tracked item by: designating it a 'hit' or 'miss'
 
     Make sure to:
         Write tests as you go!
         Document rationale along the way (why list vs. dictionary, data structure/algo choice etc.)
 
 2.0 NICE TO HAVES:
-    4. API: Google Maps to provide return location for 'misses'
-    5. User is prompted to reflect on purchase via form
-    6. API: IBM Watson Tone Analyzer for check-in form data
+    4. [ ] API: Google Maps to provide return location for 'misses'
+    5. [ ] User is prompted to reflect on purchase via form
+    6. [ ] API: IBM Watson Tone Analyzer for check-in form data
 
 3.0 SHOW OFF:
-    7. OAuth to Access Google APIS:
+    7. [ ] OAuth to Access Google APIS:
         https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth
         https://developers.google.com/identity/protocols/oauth2
-    8. Security (Login security (username/password), site authentication
-    9. Twilio API for text reminders
-   10. Email reminders
+    8. [ ] Security (Login security (username/password), site authentication
+    9. [ ] Twilio API for text reminders
+   10. [ ] Email reminders
+   11. [ ] More Ideas
 
 
 *********** APIS + Keys ****************

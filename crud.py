@@ -42,9 +42,9 @@ def get_retailer_by_name(user, name):
         return False
 
 # Item object CRUD functions
-def create_item(user_id, retailer_id, brand, item_url, return_deadline):
+def create_item(user_id, retailer_id, brand, item_url, return_deadline, return_type):
     item = Item(user_id=user_id, retailer_id=retailer_id, brand=brand, item_url=item_url, 
-                return_deadline=return_deadline, decision_status="Undecided")
+                return_deadline=return_deadline, return_type=return_type, decision_status="Undecided")
     db.session.add(item)
     db.session.commit()
     return item

@@ -71,7 +71,7 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/14: Week 1 - Friday
     Today's Goals:
-        1. [ ] Start Watson integration with Item Details 
+        1. [ ] Start IBM Watson integration with Item Details 
         2. [ ] Write Route Tests
             a. [ ] Login
             b. [ ] Dashboard

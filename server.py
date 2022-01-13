@@ -38,7 +38,7 @@ def register_user():
         first_name = request.form.get("first_name")
         crud.create_user(email, password, first_name)
         flash("Account created!")
-    
+      
     return redirect("/")
 
 
@@ -61,14 +61,10 @@ def handle_login():
 def dashboard():
     if not session.get("user_id"):
         return redirect("/")
-
     user = crud.get_user_by_id(session["user_id"])
     tracked_items = [item for item in user.items if item.decision_status == "Undecided"]
-    # TO-DO 
     plans = [item.plan for item in user.items if item.plan]
-    
-    # TO-DO
-    
+
     return render_template("dashboard.html", user=user, tracked_items=tracked_items, plans=plans)
     
 
@@ -78,8 +74,6 @@ def item_details(item_id):
         return redirect("/")
     item = crud.get_item_by_id(item_id)
 
-    # TO-DO
-
     return render_template("item.html", item=item)
 
 
@@ -87,14 +81,13 @@ def item_details(item_id):
 def add_item():
     if not session.get("user_id"):
         return redirect("/")
-    
     user = crud.get_user_by_id(session["user_id"])
     item_url = request.form.get("item_url")
     return_deadline = request.form.get("return_deadline")
+    return_type = request.form.get("return_type")
     brand = request.form.get("brand")
     retailer_name = request.form.get("retailer")
 
-    
     if not crud.get_retailer_by_name(user, retailer_name):
         main_url = request.form.get("main_url")
         returns_url = request.form.get("returns_url")
@@ -103,7 +96,7 @@ def add_item():
     else:
         retailer = crud.get_retailer_by_name(user, retailer_name)
     
-    item = crud.create_item(user.user_id, retailer.retailer_id, brand, item_url, return_deadline)
+    item = crud.create_item(user.user_id, retailer.retailer_id, brand, item_url, return_deadline, return_type)
     
     text = request.form.get("text")
     email = request.form.get("email")
@@ -123,9 +116,6 @@ def add_detail(item_id):
     if not session.get("user_id"):
         return redirect("/")
     
-
-    # TO-DO: Code full Item object update
-    
     cotton = request.form.get("cotton")
     wool = request.form.get("wool")
     leather = request.form.get("leather")
@@ -138,7 +128,7 @@ def add_detail(item_id):
     cashmere = request.form.get("wool")
     
     form_values = [cotton, wool, leather, faux_leather, elastane,
-                        polyester, acrylic, viscose, silk, cashmere]
+                    polyester, acrylic, viscose, silk, cashmere]
             
     materials = f'{[material for material in form_values if material]}'
     num_size = request.form.get("int_size")
@@ -147,8 +137,8 @@ def add_detail(item_id):
         size = num_size
     else:
         size = str_size
-    care = request.form.get("care")
 
+    care = request.form.get("care")
     item = crud.get_item_by_id(item_id)
     crud.set_item_details(item, materials, size, care)
 
@@ -164,6 +154,7 @@ def add_plan(item_id):
         crud.create_plan(item_id, action=action)
     else:
         flash("This item had a plan in progress.")
+
     return redirect(f"/item/{item_id}")
 
 
@@ -177,6 +168,8 @@ def plan_details(plan_id):
     return render_template("plan.html", plan=plan, item=item)
 
 
+# For viewing personal information
+#
 # @app.route("/profile")
 # def show_profile():
 #     if not session.get("user"):
