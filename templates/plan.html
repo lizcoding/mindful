@@ -32,6 +32,14 @@
 <h4>Staus: {{ item.decision_status }}</h4>
 <h4>Plan: {{ plan.action }}</h4>
 </div>
+
+{% if (item.return_type == 'by mail') or (item.return_type == 'both') %}
+<h4>Request a shipping label for mail-back return <a href="{{item.retailer.returns_url}}">here</a></h4>
+{% endif%}
+
+{% if (item.return_type == 'in store') or (item.return_type == 'both') %}
+<h4>Locations for in-store returns</h4>
 <div id="map" style="height: 600px; width: 600px;"></div>
+{% endif %}
 
 {% endblock %}

@@ -55,7 +55,16 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
         5. [X] Add Google Maps API display to Plan Details
 
     Today's Reflection:
+        I completed all the goals I set for today, but I feel a little unsatisfied with the amount of work I
+        did today. Perhaps a good idea would be to add more numbered goals, or unnumbered optional goals so
+        there will be more of a sense of urgency to get through all the tasks. Maybe there should always be
+        a goal to be pushed to tomorrow!
 
+        In terms of challenges, reading the Google Maps documentation was harder than I thought. There are so
+        many pages and it is difficult at times to find information relevant to my question. Also, I've noticed
+        that I have been needing to make small changes to my database along the way, such as changing the 
+        VARCHAR limit from 20 to 30. I also didn't commit as often I would like, I will try to do it more 
+        tomorrow!
 
 ----------------------------------------------------------------------------------
 1/13: Week 1 - Thursday
