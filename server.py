@@ -65,7 +65,7 @@ def dashboard():
     user = crud.get_user_by_id(session["user_id"])
     tracked_items = [item for item in user.items if item.decision_status == "Undecided"]
     # TO-DO 
-    plans = [ ]
+    plans = [item.plan for item in user.items if item.plan]
     
     # TO-DO
     
@@ -89,8 +89,11 @@ def add_item():
         return redirect("/")
     
     user = crud.get_user_by_id(session["user_id"])
-    item_url = request.form.get("item_url") 
+    item_url = request.form.get("item_url")
+    return_deadline = request.form.get("return_deadline")
+    brand = request.form.get("brand")
     retailer_name = request.form.get("retailer")
+
     
     if not crud.get_retailer_by_name(user, retailer_name):
         main_url = request.form.get("main_url")
@@ -100,7 +103,7 @@ def add_item():
     else:
         retailer = crud.get_retailer_by_name(user, retailer_name)
     
-    item = crud.create_item(user.user_id, retailer.retailer_id, item_url)
+    item = crud.create_item(user.user_id, retailer.retailer_id, brand, item_url, return_deadline)
     
     text = request.form.get("text")
     email = request.form.get("email")
@@ -156,12 +159,12 @@ def add_detail(item_id):
 def add_plan(item_id):
     if not session.get("user_id"):
         return redirect("/")
-    action = request.form.get("action")
-
-    # TO-DO: Code full Plan object instantiation
-
-    crud.create_plan(item_id, action=action)
-    return redirect("/dashboard")
+    if not crud.get_item_by_id(item_id).plan:
+        action = request.form.get("action")
+        crud.create_plan(item_id, action=action)
+    else:
+        flash("This item had a plan in progress.")
+    return redirect(f"/item/{item_id}")
 
 
 @app.route("/plan/<plan_id>")
@@ -169,10 +172,9 @@ def plan_details(plan_id):
     if not session.get("user_id"):
         return redirect("/")
     plan = crud.get_plan_by_id(plan_id)
-    
-    # TO-DO
+    item = crud.get_item_by_id(plan.item_id)
 
-    return render_template("plan.html", plan=plan)
+    return render_template("plan.html", plan=plan, item=item)
 
 
 # @app.route("/profile")

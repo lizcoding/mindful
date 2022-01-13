@@ -3,7 +3,35 @@
 {% block title %}Plan {{ plan.plan_id }}{% endblock %}
 
 {% block content %}
+<script src="/static/js/gmaps.js"></script>
+<script
+  async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyChsFlCfejMUEhfUHqxLcwYtx2-Uxbeiag&libraries=places&callback=initMap">
+</script>
 
-<h1>Plan {{ plan.plan_id }}</h1>
+<h1>My plan for <a href="/item/{{item.item_id}}">Item {{ item.item_id }}</a></h1>
+{% for image in item.images %}
+  <img src="{{ image.cloudinary_url }}" height="400px" width="auto">
+{% endfor %}
+
+<div>
+<h2>Details</h2>
+{% if item.retailer %}
+<p>{{ item.retailer.name }}
+    {% if item.brand and (item.brand != item.retailer.name) %}
+    : {{ item.brand }}
+    {% endif %}
+</p>
+{% endif %}
+<p>Return Deadline: {{ item.return_deadline }}</p>
+<p>{% if item.size %}Size: {{ item.size }} {% endif %}</p>
+<p>{% if item.care %}Care: {{ item.care }} {% endif %}</p>
+<p>{% if item.materials %}Materials: {{ item.materials }} {% endif %}</p>
+</div>
+
+<div>
+<h4>Staus: {{ item.decision_status }}</h4>
+<h4>Plan: {{ plan.action }}</h4>
+</div>
+<div id="map" style="height: 600px; width: 600px;"></div>
 
 {% endblock %}

@@ -11,8 +11,22 @@
   
   <div>
   <h2>Details</h2>
+  {% if item.retailer %}
+  <p>{{ item.retailer.name }}
+    {% if item.brand and (item.brand != item.retailer.name) %}
+    : {{ item.brand }}
+    {% endif %}
+  </p>
+  {% endif %}
+  <p>Return Deadline: {{ item.return_deadline }}</p>
+  <p>{% if item.size %}Size: {{ item.size }} {% endif %}</p>
+  <p>{% if item.care %}Care: {{ item.care }} {% endif %}</p>
+  <p>{% if item.materials %}Materials: {{ item.materials }} {% endif %}</p>
   </div>
-
+  <h4>Staus: {{ item.decision_status }}</h4>
+  {% if item.plan %}
+  <h4>Plan: <a href="/plan/{{item.plan[0].plan_id}}">{{ item.plan[0].action }}</a></h4>
+  {% endif %}
 
   <div>
   <h3>Add Details</h3>
@@ -59,15 +73,15 @@
   <form action="/item/{{item.item_id}}/add_plan" method="POST">
     <label>Action: </label>
     <label>Return</label>
-    <input type="radio" name="action" value="return">
+    <input type="radio" name="action" value="return" required>
     <label>Keep</label>
-    <input type="radio" name="action" value="keep">
+    <input type="radio" name="action" value="keep" required>
     <label>Donate</label>
-    <input type="radio" name="action" value="donate">
+    <input type="radio" name="action" value="donate" required>
     <label>Gift</label>
-    <input type="radio" name="action" value="gift">
+    <input type="radio" name="action" value="gift" required>
     <label>Resell</label>
-    <input type="radio" name="action" value="resell">
+    <input type="radio" name="action" value="resell" required>
 
     <button type="submit">Add Plan</button>
   </form>

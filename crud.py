@@ -42,8 +42,9 @@ def get_retailer_by_name(user, name):
         return False
 
 # Item object CRUD functions
-def create_item(user_id, retailer_id, item_url):
-    item = Item(user_id=user_id, retailer_id=retailer_id, item_url=item_url, decision_status="Undecided")
+def create_item(user_id, retailer_id, brand, item_url, return_deadline):
+    item = Item(user_id=user_id, retailer_id=retailer_id, brand=brand, item_url=item_url, 
+                return_deadline=return_deadline, decision_status="Undecided")
     db.session.add(item)
     db.session.commit()
     return item
@@ -70,9 +71,6 @@ def set_item_details(item, materials, size, care):
     if care:
         item.care = care
     db.session.commit()
-
-# def get_undecided_items(user_id):
-#     return Item.query.filter((Item.user_id == user_id) and (Item.decision_status == "Undecided")).all()
 
 
 # Plan object CRUD functions

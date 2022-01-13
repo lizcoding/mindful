@@ -14,6 +14,7 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
     <h1>Dashboard</h1>
     <h2>Hi, {{ user.first_name }}</h3>
     
+    <h4>Items</h4>
     {% if tracked_items %}
     <ul>
         {% for item in tracked_items %}
@@ -24,17 +25,18 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
         <p>Nothing to see here! Add an item to be tracked.</p>
     {% endif %}
 
+    <h4>Plans</h4>
     {% if plans %}
     <ul>
         {% for plan in plans %}
-        <li><a href="/plan/{{plan.plan_id}}">{{ plan }}</a></li>
+        <li><a href="/plan/{{plan[0].plan_id}}">{{ plan }}</a></li>
         {% endfor %}
     </ul>
     {% else %}
         <p>Nothing to see here! No active plans!</p>
     {% endif %}
 
-    <h3>Add Items</h3>
+    <h4>Add Items</h4>
     <form action="/add_item" method="POST" enctype="multipart/form-data">
         <div>
         <label for="retailer">Retailer: </label>
@@ -47,8 +49,13 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
         </div>
 
         <div>
+            <label for="return_deadline">Last day to return item: </label>
+            <input type="date" name="return_deadline" required>
+        </div>
+
+        <div>
         <label for="brand">Brand: </label>
-        <input type="text" name="brand">
+        <input type="text" name="brand" required>
         </div>
 
         <div>

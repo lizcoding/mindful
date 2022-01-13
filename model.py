@@ -51,6 +51,7 @@ class Item(db.Model):
     item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     retailer_id = db.Column(db.Integer, db.ForeignKey("retailers.retailer_id"), nullable=False)
+    return_deadline = db.Column(db.Date, nullable=False)
     item_url = db.Column(db.String(200), nullable=False)
     text_reminder = db.Column(db.Boolean)
     email_reminder = db.Column(db.Boolean)
@@ -66,8 +67,9 @@ class Item(db.Model):
     country_sizing = db.Column(db.String(3))
     size = db.Column(db.String(10))
     color = db.Column(db.String(10))
-    care = db.Column(db.String(20)) # Changed care Booleans to string 
-    materials = db.Column(db.String(100)) # Change to String(100)
+    care = db.Column(db.String(20))
+    materials = db.Column(db.String(100))
+    
     # images = a list of Image objects
     # sentiments = a list of Sentiment objects
 
@@ -86,8 +88,8 @@ class Plan(db.Model):
 
     plan_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"), nullable=False)
-    action = db.Column(db.String(10), nullable=False)
-    status = db.Column(db.String(10), nullable=False)
+    action = db.Column(db.String(20), nullable=False)
+    status = db.Column(db.String(20), nullable=False)
     # items = a list of Item objects
     
     def __repr__(self):
