@@ -85,14 +85,25 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/14: Week 1 - Friday
     Today's Goals:
-        1. [ ] Start IBM Watson integration with Item Details 
-        2. [ ] Write Route Tests
+        1. [ ] Start IBM Watson integration with Item Details
+        2. [ ] Pre-Weekend TO-DO's 
+            a. [ ] Change "Status" when plan has been added + when plan has been executed
+            b. [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
+            c. [ ] Add price attribute to Item objects (edit DB)
+        3. [ ] Write Route Tests
             a. [ ] Login
             b. [ ] Dashboard
             c. [ ] Item Details
             d. [ ] Plan Details
     
     Today's Reflection:
+
+
+----------------------------------------------------------------------------------
+1/15-1/16: Weekend Progress
+
+
+
 
 
 

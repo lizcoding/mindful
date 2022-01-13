@@ -6,9 +6,12 @@ import crud
 import datetime
 import cloudinary.uploader
 
-# TO-DO: Change "Status" when plan has been added + when plan has been executed
-# TO-DO: Add "Days Left" displays in the Dashboard
-# TO-DO: Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
+# TO-DO: 1/13
+# TO-DO: [ ] Change "Status" when plan has been added + when plan has been executed
+# TO-DO: [X] Add "Days Left" displays in the Dashboard
+# TO-DO: [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
+# TO-DO: [ ] Add price attribute to Item objects (edit DB)
+
 app = Flask(__name__)
 app.jinja_env.undefined = StrictUndefined
 app.jinja_env.filters['zip'] = zip

@@ -12,12 +12,13 @@
   <div>
   <h2>Details</h2>
   {% if item.retailer %}
-  <p>{{ item.retailer.name }}
-    {% if item.brand and (item.brand != item.retailer.name) %}
+    <p>{{ item.retailer.name }}
+        {% if item.brand and (item.brand != item.retailer.name) %}
     : {{ item.brand }}
-    {% endif %}
-  </p>
+        {% endif %}
+    </p>
   {% endif %}
+
   <p>Return Deadline: {{ item.return_deadline }}</p>
   <p>{% if item.size %}Size: {{ item.size }} {% endif %}</p>
   <p>{% if item.care %}Care: {{ item.care }} {% endif %}</p>
@@ -25,7 +26,7 @@
   </div>
   <h4>Staus: {{ item.decision_status }}</h4>
   {% if item.plan %}
-  <h4>Plan: <a href="/plan/{{item.plan[0].plan_id}}">{{ item.plan[0].action }}</a></h4>
+    <h4>Plan: <a href="/plan/{{item.plan[0].plan_id}}">{{ item.plan[0].action }}</a></h4>
   {% endif %}
 
   <div>
