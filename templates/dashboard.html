@@ -28,6 +28,8 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
                 {% if days_left.days == 0 %}
                     <p style="color:red;">Must return this item today!</p>
                 {% endif %}
+            {% else %}
+            <p style="color:red;">Item has passed return window. Make a back-up plan!</p>
             {% endif %}
             </div>
         {% endfor %}

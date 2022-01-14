@@ -29,6 +29,29 @@
     <h4>Plan: <a href="/plan/{{item.plan[0].plan_id}}">{{ item.plan[0].action }}</a></h4>
   {% endif %}
 
+  <!-- Item To-Do's -->
+  <div>
+    <h3>Item To-Do's </h3>
+    <ul>
+      <li>Add Item Details</li>
+      <li>Create a Plan</li>
+      <!-- Every-Day, twice a week, or weekly (allow user to choose days) -->
+      <li>Complete purchase reflection</li>
+    </ul>
+  
+  </div>
+  <!-- Add Sentiment/Daily Reflection Form -->
+  <div>
+    <form action="/item/{{item.item_id}}/add_sentiment" method="POST">
+    <label for="reflection">Reflect on your purchase: </label>
+
+    <textarea id="reflection" name="reflection" rows="4" cols="50"></textarea>
+    <button type="submit">Submit Reflection</button>
+    </form>
+  
+  
+  </div>
+
   <div>
   <h3>Add Details</h3>
   <form action="/item/{{item.item_id}}/add_detail" method="POST">

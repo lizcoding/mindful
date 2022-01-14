@@ -12,6 +12,8 @@ import cloudinary.uploader
 # TO-DO: [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
 # TO-DO: [ ] Add price attribute to Item objects (edit DB)
 
+# TO-DO: [ ] Screen capture walk through of MVP
+
 app = Flask(__name__)
 app.jinja_env.undefined = StrictUndefined
 app.jinja_env.filters['zip'] = zip

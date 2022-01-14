@@ -71,7 +71,7 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
     Today's Goals:
         1. [X] Build out (Finish) Maps API on Plan Details
         2. [X] Build Tracked Item Dashboard display (deadline display)
-        3. [ ] Start research on IBM Watson Tone Analyzer
+        3. [X] Start research on IBM Watson Tone Analyzer
 
         Bonus: Start IBM Watson integration with Item Details
                 1. [ ] Add form with text area to item details page
@@ -86,7 +86,7 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 1/14: Week 1 - Friday
     Today's Goals:
         1. [ ] Start IBM Watson integration with Item Details
-        2. [ ] Pre-Weekend TO-DO's 
+        2. [ ] Pre-Weekend TO-DO's
             a. [ ] Change "Status" when plan has been added + when plan has been executed
             b. [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
             c. [ ] Add price attribute to Item objects (edit DB)
@@ -112,7 +112,7 @@ PROJECT JOURNAL WEEK 2 ---------------------------------------------------------
 
 1/17: Week 2 - Monday
     Today's Goals:
-        1. [ ] 
+        1. [ ] IBM Watson details
         2. [ ] 
         3. [ ] 
 
