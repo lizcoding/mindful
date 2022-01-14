@@ -43,13 +43,16 @@
   <!-- Add Sentiment/Daily Reflection Form -->
   <div>
     <form action="/item/{{item.item_id}}/add_sentiment" method="POST">
-    <label for="reflection">Reflect on your purchase: </label>
-
-    <textarea id="reflection" name="reflection" rows="4" cols="50"></textarea>
+    <div>
+      <h3>Reflect on your purchase</h3>
+    <label for="reflection">Write a short reflection (30-100 characters) on your purchase. Are you
+      happy that you bought the item, or are you undecided? Is the item what you expected? Have you tried
+      on the item? How does the item fit? How much use will you get out of this item? Is the item worth
+      the price you paid? How satisfied are you with the purchase?</label>
+    <textarea id="reflection" name="reflection" rows="4" cols="50" minlength="30" maxlength="100"></textarea>  
+    </div>
     <button type="submit">Submit Reflection</button>
     </form>
-  
-  
   </div>
 
   <div>

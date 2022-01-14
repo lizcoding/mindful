@@ -6,13 +6,22 @@ import crud
 import datetime
 import cloudinary.uploader
 
-# TO-DO: 1/13
+# TO-DO: 1/14
+# TO-DO: [ ] Add price attribute to Item objects (edit DB)
+# TO-DO: [ ] Add entry date attribute to Sentiment objects (edit DB)
+# TO-DO: [ ] Ensure Sentiment object instantiation from form submission
+
 # TO-DO: [ ] Change "Status" when plan has been added + when plan has been executed
+# TO-DO: [ ] Remove "Add Details", "Add Plan" forms for items with existing details/plans
 # TO-DO: [X] Add "Days Left" displays in the Dashboard
 # TO-DO: [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
-# TO-DO: [ ] Add price attribute to Item objects (edit DB)
+# TO-DO: [ ] Order items/plans on dashboard by time-sensitivity (Days left)
+# TO-DO: [ ] Show top 3 time-sensitive items or plans at the very top of the page
 
+# END OF MVP: IMB Watson integration up and running
 # TO-DO: [ ] Screen capture walk through of MVP
+
+# On the horizon: OAuth login
 
 app = Flask(__name__)
 app.jinja_env.undefined = StrictUndefined
@@ -163,6 +172,19 @@ def add_detail(item_id):
     care = request.form.get("care")
     item = crud.get_item_by_id(item_id)
     crud.set_item_details(item, materials, size, care)
+
+    return redirect(f"/item/{item_id}")
+
+
+# DO TODAY (1/14)
+@app.route("/item/<item_id>/add_sentiment", methods=['POST'])
+def add_sentiment(item_id):
+    if not session.get("user_id"):
+        return redirect("/")
+    entry = request.form.get("reflection")
+    analysis = ""
+    score = ""
+    crud.create_sentiment(item_id, entry, analysis, score)
 
     return redirect(f"/item/{item_id}")
 

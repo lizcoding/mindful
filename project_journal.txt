@@ -74,7 +74,7 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
         3. [X] Start research on IBM Watson Tone Analyzer
 
         Bonus: Start IBM Watson integration with Item Details
-                1. [ ] Add form with text area to item details page
+                1. [X] Add form with text area to item details page
                 2. [ ] Ensure Sentiment object instantiation from form submission
                 3. [ ] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
         
@@ -86,10 +86,12 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 1/14: Week 1 - Friday
     Today's Goals:
         1. [ ] Start IBM Watson integration with Item Details
-        2. [ ] Pre-Weekend TO-DO's
-            a. [ ] Change "Status" when plan has been added + when plan has been executed
-            b. [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
-            c. [ ] Add price attribute to Item objects (edit DB)
+                1. [X] Add form with text area to item details page
+                2. [ ] Ensure Sentiment object instantiation from form submission
+                3. [ ] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
+        2. [ ] Pre-Weekend TO-DO's (Found on server.py)
+            Total: [7]
+            Completed: [1]
         3. [ ] Write Route Tests
             a. [ ] Login
             b. [ ] Dashboard
