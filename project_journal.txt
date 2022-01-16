@@ -75,8 +75,8 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 
         Bonus: Start IBM Watson integration with Item Details
                 1. [X] Add form with text area to item details page
-                2. [ ] Ensure Sentiment object instantiation from form submission
-                3. [ ] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
+                2. [0] Ensure Sentiment object instantiation from form submission
+                3. [0] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
         
     Today's Reflection:
 
@@ -85,18 +85,13 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/14: Week 1 - Friday
     Today's Goals:
-        1. [ ] Start IBM Watson integration with Item Details
+        1. [X] Start IBM Watson integration with Item Details
                 1. [X] Add form with text area to item details page
-                2. [ ] Ensure Sentiment object instantiation from form submission
-                3. [ ] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
-        2. [ ] Pre-Weekend TO-DO's (Found on server.py)
+                2. [0] Ensure Sentiment object instantiation from form submission
+                3. [0] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
+        2. [X] Pre-Weekend TO-DO's (Found on server.py)
             Total: [7]
-            Completed: [1]
-        3. [ ] Write Route Tests
-            a. [ ] Login
-            b. [ ] Dashboard
-            c. [ ] Item Details
-            d. [ ] Plan Details
+            Completed: [3]
     
     Today's Reflection:
 
@@ -104,9 +99,17 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/15-1/16: Weekend Progress
 
+TO-DO server.py comments completed:
+    # [X] Update model.py
+    # [X] Update server.py (send correct info to crud function .create_sentiment)
+    
+    # [X] Update crud.py (Create new sentiment, keywords, targets, entities records)
 
-
-
+    # TO-DO: [X] Add price attribute to Item objects (edit DB)
+    # TO-DO: [X] Add entry date attribute to Sentiment objects (edit DB)
+    # TO-DO: [X] Ensure Sentiment object instantiation from form submission
+    # TO-DO: [X] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
+    # TO-DO: [X] Add "Days Left" displays in the Dashboard
 
 
 ----------------------------------------------------------------------------------

@@ -1,27 +1,40 @@
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson.natural_language_understanding_v1 import Features, EntitiesOptions, KeywordsOptions, SentimentOptions
 from flask import (Flask, redirect, flash, request, render_template, session)
 from jinja2 import StrictUndefined
+from markupsafe import re
 from model import connect_to_db
-import os
-import crud
-import datetime
 import cloudinary.uploader
+import datetime
+import crud
+import json
+import os
 
-# TO-DO: 1/14
-# TO-DO: [ ] Add price attribute to Item objects (edit DB)
-# TO-DO: [ ] Add entry date attribute to Sentiment objects (edit DB)
-# TO-DO: [ ] Ensure Sentiment object instantiation from form submission
+# <----------- UP NEXT ------------------->
+# TO-DO: [ ] Edit model.py to add emotion attributes to Entity, Keyword, and Target tables
+
+# <----------- TO-DO's: Odds and Ends ------------------->
+# TO-DO: [ ] Validate Add Item Form (can't add dates in the past)
+# TO-DO: [ ] Automatically calculate return deadline date
 
 # TO-DO: [ ] Change "Status" when plan has been added + when plan has been executed
 # TO-DO: [ ] Remove "Add Details", "Add Plan" forms for items with existing details/plans
-# TO-DO: [X] Add "Days Left" displays in the Dashboard
+
 # TO-DO: [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
 # TO-DO: [ ] Order items/plans on dashboard by time-sensitivity (Days left)
 # TO-DO: [ ] Show top 3 time-sensitive items or plans at the very top of the page
 
+# <----------- END OF MVP - On the Horizon ------------------->
 # END OF MVP: IMB Watson integration up and running
-# TO-DO: [ ] Screen capture walk through of MVP
+# On the horizon: 
+#   OAuth login (login with google, sync with Google Calendar)
+#   Dynamic search for retailers + items
+#   Implement Flask Login (more features): https://flask-login.readthedocs.io/en/latest/#flask_login.login_required
+#   Google Search Bar then scrape data? Hidden store parameter
+#   Try to get Joe to break my site :)
+#   Ask Anjelica to rate features for automation
 
-# On the horizon: OAuth login
 
 app = Flask(__name__)
 app.jinja_env.undefined = StrictUndefined
@@ -34,6 +47,14 @@ app.secret_key = os.environ['MINDFUL_KEY']
 CLOUD_NAME = os.environ['CLOUD_NAME']
 CLOUDINARY_KEY = os.environ['CLOUD_KEY']
 CLOUDINARY_SECRET = os.environ['CLOUD_SECRET']
+
+# Configure IBM Natural Language Understanding
+authenticator = IAMAuthenticator(os.environ['IBM_NATURAL_LANGUAGE_KEY'])
+natural_language_understanding = NaturalLanguageUnderstandingV1(
+    version='2021-08-01',
+    authenticator=authenticator
+)
+natural_language_understanding.set_service_url(os.environ['IBM_NATURAL_LANGUAGE_URL'])
 
 
 @app.route("/")
@@ -95,7 +116,6 @@ def dashboard():
         delta = return_deadline - datetime.date(today_list[0], today_list[1], today_list[2])
         deltas.append(delta)
     
-    today = session.get("today")
     return render_template("dashboard.html", user=user, tracked_items=tracked_items, plans=plans, today=today, deltas=deltas)
     
 
@@ -104,8 +124,12 @@ def item_details(item_id):
     if not session.get("user_id"):
         return redirect("/")
     item = crud.get_item_by_id(item_id)
+    date = session["today"]
+    today_list =[int(num) for num in date.split('-')]
+    today = datetime.date(today_list[0], today_list[1], today_list[2])
+    days_left = item.return_deadline - today
 
-    return render_template("item.html", item=item)
+    return render_template("item.html", item=item, days_left=days_left)
 
 
 @app.route("/add_item", methods=['POST'])
@@ -118,6 +142,7 @@ def add_item():
     return_type = request.form.get("return_type")
     brand = request.form.get("brand")
     retailer_name = request.form.get("retailer")
+    price = request.form.get("price")
 
     if not crud.get_retailer_by_name(user, retailer_name):
         main_url = request.form.get("main_url")
@@ -127,7 +152,7 @@ def add_item():
     else:
         retailer = crud.get_retailer_by_name(user, retailer_name)
     
-    item = crud.create_item(user.user_id, retailer.retailer_id, brand, item_url, return_deadline, return_type)
+    item = crud.create_item(user.user_id, retailer.retailer_id, brand, item_url, price, return_deadline, return_type)
     
     text = request.form.get("text")
     email = request.form.get("email")
@@ -181,10 +206,49 @@ def add_detail(item_id):
 def add_sentiment(item_id):
     if not session.get("user_id"):
         return redirect("/")
+    date = session["today"]
+    item = crud.get_item_by_id(item_id)
+    previous_sentiments = item.sentiments
+    today_list =[int(num) for num in date.split('-')]
+    today = datetime.date(today_list[0], today_list[1], today_list[2])
+    
+    if previous_sentiments:
+        for record in previous_sentiments[::]:
+            if record.date == today:
+                flash("Today's reflection has already been entered!")
+                return redirect(f"/item/{item_id}")
+    
+    
     entry = request.form.get("reflection")
-    analysis = ""
-    score = ""
-    crud.create_sentiment(item_id, entry, analysis, score)
+    
+    response = natural_language_understanding.analyze(text=entry, features=Features(
+        entities=EntitiesOptions(emotion=True, sentiment=True, limit=2),
+        keywords=KeywordsOptions(emotion=True, sentiment=True, limit=3),
+        sentiment=SentimentOptions(targets=['item', 'fit', 'size', 'value', 
+        'worth', 'keep', 'return', 'quality', 'wear', 'color']))).get_result()
+
+    if not response.get("entities"):
+        entities = []
+    else:
+        entities = [entity for entity in response["entities"]]
+    if not response.get("keywords"):
+        keywords = []
+    else:
+        keywords = [keyword for keyword in response["keywords"]]
+    if not response.get("sentiment"):
+            flash("Unable to generate sentiment analysis from text entered.")
+            return redirect(f"/item/{item_id}")
+    else:
+        if not response.get("sentiment").get("targets"):
+            target_words = []
+        else:
+            target_words = [target for target in response["sentiment"]["targets"]]
+            general_sentiment_score = response["sentiment"]["document"]["score"]
+            general_sentiment_label = response["sentiment"]["document"]["label"]
+    
+    crud.create_sentiment(
+        item_id, date, entry, general_sentiment_score, general_sentiment_label, 
+        entities, keywords, target_words)
 
     return redirect(f"/item/{item_id}")
 

@@ -18,17 +18,27 @@
         {% endif %}
     </p>
   {% endif %}
-
+  <p>${{item.price}}</p>
   <p>Return Deadline: {{ item.return_deadline }}</p>
+  {% if days_left.days >= 0 %}
+      <p>Days left before return deadline: {{days_left.days}} </p>
+      {% if days_left.days == 0 %}
+          <p style="color:red;">Must return this item today!</p>
+      {% endif %}
+  {% else %}
+    <p style="color:red;">Item has passed return window. Make a back-up plan!</p>
+  {% endif %}
   <p>{% if item.size %}Size: {{ item.size }} {% endif %}</p>
   <p>{% if item.care %}Care: {{ item.care }} {% endif %}</p>
   <p>{% if item.materials %}Materials: {{ item.materials }} {% endif %}</p>
   </div>
-  <h4>Staus: {{ item.decision_status }}</h4>
-  {% if item.plan %}
-    <h4>Plan: <a href="/plan/{{item.plan[0].plan_id}}">{{ item.plan[0].action }}</a></h4>
-  {% endif %}
 
+  <div>
+    <h4>Staus: {{ item.decision_status }}</h4>
+    {% if item.plan %}
+      <h4>Plan: <a href="/plan/{{item.plan[0].plan_id}}">{{ item.plan[0].action }}</a></h4>
+    {% endif %}
+  </div>
   <!-- Item To-Do's -->
   <div>
     <h3>Item To-Do's </h3>
@@ -38,18 +48,35 @@
       <!-- Every-Day, twice a week, or weekly (allow user to choose days) -->
       <li>Complete purchase reflection</li>
     </ul>
-  
   </div>
+
+  <!-- Display Reflection Results -->
+  <div>
+    {% if item.sentiments %}
+      <h4>Reflection Results</h4>
+      <p>{{item.sentiments[-1]}}</p>
+      {% if item.sentiments[-1].entities %}
+        <p>{{item.sentiments[-1].entities}}</p>
+      {% endif %}
+      {% if item.sentiments[-1].keywords %}
+        <p>{{item.sentiments[-1].keywords}}</p>
+      {% endif %}
+      {% if item.sentiments[-1].targets %}
+        <p>{{item.sentiments[-1].targets}}</p>
+      {% endif %}
+    {% endif %}
+  </div>
+
   <!-- Add Sentiment/Daily Reflection Form -->
   <div>
     <form action="/item/{{item.item_id}}/add_sentiment" method="POST">
     <div>
       <h3>Reflect on your purchase</h3>
-    <label for="reflection">Write a short reflection (30-100 characters) on your purchase. Are you
+    <label for="reflection">Write a short reflection (30-200 characters) on your purchase. Are you
       happy that you bought the item, or are you undecided? Is the item what you expected? Have you tried
       on the item? How does the item fit? How much use will you get out of this item? Is the item worth
       the price you paid? How satisfied are you with the purchase?</label>
-    <textarea id="reflection" name="reflection" rows="4" cols="50" minlength="30" maxlength="100"></textarea>  
+    <textarea id="reflection" name="reflection" rows="4" cols="50" minlength="30" maxlength="200" required></textarea>  
     </div>
     <button type="submit">Submit Reflection</button>
     </form>
@@ -68,7 +95,6 @@
     </select>
     <label for="int_size">Size: </label>
     <input type="number" name="int_size">
-
     <label for="care">Care: </label>
     <label>Machine Wash</label>
     <input type="radio" name="care" value="machine washable">
@@ -76,7 +102,6 @@
     <input type="radio" name="care" value="hand wash">
     <label>Dryclean Only</label>
     <input type="radio" name="care" value="dryclean only">
-    
     <div>
     <label>Materials: </label>
     <label>Cotton</label><input type="checkbox" name="cotton" value="cotton">
@@ -90,11 +115,10 @@
     <label>Silk</label><input type="checkbox" name="silk" value="silk">
     <label>Cashmere</label><input type="checkbox" name="cashmere" value="cashmere">
     </div>
-    
     <button type="submit">Add Item Details</button>
   </form>
   </div>
-  
+
   <div>
   <h3>Add Plan</h3>
   <form action="/item/{{item.item_id}}/add_plan" method="POST">
@@ -109,7 +133,6 @@
     <input type="radio" name="action" value="gift" required>
     <label>Resell</label>
     <input type="radio" name="action" value="resell" required>
-
     <button type="submit">Add Plan</button>
   </form>
   </div>

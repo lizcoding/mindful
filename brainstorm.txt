@@ -24,9 +24,10 @@ MVP (2 WEEK timeline):
         https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth
         https://developers.google.com/identity/protocols/oauth2
     8. [ ] Security (Login security (username/password), site authentication
-    9. [ ] Twilio API for text reminders
-   10. [ ] Email reminders
-   11. [ ] More Ideas
+    9. [ ] Dynamic search for brands
+    10. [ ] Twilio API for text reminders
+   11. [ ] Email reminders
+   12. [ ] More Ideas
 
 
 *********** APIS + Keys ****************
