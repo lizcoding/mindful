@@ -100,17 +100,18 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
 1/15-1/16: Weekend Progress
 
 TO-DO server.py comments completed:
-    # [X] Update model.py
+    # [X] Update model.py (sentiment)
     # [X] Update server.py (send correct info to crud function .create_sentiment)
     
     # [X] Update crud.py (Create new sentiment, keywords, targets, entities records)
 
-    # TO-DO: [X] Add price attribute to Item objects (edit DB)
-    # TO-DO: [X] Add entry date attribute to Sentiment objects (edit DB)
-    # TO-DO: [X] Ensure Sentiment object instantiation from form submission
-    # TO-DO: [X] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
-    # TO-DO: [X] Add "Days Left" displays in the Dashboard
+    # [X] Add price attribute to Item objects (edit DB)
+    # [X] Add entry date attribute to Sentiment objects (edit DB)
+    # [X] Ensure Sentiment object instantiation from form submission
+    # [X] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
+    # [X] Add "Days Left" displays in the Dashboard
 
+    # [X] Edit model.py to add emotion attributes to Entity, Keyword, and Target tables
 
 ----------------------------------------------------------------------------------
 PROJECT JOURNAL WEEK 2 -----------------------------------------------------------

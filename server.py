@@ -1,6 +1,6 @@
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from ibm_watson.natural_language_understanding_v1 import Features, EntitiesOptions, KeywordsOptions, SentimentOptions
+from ibm_watson.natural_language_understanding_v1 import Features, EmotionOptions, EntitiesOptions, KeywordsOptions, SentimentOptions
 from flask import (Flask, redirect, flash, request, render_template, session)
 from jinja2 import StrictUndefined
 from markupsafe import re
@@ -11,22 +11,23 @@ import crud
 import json
 import os
 
-# <----------- UP NEXT ------------------->
-# TO-DO: [ ] Edit model.py to add emotion attributes to Entity, Keyword, and Target tables
+# <------- UP NEXT ---------------------------------------------------------------->
+# [ ] Make sure emotions are working (put in Item HTML)
 
-# <----------- TO-DO's: Odds and Ends ------------------->
-# TO-DO: [ ] Validate Add Item Form (can't add dates in the past)
-# TO-DO: [ ] Automatically calculate return deadline date
+# <------- TO-DO's: Odds and Ends -------------------------------------------------->
+# [ ] Validate Add Item Form (can't add dates in the past)
+# [ ] Automatically calculate return deadline date
 
-# TO-DO: [ ] Change "Status" when plan has been added + when plan has been executed
-# TO-DO: [ ] Remove "Add Details", "Add Plan" forms for items with existing details/plans
+# [ ] Change "Status" when plan has been added + when plan has been executed
+# [ ] Remove "Add Details", "Add Plan" forms for items with existing details/plans
 
-# TO-DO: [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
-# TO-DO: [ ] Order items/plans on dashboard by time-sensitivity (Days left)
-# TO-DO: [ ] Show top 3 time-sensitive items or plans at the very top of the page
+# [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
+# [ ] Order items/plans on dashboard by time-sensitivity (Days left)
+# [ ] Show top 3 items OR plans at the very top of the page
 
-# <----------- END OF MVP - On the Horizon ------------------->
+# <------- END OF MVP - On the Horizon ---------------------------------------------->
 # END OF MVP: IMB Watson integration up and running
+#
 # On the horizon: 
 #   OAuth login (login with google, sync with Google Calendar)
 #   Dynamic search for retailers + items
@@ -103,7 +104,7 @@ def dashboard():
     if not session.get("user_id"):
         return redirect("/")
     user = crud.get_user_by_id(session["user_id"])
-    # Make sure tracked items is ordered by return_deadline
+    # Make sure tracked items are ordered by return_deadline
     tracked_items = [item for item in user.items if item.decision_status == "Undecided"]
     plans = [item.plan for item in user.items if item.plan]
     
@@ -201,7 +202,6 @@ def add_detail(item_id):
     return redirect(f"/item/{item_id}")
 
 
-# DO TODAY (1/14)
 @app.route("/item/<item_id>/add_sentiment", methods=['POST'])
 def add_sentiment(item_id):
     if not session.get("user_id"):
@@ -212,43 +212,75 @@ def add_sentiment(item_id):
     today_list =[int(num) for num in date.split('-')]
     today = datetime.date(today_list[0], today_list[1], today_list[2])
     
-    if previous_sentiments:
-        for record in previous_sentiments[::]:
-            if record.date == today:
-                flash("Today's reflection has already been entered!")
-                return redirect(f"/item/{item_id}")
+    # if previous_sentiments:
+    #     for record in previous_sentiments[::]:
+    #         if record.date == today:
+    #             flash("Today's reflection has already been entered!")
+    #             return redirect(f"/item/{item_id}")
     
     
     entry = request.form.get("reflection")
     
     response = natural_language_understanding.analyze(text=entry, features=Features(
         entities=EntitiesOptions(emotion=True, sentiment=True, limit=2),
+        emotion=EmotionOptions(targets=['item', 'fit', 'size', 'value', 
+        'worth', 'keep', 'return', 'quality', 'wear', 'color']),
         keywords=KeywordsOptions(emotion=True, sentiment=True, limit=3),
         sentiment=SentimentOptions(targets=['item', 'fit', 'size', 'value', 
         'worth', 'keep', 'return', 'quality', 'wear', 'color']))).get_result()
+
+    response_dump = json.dumps(response, indent=2)
+    print(response_dump)
+
+    if not response.get("emotion"):
+        document_emotions = []
+    elif not response["emotion"].get("document"):
+        document_emotions = []
+    else:
+        emotion_targets = [target for target in response["emotion"]["targets"]]
+        document_emotions = response["emotion"]["document"]["emotion"]
 
     if not response.get("entities"):
         entities = []
     else:
         entities = [entity for entity in response["entities"]]
+
     if not response.get("keywords"):
         keywords = []
     else:
         keywords = [keyword for keyword in response["keywords"]]
+
     if not response.get("sentiment"):
             flash("Unable to generate sentiment analysis from text entered.")
             return redirect(f"/item/{item_id}")
+    elif not response["sentiment"].get("targets"):
+            sentiment_targets = []
     else:
-        if not response.get("sentiment").get("targets"):
-            target_words = []
-        else:
-            target_words = [target for target in response["sentiment"]["targets"]]
-            general_sentiment_score = response["sentiment"]["document"]["score"]
-            general_sentiment_label = response["sentiment"]["document"]["label"]
+        sentiment_targets = [target for target in response["sentiment"]["targets"]]
+        general_sentiment_score = response["sentiment"]["document"]["score"]
+        general_sentiment_label = response["sentiment"]["document"]["label"]
     
-    crud.create_sentiment(
-        item_id, date, entry, general_sentiment_score, general_sentiment_label, 
-        entities, keywords, target_words)
+    sentiment = crud.create_sentiment(
+        item_id, date, entry, general_sentiment_score, general_sentiment_label)
+    crud.set_emotions(sentiment, document_emotions)
+
+    if entities:
+        for result in entities:
+            entity = crud.create_entity(sentiment, result)
+            # sentiment.entities.append(entity)
+            crud.set_emotions(entity, result["emotion"])
+            
+    if keywords:
+        for result in keywords:
+            keyword = crud.create_keyword(sentiment, result)
+            # sentiment.keywords.append(keyword)
+            crud.set_emotions(keyword, result["emotion"])
+    
+    if sentiment_targets and emotion_targets:
+        for sentiment_result, emotion_result in zip(sentiment_targets, emotion_targets):
+            target = crud.create_target(sentiment, sentiment_result)
+            # sentiment.targets.append(target)
+            crud.set_emotions(target, emotion_result["emotion"])
 
     return redirect(f"/item/{item_id}")
 

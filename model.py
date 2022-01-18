@@ -72,7 +72,6 @@ class Item(db.Model):
     color = db.Column(db.String(10))
     care = db.Column(db.String(20))
     materials = db.Column(db.String(100))
-    
     # images = a list of Image objects
     # sentiments = a list of Sentiment objects
 
@@ -121,23 +120,27 @@ class Sentiment(db.Model):
 
     sentiment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"), nullable=False)
-    date = db.Column(db.Date, nullable=False, unique=True)
+    date = db.Column(db.Date, nullable=False)
     entry = db.Column(db.String(200), nullable=False)
-    overall_sentiment_label = db.Column(db.String(20), nullable=False)
-    overall_sentiment_score = db.Column(db.Numeric, nullable=False)
+    general_sentiment_label = db.Column(db.String(20), nullable=False)
+    general_sentiment_score = db.Column(db.Numeric, nullable=False)
+    
+    # document level emotion result is stored in Sentiment
+    sadness = db.Column(db.Numeric, default=None)
+    joy = db.Column(db.Numeric, default=None)
+    fear = db.Column(db.Numeric, default=None)
+    disgust = db.Column(db.Numeric, default=None)
+    anger = db.Column(db.Numeric, default=None)
 
     item = db.relationship("Item", backref="sentiments")
     entities = db.relationship("Entity", backref="sentiment")
     keywords = db.relationship("Keyword", backref="sentiment")
     targets = db.relationship("Target", backref="sentiment")
-
+    
     def __repr__(self):
-        return f"<Sentiment sentiment_id={self.sentiment_id} item_id={self.item_id} date={self.date} overall_score={self.overall_sentiment_score} overall_sentiment_label={self.overall_sentiment_label}>"
+        return f"<Sentiment sentiment_id={self.sentiment_id} item_id={self.item_id} date={self.date} overall_score={self.general_sentiment_score} overall_sentiment_label={self.general_sentiment_label}>"
 
 
-# -----------------------------------
-# Complete: Entity, Keyword, and Target 
-# -----------------------------------
 class Entity(db.Model):
     """An entity returned through a sentiment analysis of a reflection entry."""
     
@@ -147,11 +150,17 @@ class Entity(db.Model):
     sentiment_id = db.Column(db.Integer, db.ForeignKey("sentiments.sentiment_id"), nullable=False)
     entity_type = db.Column(db.String(100))
     text = db.Column(db.String(100), nullable=False)
-    
     sentiment_score = db.Column(db.Numeric, nullable=False)
     sentiment_label = db.Column(db.String(20), nullable=False)
     relevance = db.Column(db.Numeric, nullable=False)
-    # emotions = db.Column(HSTORE, nullable=False)
+    
+    # emotion
+    sadness = db.Column(db.Numeric, default=None)
+    joy = db.Column(db.Numeric, default=None)
+    fear = db.Column(db.Numeric, default=None)
+    disgust = db.Column(db.Numeric, default=None)
+    anger = db.Column(db.Numeric, default=None)
+    # sentiment = a list of one Sentiment object
 
     def __repr__(self):
         return f"<Entity entity_id={self.entity_id} sentiment_id={self.sentiment_id} entity_type={self.entity_type} text={self.text} sentiment_score={self.sentiment_score} sentiment_label={self.sentiment_label} relevance={self.relevance}>"
@@ -167,7 +176,14 @@ class Keyword(db.Model):
     text = db.Column(db.String(20), nullable=False)
     sentiment_score = db.Column(db.Numeric, nullable=False)
     relevance = db.Column(db.Numeric, nullable=False)
-    # emotions = db.Column(HSTORE, nullable=False)
+    
+    # emotion 
+    sadness = db.Column(db.Numeric, default=None)
+    joy = db.Column(db.Numeric, default=None)
+    fear = db.Column(db.Numeric, default=None)
+    disgust = db.Column(db.Numeric, default=None)
+    anger = db.Column(db.Numeric, default=None)
+    # sentiment = a list of one Sentiment object
     
     def __repr__(self):
         return f"<Keyword keyword_id={self.keyword_id} sentiment_id={self.sentiment_id} text={self.text} sentiment_score={self.sentiment_score} relevance={self.relevance}>"
@@ -183,7 +199,13 @@ class Target(db.Model):
     text = db.Column(db.String(20), nullable=False)
     sentiment_score = db.Column(db.Numeric, nullable=False)
     sentiment_label = db.Column(db.String(20), nullable=False)
-    # emotions = db.Column(HSTORE, nullable=False)
+    # emotion 
+    sadness = db.Column(db.Numeric, default=None)
+    joy = db.Column(db.Numeric, default=None)
+    fear = db.Column(db.Numeric, default=None)
+    disgust = db.Column(db.Numeric, default=None)
+    anger = db.Column(db.Numeric, default=None)
+    # sentiment = a list of one Sentiment object
     
     def __repr__(self):
         return f"<Target target_id={self.target_id} sentiment_id={self.sentiment_id} text={self.text} sentiment_score={self.sentiment_score} sentiment_label={self.sentiment_label}>"

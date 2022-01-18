@@ -53,17 +53,28 @@
   <!-- Display Reflection Results -->
   <div>
     {% if item.sentiments %}
+
       <h4>Reflection Results</h4>
       <p>{{item.sentiments[-1]}}</p>
+      <p>"sadness": {{item.sentiments[-1].sadness}}</p>
+      <p>"joy": {{item.sentiments[-1].joy}}</p>
+      <p>"fear": {{item.sentiments[-1].fear}}</p>
+      <p>"disgust": {{item.sentiments[-1].disgust}}</p>
+      <p>"anger": {{item.sentiments[-1].anger}}</p>
+
+
       {% if item.sentiments[-1].entities %}
         <p>{{item.sentiments[-1].entities}}</p>
       {% endif %}
+
       {% if item.sentiments[-1].keywords %}
         <p>{{item.sentiments[-1].keywords}}</p>
       {% endif %}
+
       {% if item.sentiments[-1].targets %}
         <p>{{item.sentiments[-1].targets}}</p>
       {% endif %}
+
     {% endif %}
   </div>
 

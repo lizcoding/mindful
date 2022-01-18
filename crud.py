@@ -2,6 +2,7 @@
 
 # from flask.templating import _default_template_ctx_processor
 # from flask_sqlalchemy import _record_queries
+from sqlalchemy import ForeignKey
 from sqlalchemy.sql.elements import TextClause
 from model import db, User, Retailer, Item, Plan, Image, Sentiment, Entity, Target, Keyword, connect_to_db
 
@@ -100,49 +101,61 @@ def get_image_by_id(img_id):
     return Image.query.get(img_id)
 
 
-# MUST EDIT FOR IBM NLU API
+# set emotion attributes
+def set_emotions(object, emotion_list):
+        object.sadness = emotion_list["sadness"]
+        object.joy = emotion_list["joy"]
+        object.fear = emotion_list["fear"]
+        object.disgust = emotion_list["disgust"]
+        object.anger = emotion_list["anger"]
+        db.session.commit()
+
+def create_entity(sentiment, result):
+    entity = Entity(
+            sentiment_id=sentiment.sentiment_id, 
+            entity_type=result["type"],
+            text=result["text"], 
+            sentiment_score=result["sentiment"]["score"],
+            sentiment_label=result["sentiment"]["label"], 
+            relevance=result["relevance"]
+        )
+    db.session.add(entity)
+    db.session.commit()
+    return entity
+
+def create_keyword(sentiment, result):
+    keyword = Keyword(
+        sentiment_id=sentiment.sentiment_id, 
+        text=result["text"], 
+        sentiment_score=result["sentiment"]["score"],
+        relevance=result["relevance"]
+    )
+    db.session.add(keyword)
+    db.session.commit()
+    return keyword
+
+def create_target(sentiment, sentiment_result):
+    target = Target(
+        sentiment_id=sentiment.sentiment_id,
+        text=sentiment_result["text"], 
+        sentiment_score=sentiment_result["score"],
+        sentiment_label=sentiment_result["label"]
+    )
+    db.session.add(target)
+    db.session.commit()
+    return target
+
 # Sentiment object CRUD functions
-def create_sentiment(item_id, date, entry, overall_sentiment_score, overall_sentiment_label, 
-        entities, keywords, target_words):
-    
+def create_sentiment(item_id, date, entry, general_sentiment_score, general_sentiment_label):
     sentiment = Sentiment(
         item_id=item_id, date=date, entry=entry,
-        overall_sentiment_score=overall_sentiment_score, 
-        overall_sentiment_label=overall_sentiment_label)
+        general_sentiment_score=general_sentiment_score, 
+        general_sentiment_label=general_sentiment_label)
+
     db.session.add(sentiment)
-    if entities:
-        for result in entities:
-            entity = Entity(
-                sentiment_id=sentiment.sentiment_id, 
-                entity_type=result["type"],
-                text=result["text"], 
-                sentiment_score=result["sentiment"]["score"],
-                sentiment_label=result["sentiment"]["label"], 
-                relevance=result["relevance"]  
-            )
-            sentiment.entities.append(entity)
-    
-    if keywords:
-        for result in keywords:
-            keyword = Keyword(
-                sentiment_id=sentiment.sentiment_id, 
-                text=result["text"], 
-                sentiment_score=result["sentiment"]["score"],
-                relevance=result["relevance"]  
-            )
-            sentiment.keywords.append(keyword)
-    
-    if target_words:
-        for result in target_words:
-            target = Target(
-                sentiment_id=sentiment.sentiment_id,
-                text=result["text"], 
-                sentiment_score=result["score"],
-                sentiment_label=result["label"]
-            )
-            sentiment.targets.append(target)
     db.session.commit()
     return sentiment
+
 
 def get_sentiment_by_id(sentiment_id):
     return Sentiment.query.get(sentiment_id)
