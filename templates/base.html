@@ -27,10 +27,14 @@ Bootstrap Extras: https://getbootstrap.com/docs/4.3/utilities/borders/
   {% block js %}{% endblock %}
 
 </head>
+
 <body>
   <!-- Header -->
   <!-- Bootstrap Navbar: https://getbootstrap.com/docs/4.3/components/navbar/ -->
-  <a href="/">Mindful</a>
+  {% block navbar %}
+    <a href="/">Mindful</a> 
+    <a href="/logout">Logout</a> 
+  {% endblock %}
 
   <!-- Page Body Block -->
   

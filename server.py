@@ -11,30 +11,34 @@ import crud
 import json
 import os
 
-# <------- UP NEXT ---------------------------------------------------------------->
-# [ ] Make sure emotions are working (put in Item HTML)
-
-# <------- TO-DO's: Odds and Ends -------------------------------------------------->
-# [ ] Validate Add Item Form (can't add dates in the past)
-# [ ] Automatically calculate return deadline date
-
+# <------- UP NEXT ----------------------------------------------------------------->
+# [X] Setup User Logout 
 # [ ] Change "Status" when plan has been added + when plan has been executed
 # [ ] Remove "Add Details", "Add Plan" forms for items with existing details/plans
+# [ ] Only show Google Map result for Items with in-store or "both" returns
+# [ ] Only show returns url for items with online-only or "both" returns
+# [ ] Validate Add Item Form (can't add dates in the past, etc.)
 
+# <------- TO-DO's: Odds and Ends -------------------------------------------------->
+# [ ] Automatically calculate return deadline date
 # [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
 # [ ] Order items/plans on dashboard by time-sensitivity (Days left)
 # [ ] Show top 3 items OR plans at the very top of the page
 
 # <------- END OF MVP - On the Horizon ---------------------------------------------->
-# END OF MVP: IMB Watson integration up and running
-#
-# On the horizon: 
-#   OAuth login (login with google, sync with Google Calendar)
-#   Dynamic search for retailers + items
-#   Implement Flask Login (more features): https://flask-login.readthedocs.io/en/latest/#flask_login.login_required
-#   Google Search Bar then scrape data? Hidden store parameter
-#   Try to get Joe to break my site :)
-#   Ask Anjelica to rate features for automation
+# END OF MVP: Cloudinary API, Google Maps API, IBM NLU API integration.
+# All database objects have functional + robust CRUD and HTML displays logically  
+# TO-DO: Review code and refactor/modularize where appropriate. Ask for a code review.
+
+# <------- SPRINT 2: General Plans -------------------------------------------------->
+# OAuth login (login with google, sync with Google Calendar)
+# Implement Flask Login (more features): https://flask-login.readthedocs.io/en/latest/#flask_login.login_required
+
+# <------- EXTRAS ------------------------------------------------------------------->
+# Dynamic search for retailers + items
+# Google Search Bar then scrape data? Hidden store parameter
+# Try to get Joe to break my site :)
+# Ask Anjelica to rate features for automation
 
 
 app = Flask(__name__)
@@ -97,6 +101,13 @@ def handle_login():
     else:
         flash("Invalid login credentials.")
         return redirect("/")
+
+
+@app.route("/logout")
+def handle_logout():
+    session.pop("today")
+    session.pop("user_id")
+    return redirect("/")
 
 
 @app.route("/dashboard")
