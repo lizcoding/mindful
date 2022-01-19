@@ -2,6 +2,22 @@
 
 {% block title %}Item {{ item.item_id }}{% endblock %}
 
+{% block js %}
+<script>
+  function toggle_display(button_id, element_id) {
+    element = document.getElementById(element_id);
+    button = document.getElementById(button_id);
+    if (element.hasAttribute("hidden")) {
+      element.removeAttribute("hidden");
+      button.innerHTML = 'Close Add Details';
+    } else {
+      element.setAttribute("hidden", "true");
+      button.innerHTML= "Add Item Details";
+    }
+  }
+</script>
+{% endblock %}
+
 {% block content %} 
   <!-- Bootstrap Carousel: https://getbootstrap.com/docs/4.3/components/carousel/ -->
   <h1>Item {{ item.item_id }}</h1>
@@ -54,7 +70,7 @@
   <div>
     {% if item.sentiments %}
 
-      <h4>Reflection Results</h4>
+      <h4>Reflection Results: {{item.sentiments[-1].date}}</h4>
       <p>{{item.sentiments[-1]}}</p>
       <p>"sadness": {{item.sentiments[-1].sadness}}</p>
       <p>"joy": {{item.sentiments[-1].joy}}</p>
@@ -78,7 +94,8 @@
     {% endif %}
   </div>
 
-  <!-- Add Sentiment/Daily Reflection Form -->
+  {% if not item.sentiments or item.sentiments[-1].date != today %}
+  <!-- Sentiment/Daily Reflection Form -->
   <div>
     <form action="/item/{{item.item_id}}/add_sentiment" method="POST">
     <div>
@@ -92,10 +109,13 @@
     <button type="submit">Submit Reflection</button>
     </form>
   </div>
+  {% endif %}
+
 
   <div>
-  <h3>Add Details</h3>
-  <form action="/item/{{item.item_id}}/add_detail" method="POST">
+  <button type="button" id ="detail_button" onclick="toggle_display('detail_button', 'item_detail')">Click to add item details</button>
+  <form id="item_detail" action="/item/{{item.item_id}}/add_detail" method="POST" hidden>
+    <h3>Add Item Details</h3>
     <label for="alpha_size">Size: </label>
     <select name="alpha_size">
         <option value="XS">XS</option>
@@ -129,15 +149,19 @@
     <button type="submit">Add Item Details</button>
   </form>
   </div>
-
+  
+  <!-- Add Keep Item button -->
+  <button type="submit" formaction="/item/{{item.item_id}}/keep">Click to keep item</button>
+  
+  {% if not item.plan %}
   <div>
-  <h3>Add Plan</h3>
+  <h3>Make a Plan!</h3>
   <form action="/item/{{item.item_id}}/add_plan" method="POST">
     <label>Action: </label>
-    <label>Return</label>
-    <input type="radio" name="action" value="return" required>
-    <label>Keep</label>
-    <input type="radio" name="action" value="keep" required>
+    {% if days_left.days >= 0 %}
+      <label>Return</label>
+      <input type="radio" name="action" value="return" required>
+    {% endif %}
     <label>Donate</label>
     <input type="radio" name="action" value="donate" required>
     <label>Gift</label>
@@ -147,5 +171,6 @@
     <button type="submit">Add Plan</button>
   </form>
   </div>
+  {% endif %}
 
 {% endblock %}

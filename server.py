@@ -12,18 +12,11 @@ import json
 import os
 
 # <------- UP NEXT ----------------------------------------------------------------->
-# [X] Setup User Logout 
-# [ ] Change "Status" when plan has been added + when plan has been executed
-# [ ] Remove "Add Details", "Add Plan" forms for items with existing details/plans
-# [ ] Only show Google Map result for Items with in-store or "both" returns
-# [ ] Only show returns url for items with online-only or "both" returns
-# [ ] Validate Add Item Form (can't add dates in the past, etc.)
 
 # <------- TO-DO's: Odds and Ends -------------------------------------------------->
-# [ ] Automatically calculate return deadline date
-# [ ] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
-# [ ] Order items/plans on dashboard by time-sensitivity (Days left)
 # [ ] Show top 3 items OR plans at the very top of the page
+# [ ] Keep One: return deadline or return window
+# [ ] Modify "Add Details" text for items with existing details
 
 # <------- END OF MVP - On the Horizon ---------------------------------------------->
 # END OF MVP: Cloudinary API, Google Maps API, IBM NLU API integration.
@@ -116,32 +109,41 @@ def dashboard():
         return redirect("/")
     user = crud.get_user_by_id(session["user_id"])
     # Make sure tracked items are ordered by return_deadline
-    tracked_items = [item for item in user.items if item.decision_status == "Undecided"]
+    tracked_items = [item for item in user.items if item.decision_status != "Complete"]
+    tracked_items.sort(key=lambda x: x.return_deadline)
+    
     plans = [item.plan for item in user.items if item.plan]
     
-    today = session.get("today")
-    today_list =[int(num) for num in today.split('-')]
+    today = datetime.date.fromisoformat(session["today"])
     deltas = []
-    
     for item in tracked_items:
         return_deadline = item.return_deadline
-        delta = return_deadline - datetime.date(today_list[0], today_list[1], today_list[2])
+        delta = return_deadline - today
         deltas.append(delta)
     
     return render_template("dashboard.html", user=user, tracked_items=tracked_items, plans=plans, today=today, deltas=deltas)
-    
+
+
+# For viewing user's historical data
+@app.route("/profile")
+def show_profile():
+    if not session.get("user_id"):
+        return redirect("/")
+    user = crud.get_user_by_id(session["user_id"])
+    completed_items = [item for item in user.items if item.decision_status == "Complete"]
+    # TO-DO
+    return render_template("profile.html", user=user, completed_items=completed_items)
+
 
 @app.route("/item/<item_id>")
 def item_details(item_id):
     if not session.get("user_id"):
         return redirect("/")
     item = crud.get_item_by_id(item_id)
-    date = session["today"]
-    today_list =[int(num) for num in date.split('-')]
-    today = datetime.date(today_list[0], today_list[1], today_list[2])
+    today = datetime.date.fromisoformat(session["today"])
     days_left = item.return_deadline - today
 
-    return render_template("item.html", item=item, days_left=days_left)
+    return render_template("item.html", item=item, today=today, days_left=days_left)
 
 
 @app.route("/add_item", methods=['POST'])
@@ -217,18 +219,15 @@ def add_detail(item_id):
 def add_sentiment(item_id):
     if not session.get("user_id"):
         return redirect("/")
-    date = session["today"]
     item = crud.get_item_by_id(item_id)
     previous_sentiments = item.sentiments
-    today_list =[int(num) for num in date.split('-')]
-    today = datetime.date(today_list[0], today_list[1], today_list[2])
+    today = datetime.date.fromisoformat(session["today"])
     
-    # if previous_sentiments:
-    #     for record in previous_sentiments[::]:
-    #         if record.date == today:
-    #             flash("Today's reflection has already been entered!")
-    #             return redirect(f"/item/{item_id}")
-    
+    if previous_sentiments:
+        for record in previous_sentiments[::]:
+            if record.date == today:
+                flash("Today's reflection has already been entered!")
+                return redirect(f"/item/{item_id}")
     
     entry = request.form.get("reflection")
     
@@ -272,25 +271,22 @@ def add_sentiment(item_id):
         general_sentiment_label = response["sentiment"]["document"]["label"]
     
     sentiment = crud.create_sentiment(
-        item_id, date, entry, general_sentiment_score, general_sentiment_label)
+        item_id, today, entry, general_sentiment_score, general_sentiment_label)
     crud.set_emotions(sentiment, document_emotions)
 
     if entities:
         for result in entities:
             entity = crud.create_entity(sentiment, result)
-            # sentiment.entities.append(entity)
             crud.set_emotions(entity, result["emotion"])
             
     if keywords:
         for result in keywords:
             keyword = crud.create_keyword(sentiment, result)
-            # sentiment.keywords.append(keyword)
             crud.set_emotions(keyword, result["emotion"])
     
     if sentiment_targets and emotion_targets:
         for sentiment_result, emotion_result in zip(sentiment_targets, emotion_targets):
             target = crud.create_target(sentiment, sentiment_result)
-            # sentiment.targets.append(target)
             crud.set_emotions(target, emotion_result["emotion"])
 
     return redirect(f"/item/{item_id}")
@@ -302,12 +298,28 @@ def add_plan(item_id):
         return redirect("/")
     if not crud.get_item_by_id(item_id).plan:
         action = request.form.get("action")
-        crud.create_plan(item_id, action=action)
+        item = crud.get_item_by_id(item_id)
+        crud.create_plan(item, action=action)
         flash("Plan created!")
     else:
         flash("This item had a plan in progress.")
 
     return redirect(f"/item/{item_id}")
+
+
+@app.route("/item/<item_id>/keep")
+def keep_item(item_id):
+    if not session.get("user_id"):
+        return redirect("/")
+    
+    item = crud.get_item_by_id(item_id)
+    crud.set_item_status(item, "Complete")
+
+    if item.plan:
+        plan = item.plan[0]
+        crud.complete_plan(item, plan)
+
+    return redirect(f"/profile")
 
 
 @app.route("/plan/<plan_id>")
@@ -320,17 +332,26 @@ def plan_details(plan_id):
     return render_template("plan.html", plan=plan, item=item)
 
 
-# For viewing personal information
-#
-# @app.route("/profile")
-# def show_profile():
-#     if not session.get("user"):
-#         return redirect("/")
-#     user = crud.get_user_by_id(session["user_id"])
-    
-#     # TO-DO
+@app.route("/plan/<plan_id>/remove_plan")
+def remove_plan(plan_id):
+    if not session.get("user_id"):
+        return redirect("/")
+    plan = crud.get_plan_by_id(plan_id)
+    item = crud.get_item_by_id(plan.item_id)
+    crud.remove_plan(item)
 
-#     return render_template("profile.html")
+    return redirect(f"/item/{item.item_id}")
+
+
+@app.route("/plan/<plan_id>/complete_plan")
+def complete_plan(plan_id):
+    if not session.get("user_id"):
+        return redirect("/")
+    plan = crud.get_plan_by_id(plan_id)
+    item = crud.get_item_by_id(plan.item_id)
+    crud.complete_plan(item, plan)
+
+    return redirect(f"/profile")
 
 
 if __name__ == "__main__":

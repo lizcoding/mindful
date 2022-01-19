@@ -74,16 +74,34 @@ def set_item_details(item, materials, size, care):
         item.care = care
     db.session.commit()
 
+def set_item_status(item, status):
+    item.decision_status = status
+    db.session.commit()
 
 # Plan object CRUD functions
-def create_plan(item_id, action):
-    plan = Plan(item_id=item_id, action=action, status="In Progress")
+def create_plan(item, action):
+    plan = Plan(item_id=item.item_id, action=action, status="In Progress")
+    item.decision_status = "In-Progess"
     db.session.add(plan)
+    
+    if action == "return":
+        plan.deadline = item.return_deadline
+    
     db.session.commit()
     return plan
 
 def get_plan_by_id(plan_id):
     return Plan.query.get(plan_id)
+
+def remove_plan(item):
+    item.plan.clear()
+    item.decision_status = "Undecided"
+    db.session.commit()
+
+def complete_plan(item, plan):
+    plan.status = "Complete"
+    item.decision_status = "Complete"
+    db.session.commit()
 
 
 # Image object CRUD functions

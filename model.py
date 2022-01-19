@@ -92,8 +92,9 @@ class Plan(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"), nullable=False)
     action = db.Column(db.String(20), nullable=False)
     status = db.Column(db.String(20), nullable=False)
+    deadline = db.Column(db.Date)
     # items = a list of Item objects
-    
+
     def __repr__(self):
         return f"<Plan plan_id={self.plan_id} item_id={self.item_id} action={self.action} status={self.status}>"
 

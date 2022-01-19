@@ -117,20 +117,26 @@ TO-DO server.py comments completed:
 PROJECT JOURNAL WEEK 2 -----------------------------------------------------------
 
 1/17: Week 2 - Monday
-    Today's Goals:
-        1. [ ] IBM Watson details
-        2. [ ] 
-        3. [ ] 
-
-    Today's Reflection:
-
+    HOLIDAY: MLK (No Class)
 
 ----------------------------------------------------------------------------------
 1/18: Week 2 - Tuesday
     Today's Goals:
-        1. [ ] 
-        2. [ ] 
-        3. [ ] 
+    # [X] Setup User Logout 
+    # [X] Change "Status" when plan has been added
+    # [X] Change Item/Plan "Status" when plan has been executed
+    # [X] Change Item/Plan "Status" when "Keep" button is clicked
+    # [X] Hide Reflection form if one exists for today's date
+    # [X] Remove "Add Plan" form for items with existing details/plans
+    # [X] Only show Google Map result for Items with in-store or "both" returns
+    # [X] Only show returns url for items with online-only or "both" returns
+
+    # [X] Create Profile route for non-tracked items (items that finished Mindful track-plan life-cycle)
+    # [X] Order Items on dashboard by time-sensitivity (Days left before return)
+    # [X] Order Plans on dashboard by time-sensitivity (Days left before plan deadline)
+    # [X] Add plan deadline attribute (date)
+    # [X] Change session["today"] format from the start
+    # [X] Edit Add Item Form: can't add dates in the past
 
     Today's Reflection:
 

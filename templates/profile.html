@@ -7,5 +7,22 @@
 <!-- Bootstrap Alerts: https://getbootstrap.com/docs/4.3/components/alerts/ -->
 <!-- Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/ -->
 
+{% block content %}
 
-{% block content %} {% endblock %}
+<h1>Profile</h1>
+<h2>Hi, {{ user.first_name }}</h3>
+<h4>Past Items</h4>
+{% if completed_items %}
+    {% for item in completed_items %}
+        <ul>
+            <li>Item: {{item}}</li>
+            {% if item.plan %}
+            <li>Plan: {{item.plan}}</li>
+            {% endif %}
+        </ul>
+    {% endfor %}
+{% else %}
+    <p>Nothing to see here!</p>
+{% endif %}
+
+{% endblock %}

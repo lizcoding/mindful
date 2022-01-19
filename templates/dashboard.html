@@ -68,7 +68,7 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
 
         <div>
             <label for="return_deadline">Last day to return item: </label>
-            <input type="date" name="return_deadline" required>
+            <input type="date" name="return_deadline" min="{{today}}" required>
         </div>
         <div>
             <label for="Price">Price: </label>
@@ -117,7 +117,6 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
         <label for="image">Upload Item Images: </label>
         <input type="file" name="image">
         </div>
-
         
         <div><button type="submit">Add Item</button></div>
     </form>
