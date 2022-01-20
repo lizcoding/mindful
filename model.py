@@ -2,19 +2,21 @@
 """Models mindful app"""
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import HSTORE
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
 
 db = SQLAlchemy()
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     """A user."""
     
     __tablename__ = 'users'
 
-    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String(50), primary_key=True)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    password = db.Column(db.String(20), nullable=False)
     first_name = db.Column(db.String(20), nullable=False)
+    password_hash = db.Column(db.String(128))
     street = db.Column(db.String(40))
     unit = db.Column(db.String(10))
     city = db.Column(db.String(20))
@@ -24,8 +26,14 @@ class User(db.Model):
     # items = a list of Item objects
     # plans = a list of Plan objects
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
     def __repr__(self):
-        return f"<User user_id={self.user_id} email={self.email} first_name={self.first_name}>"
+        return f"<User id={self.id} email={self.email} first_name={self.first_name}>"
 
 
 class Retailer(db.Model):
@@ -50,7 +58,7 @@ class Item(db.Model):
     __tablename__ = 'items'
 
     item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
+    user_id = db.Column(db.String(50), db.ForeignKey("users.id"), nullable=False)
     retailer_id = db.Column(db.Integer, db.ForeignKey("retailers.retailer_id"), nullable=False)
     return_deadline = db.Column(db.Date, nullable=False)
     return_type = db.Column(db.String(10))

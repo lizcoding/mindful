@@ -4,7 +4,8 @@ from ibm_watson.natural_language_understanding_v1 import Features, EmotionOption
 from flask import (Flask, redirect, flash, request, render_template, session)
 from jinja2 import StrictUndefined
 from markupsafe import re
-from model import connect_to_db
+from model import connect_to_db, User
+import flask_login
 import cloudinary.uploader
 import datetime
 import crud
@@ -12,24 +13,31 @@ import json
 import os
 
 # <------- UP NEXT ----------------------------------------------------------------->
+# [ ] Implement Google OAuth
+# [ ] Add more features to Flask Login: https://flask-login.readthedocs.io/en/latest/#flask_login.login_required
 
 # <------- TO-DO's: Odds and Ends -------------------------------------------------->
 # [ ] Show top 3 items OR plans at the very top of the page
 # [ ] Keep One: return deadline or return window
 # [ ] Modify "Add Details" text for items with existing details
+# [ ] Add display logic (make reccomendation) for sentiment analysis data
+# [ ] Build out Plans (focus on non-return actions)
+# [ ] Enable deletion of items
+# [ ] Disable Cache for back button on logout
 
 # <------- END OF MVP - On the Horizon ---------------------------------------------->
-# END OF MVP: Cloudinary API, Google Maps API, IBM NLU API integration.
+# END OF MVP: Cloudinary API, Google Maps API, IBM NLU API integration. Flask login and Google OAuth.
 # All database objects have functional + robust CRUD and HTML displays logically  
 # TO-DO: Review code and refactor/modularize where appropriate. Ask for a code review.
 
 # <------- SPRINT 2: General Plans -------------------------------------------------->
-# OAuth login (login with google, sync with Google Calendar)
-# Implement Flask Login (more features): https://flask-login.readthedocs.io/en/latest/#flask_login.login_required
+# Testing
+# User Experience
+# Dynamic search for retailers + items
+# Webpage scaping for data + research existing datasets
+# Some Design
 
 # <------- EXTRAS ------------------------------------------------------------------->
-# Dynamic search for retailers + items
-# Google Search Bar then scrape data? Hidden store parameter
 # Try to get Joe to break my site :)
 # Ask Anjelica to rate features for automation
 
@@ -40,6 +48,10 @@ app.jinja_env.filters['zip'] = zip
 
 # Required to use Flask sessions
 app.secret_key = os.environ['MINDFUL_KEY']
+
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "/"
 
 # Configure Cloudinary API
 CLOUD_NAME = os.environ['CLOUD_NAME']
@@ -54,14 +66,20 @@ natural_language_understanding = NaturalLanguageUnderstandingV1(
 )
 natural_language_understanding.set_service_url(os.environ['IBM_NATURAL_LANGUAGE_URL'])
 
+# Takes in unicode user_id
+@login_manager.user_loader
+def load_user(user_id):
+    return crud.get_user_by_id(user_id)
+
 
 @app.route("/")
-def login():
-    if session.get("user_id"):
-        return redirect("/dashboard")
-    else:
+def login_page():
+    print(flask_login.current_user)
+    if not flask_login.current_user.is_authenticated:
         return render_template("login.html")
-
+    else:
+        return redirect("/dashboard")
+        
 
 @app.route("/create_account", methods=["POST"])
 def register_user():
@@ -79,17 +97,17 @@ def register_user():
     return redirect("/")
 
 
-@app.route("/login", methods=['POST'])
+@app.route("/login", methods=['GET', 'POST'])
 def handle_login():
     email = request.form.get("email")
     password = request.form.get("password")
     user = crud.get_user_by_email(email)
 
     if user:
-        if user.email == email and user.password == password:
+        if user.email == email and user.check_password(password):
             today = datetime.date.today().isoformat()
             session["today"] = today
-            session["user_id"] = user.user_id
+            flask_login.login_user(user)
             return redirect("/dashboard")
     else:
         flash("Invalid login credentials.")
@@ -97,17 +115,16 @@ def handle_login():
 
 
 @app.route("/logout")
-def handle_logout():
-    session.pop("today")
-    session.pop("user_id")
+@flask_login.login_required
+def logout():
+    flask_login.logout_user()
     return redirect("/")
 
 
 @app.route("/dashboard")
+@flask_login.login_required
 def dashboard():
-    if not session.get("user_id"):
-        return redirect("/")
-    user = crud.get_user_by_id(session["user_id"])
+    user = flask_login.current_user
     # Make sure tracked items are ordered by return_deadline
     tracked_items = [item for item in user.items if item.decision_status != "Complete"]
     tracked_items.sort(key=lambda x: x.return_deadline)
@@ -126,19 +143,17 @@ def dashboard():
 
 # For viewing user's historical data
 @app.route("/profile")
+@flask_login.login_required
 def show_profile():
-    if not session.get("user_id"):
-        return redirect("/")
-    user = crud.get_user_by_id(session["user_id"])
+    user = crud.get_user_by_id(flask_login.current_user.id)
     completed_items = [item for item in user.items if item.decision_status == "Complete"]
     # TO-DO
     return render_template("profile.html", user=user, completed_items=completed_items)
 
 
 @app.route("/item/<item_id>")
+@flask_login.login_required
 def item_details(item_id):
-    if not session.get("user_id"):
-        return redirect("/")
     item = crud.get_item_by_id(item_id)
     today = datetime.date.fromisoformat(session["today"])
     days_left = item.return_deadline - today
@@ -147,10 +162,9 @@ def item_details(item_id):
 
 
 @app.route("/add_item", methods=['POST'])
+@flask_login.login_required
 def add_item():
-    if not session.get("user_id"):
-        return redirect("/")
-    user = crud.get_user_by_id(session["user_id"])
+    user = crud.get_user_by_id(flask_login.current_user.id)
     item_url = request.form.get("item_url")
     return_deadline = request.form.get("return_deadline")
     return_type = request.form.get("return_type")
@@ -182,10 +196,8 @@ def add_item():
 
 
 @app.route("/item/<item_id>/add_detail", methods=['POST'])
+@flask_login.login_required
 def add_detail(item_id):
-    if not session.get("user_id"):
-        return redirect("/")
-    
     cotton = request.form.get("cotton")
     wool = request.form.get("wool")
     leather = request.form.get("leather")
@@ -216,9 +228,8 @@ def add_detail(item_id):
 
 
 @app.route("/item/<item_id>/add_sentiment", methods=['POST'])
+@flask_login.login_required
 def add_sentiment(item_id):
-    if not session.get("user_id"):
-        return redirect("/")
     item = crud.get_item_by_id(item_id)
     previous_sentiments = item.sentiments
     today = datetime.date.fromisoformat(session["today"])
@@ -293,9 +304,8 @@ def add_sentiment(item_id):
 
 
 @app.route("/item/<item_id>/add_plan", methods=['POST'])
+@flask_login.login_required
 def add_plan(item_id):
-    if not session.get("user_id"):
-        return redirect("/")
     if not crud.get_item_by_id(item_id).plan:
         action = request.form.get("action")
         item = crud.get_item_by_id(item_id)
@@ -308,10 +318,8 @@ def add_plan(item_id):
 
 
 @app.route("/item/<item_id>/keep")
+@flask_login.login_required
 def keep_item(item_id):
-    if not session.get("user_id"):
-        return redirect("/")
-    
     item = crud.get_item_by_id(item_id)
     crud.set_item_status(item, "Complete")
 
@@ -323,19 +331,18 @@ def keep_item(item_id):
 
 
 @app.route("/plan/<plan_id>")
+@flask_login.login_required
 def plan_details(plan_id):
-    if not session.get("user_id"):
-        return redirect("/")
     plan = crud.get_plan_by_id(plan_id)
     item = crud.get_item_by_id(plan.item_id)
+    gmaps_key = os.environ["gmaps_key"]
 
-    return render_template("plan.html", plan=plan, item=item)
+    return render_template("plan.html", plan=plan, item=item, gmaps_key=gmaps_key)
 
 
 @app.route("/plan/<plan_id>/remove_plan")
+@flask_login.login_required
 def remove_plan(plan_id):
-    if not session.get("user_id"):
-        return redirect("/")
     plan = crud.get_plan_by_id(plan_id)
     item = crud.get_item_by_id(plan.item_id)
     crud.remove_plan(item)
@@ -344,9 +351,8 @@ def remove_plan(plan_id):
 
 
 @app.route("/plan/<plan_id>/complete_plan")
+@flask_login.login_required
 def complete_plan(plan_id):
-    if not session.get("user_id"):
-        return redirect("/")
     plan = crud.get_plan_by_id(plan_id)
     item = crud.get_item_by_id(plan.item_id)
     crud.complete_plan(item, plan)

@@ -9,8 +9,9 @@ from model import db, User, Retailer, Item, Plan, Image, Sentiment, Entity, Targ
 
 # User object CRUD functions
 def create_user(email, password, first_name):
-    user = User(email=email, password=password, first_name=first_name)
+    user = User(id=email, email=email, first_name=first_name)
     db.session.add(user)
+    user.set_password(password)
     db.session.commit()
     return user
 

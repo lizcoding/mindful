@@ -1,4 +1,5 @@
 .DS_Store
 env
 secrets.sh
+googleOAuth.json
 *__pycache__*
