@@ -154,6 +154,9 @@ PROJECT JOURNAL WEEK 2 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/20: Week 2 - Thursday
     Today's Goals:
+    # [0] Implement Google OAuth
+    # [X] Start implemenation of Flask Login
+
 
     Today's Reflection:
 
@@ -161,7 +164,8 @@ PROJECT JOURNAL WEEK 2 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/21: Week 2 - Friday
     Today's Goals:
-
+    # [0] Implement Google OAuth
+    # [X] Complete Flask Login implemenation
 
     Today's Reflection:
 
@@ -171,7 +175,9 @@ PROJECT JOURNAL WEEK 3 ---------------------------------------------------------
 
 1/17: Week 3 - Monday
     Today's Goals:
-
+    # [X] Implement Google OAuth
+    # [X] Disable Cache for back button on logout
+    # [X] Enable deletion of items
 
     Today's Reflection:
 

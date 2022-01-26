@@ -10,117 +10,136 @@ Bootstrap Alerts: https://getbootstrap.com/docs/4.3/components/alerts/
 Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/ 
 -->
 
-{% block content %} 
-    <h1>Dashboard</h1>
-    <h2>Hi, {{ user.first_name }}</h3>
+{% block content %}
+<div id="content-block" class="content-block container-fluid">
+    <div class="d-flex justify-content-between">
+        <div class="flex-column">
+            <h4 class="dashboard-h4">LET'S GET MINDFUL, {{ user.first_name }}!</h4>
+            <h1 id="dashboard-h1">Your Items</h2>
+        </div>
+        <div class="d-flex justify-content-end align-items-center">
+            <h4 class="dashboard-h4 add-items-anchor">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addItemModal">
+            Add Items
+            </button></h4>
+        </div>
+    </div>
+
     
-    <h4>Items</h4>
     {% if tracked_items %}
-    <ul>
+    <div class="card-deck">
         {% for item, days_left in tracked_items|zip(deltas) %}
-            <div id="{{item.item_id}}" class="dashboard">
-            <img src="{{ item.images[0].cloudinary_url }}" height="400px" width="auto">
-            <li><a href="/item/{{item.item_id}}">{{ item }}</a></li>
-            <li>Today: {{today}}</li>
-            <li>Return Deadline: {{item.return_deadline}}</li>
-            {% if days_left.days >= 0 %}
-                <li>Days left before return deadline: {{days_left.days}} </li>
-                {% if days_left.days == 0 %}
-                    <p style="color:red;">Must return this item today!</p>
-                {% endif %}
-            {% else %}
-            <p style="color:red;">Item has passed return window. Make a back-up plan!</p>
-            {% endif %}
+        <div class="card">
+        <a href="/item/{{item.item_id}}"><img src="{{item.images[0].cloudinary_url}}" class="card-img-top img-fluid" max-width="100%" height="auto" alt=""></a>
+            <div class="card-body">
+                <div class="card-text">
+                    <p><a href="/item/{{item.item_id}}">Status: {{ item.decision_status }}</a></p>
+                    {% if item.plan %}
+                        <p><a href="/plan/{{item.plan[0].plan_id}}">Plan: {{ item.plan[0].action }}</a></p>
+                    {% endif %}
+                    <p>Return Deadline: {{item.return_deadline}}</p>
+                    {% if days_left.days >= 0 %}
+                        <p>Days before return deadline: {{days_left.days}} </p>
+                        {% if days_left.days == 0 %}<p style="color:red;">Must return this item today!</p>{% endif %}
+                    {% else %}<p style="color:red;">Item has passed return window. Make a back-up plan!</p>
+                    {% endif %}
+                </div>
             </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
     {% else %}
-        <p>Nothing to see here! Add an item to be tracked.</p>
-    {% endif %}
+    <p>Nothing to see here! Add an item to be tracked.</p>
+    {% endif %} 
+    <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addItemModalTitle">Add Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex">
+                <form action="/add_item" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                    <label for="retailer">Retailer: </label>
+                    <input type="text" name="retailer" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="brand">Brand: </label>
+                        <input type="text" name="brand" required>
+                    </div>
+                    
+                    <!-- <div>
+                    <label for="return_window">Return Window Policy (Days): </label>
+                    <input type="number" name="return_window" required>
+                    </div> -->
 
-    <h4>Plans</h4>
-    {% if plans %}
-    <ul>
-        {% for plan in plans %}
-        <li><a href="/plan/{{plan[0].plan_id}}">{{ plan }}</a></li>
-        {% endfor %}
-    </ul>
-    {% else %}
-        <p>Nothing to see here! No active plans!</p>
-    {% endif %}
+                    <div class="form-group">
+                        <label for="return_deadline">Last day to return item: </label>
+                        <input type="date" name="return_deadline" min="{{today}}" required>
+                    </div>
 
-    <h4>Add Items</h4>
-    <form action="/add_item" method="POST" enctype="multipart/form-data">
-        <div>
-        <label for="retailer">Retailer: </label>
-        <input type="text" name="retailer" required>
-        </div>
-        
-        <div>
-            <label for="brand">Brand: </label>
-            <input type="text" name="brand" required>
-        </div>
-        
-        <div>
-        <label for="return_window">Return Window Policy (Days): </label>
-        <input type="number" name="return_window" required>
-        </div>
+                    <div class="form-group">
+                        <label for="Price">Price: </label>
+                        <input type="number" name="price" min="0" step="0.01" required>
+                    </div>
 
-        <div>
-            <label for="return_deadline">Last day to return item: </label>
-            <input type="date" name="return_deadline" min="{{today}}" required>
-        </div>
-        <div>
-            <label for="Price">Price: </label>
-            <input type="number" name="price" min="0" step="0.01" required>
-        </div>
-        <div>
-            <label>Returns can be made: </label>
-            <label>In-person</label>
-            <input type="radio" name="return_type" value="in person" required>
-            <label>By Mail</label>
-            <input type="radio" name="return_type" value="by mail" required>
-            <label>Both</label>
-            <input type="radio" name="return_type" value="both" required>
-        </div>
+                    <div class="form-group">
+                        <label>Returns can be made: </label>
+                        <label>In-person</label>
+                        <input type="radio" name="return_type" value="in person" required>
+                        <label>By Mail</label>
+                        <input type="radio" name="return_type" value="by mail" required>
+                        <label>Both</label>
+                        <input type="radio" name="return_type" value="both" required>
+                    </div>
 
+                    <div class="form-group">
+                    <label>Reminders: </label>
+                    <label>Text</label>
+                    <input type="checkbox" name="text" value="text">
+                    <label>Email</label>
+                    <input type="checkbox" name="email" value="email">
+                    </div>
+                    
+                    <div class="form-group">
+                    <label for="main_url">Main URL: </label>
+                    <input type="url" placeholder="https://" pattern="https://.*" name="main_url" required>    
+                    </div>
 
-        <div>
-        <label>Reminders: </label>
-        <label>Text</label>
-        <input type="checkbox" name="text" value="text">
-        <label>Email</label>
-        <input type="checkbox" name="email" value="email">
+                    <div class="form-group">
+                    <label for="returns_url">Returns URL: </label>
+                    <input type="url" placeholder="https://" pattern="https://.*" name="returns_url" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="returns_url">Item URL: </label>
+                        <input type="url" placeholder="https://" pattern="https://.*" name="item_url" required>
+                    </div>
+
+                    <div class="form-group">
+                    <!--
+                    Accept any file with an image/* MIME type. (Many mobile devices also 
+                    let the user take a picture with the camera when this is used.)
+                    * TO-DO: Add "required" after Cloudinary integration
+                    -->
+                    <label for="image">Upload Item Images: </label>
+                    <input type="file" name="image">
+                    </div>
+                    
+                    <div class="form-group"><button type="submit">Add Item</button></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+            </div>
         </div>
-        
-        <div>
-        <label for="main_url">Main URL: </label>
-        <input type="url" placeholder="https://" pattern="https://.*" name="main_url" required>    
-        </div>
-
-        <div>
-        <label for="returns_url">Returns URL: </label>
-        <input type="url" placeholder="https://" pattern="https://.*" name="returns_url" required>
-        </div>
-
-        <div>
-            <label for="returns_url">Item URL: </label>
-            <input type="url" placeholder="https://" pattern="https://.*" name="item_url" required>
-        </div>
-
-        <div>
-        <!--
-        Accept any file with an image/* MIME type. (Many mobile devices also 
-        let the user take a picture with the camera when this is used.)
-        * TO-DO: Add "required" after Cloudinary integration
-        -->
-        <label for="image">Upload Item Images: </label>
-        <input type="file" name="image">
-        </div>
-        
-        <div><button type="submit">Add Item</button></div>
-    </form>
-
-
+    </div>
+</div>
 {% endblock %}
 

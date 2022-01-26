@@ -3,48 +3,63 @@
 {% block title %}Plan {{ plan.plan_id }}{% endblock %}
 
 {% block content %}
-<h1>My plan for <a href="/item/{{item.item_id}}">Item {{ item.item_id }}</a></h1>
-{% for image in item.images %}
-  <img src="{{ image.cloudinary_url }}" height="400px" width="auto">
-{% endfor %}
+<div id="item-page" class="content-block container-fluid">
+  <div id="item-block" class="container">
+    <div class="row gx-5 row-cols-sm-6 row-cols-xs-6 row-cols-md-12 row-cols-lg-12 row-cols-xl-12">
+      <div class="col-lg">
+        <div class="d-flex justify-content-center">
+          {% for image in item.images %}
+          <img id="item-img" src="{{ image.cloudinary_url }}">
+          {% endfor %}
+         </div>
+      </div>
+      <div class="col-lg">
+        <div class="container-fluid">
+          <div>
+            <div class="btn-group plan-buttons">
+              <a class="btn btn-primary" href="/plan/{{plan.plan_id}}/remove_plan" role="button">Remove Plan</a>
+              <a class="btn btn-primary" href="/plan/{{plan.plan_id}}/complete_plan" role="button">Complete Plan</a>
 
-<div>
-<h2>Details</h2>
-{% if item.retailer %}
-<p id="retailer_name">{{ item.retailer.name }}</p>
-{% endif %}
-<p>
-{% if item.brand and (item.brand != item.retailer.name) %}
-  {{ item.brand }}
-{% endif %}
-</p>
+            </div>
 
-<p>Return Deadline: {{ item.return_deadline }}</p>
-<p>{% if item.size %}Size: {{ item.size }} {% endif %}</p>
-<p>{% if item.care %}Care: {{ item.care }} {% endif %}</p>
-<p>{% if item.materials %}Materials: {{ item.materials }} {% endif %}</p>
+            <h3>Details</h3>
+            {% if item.retailer %}
+            <p id="retailer_name">{{ item.retailer.name }}</p>
+            {% endif %}
+            <p>
+            {% if item.brand and (item.brand != item.retailer.name) %}
+              {{ item.brand }}
+            {% endif %}
+            </p>
+            
+            <p>Return Deadline: {{ item.return_deadline }}</p>
+            <p>{% if item.size %}Size: {{ item.size }} {% endif %}</p>
+            <p>{% if item.care %}Care: {{ item.care }} {% endif %}</p>
+            <p>{% if item.materials %}Materials: {{ item.materials }} {% endif %}</p>
+            </div>
+            
+            <div>
+            <h4>Status: {{ item.decision_status }}</h4>
+            <h4>Plan: {{ plan.action }}</h4>
+            </div>
+          </div>
+          <div class="container-fluid">
+            {% if plan.action == "return" %}
+              {% if (item.return_type == 'by mail') or (item.return_type == 'both') %}
+              <h4>Request a shipping label for mail-back return: <a href="{{item.retailer.returns_url}}">here</a></h4>
+              {% endif%}
+              {% if (item.return_type == 'in store') or (item.return_type == 'both') %}
+              <h4>Nearest location for in-store returns: </h4>
+              <div id="map" style="height: 400px; width: 400px;"></div>
+              <script src="/static/js/gmaps.js"></script>
+              <script
+                async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
+              </script>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+    </div>  
+  </div>
 </div>
-
-<div>
-<h4>Staus: {{ item.decision_status }}</h4>
-<h4>Plan: {{ plan.action }}</h4>
-<form>
-  <button type="submit" formaction="/plan/{{plan.plan_id}}/remove_plan">Remove Plan</button>
-  <button type="submit" formaction="/plan/{{plan.plan_id}}/complete_plan">Complete Plan</button>
-</form>
-</div>
-{% if plan.action == "return" %}
-  {% if (item.return_type == 'by mail') or (item.return_type == 'both') %}
-  <h4>Request a shipping label for mail-back return here: <a href="{{item.retailer.returns_url}}">here</a></h4>
-  {% endif%}
-
-  {% if (item.return_type == 'in store') or (item.return_type == 'both') %}
-  <h4>Nearest location for in-store returns: </h4>
-  <div id="map" style="height: 600px; width: 600px;"></div>
-  <script src="/static/js/gmaps.js"></script>
-  <script
-    async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
-  </script>
-  {% endif %}
-{% endif %}
 {% endblock %}

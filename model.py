@@ -45,7 +45,7 @@ class Retailer(db.Model):
     name = db.Column(db.String(20), nullable=False)
     main_url = db.Column(db.String(100), nullable=False)
     returns_url = db.Column(db.String(200), nullable=False)
-    return_window = db.Column(db.Integer, nullable=False) # number of days until return
+    return_window = db.Column(db.Integer) # number of days until return
     # items = a list of Item objects
 
     def __repr__(self):

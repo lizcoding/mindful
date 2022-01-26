@@ -26,8 +26,11 @@ def get_user_by_email(email):
 
 
 # Retailer object CRUD functions
-def create_retailer(name, main_url, returns_url, return_window):
-    retailer = Retailer(name=name, main_url=main_url, returns_url=returns_url, return_window=return_window)
+def create_retailer(name, main_url, returns_url, return_window=None):
+    if not return_window:
+        retailer = Retailer(name=name, main_url=main_url, returns_url=returns_url)
+    else:
+        retailer = Retailer(name=name, main_url=main_url, returns_url=returns_url, return_window=return_window)
     db.session.add(retailer)
     db.session.commit()
     return retailer
@@ -54,6 +57,42 @@ def create_item(user_id, retailer_id, brand, item_url, price, return_deadline, r
 
 def get_item_by_id(item_id):
     return Item.query.get(item_id)
+
+def delete_item(item):
+    remove_plan(item)
+    delete_images(item)
+    delete_sentiments(item)
+    db.session.delete(item)
+    db.session.commit()
+
+def delete_images(item):
+    if item.images:
+        for img in item.images:
+            db.session.delete(img)
+    db.session.commit()
+
+def delete_sentiments(item):
+    for sentiment in item.sentiments:
+        delete_keywords(sentiment)
+        delete_targets(sentiment)    
+        delete_entities(sentiment)        
+        db.session.delete(sentiment)
+    db.session.commit()
+
+def delete_keywords(sentiment):
+    if sentiment.keywords:
+        for keyword in sentiment.keywords:
+            db.session.delete(keyword)
+
+def delete_targets(sentiment):
+    if sentiment.targets:
+        for target in sentiment.targets:
+            db.session.delete(target)
+
+def delete_entities(sentiment):
+    if sentiment.entities:
+        for entity in sentiment.entities:
+            db.session.delete(entity)
 
 def set_item_reminders(item, text, email):
     if text:
@@ -95,8 +134,9 @@ def get_plan_by_id(plan_id):
     return Plan.query.get(plan_id)
 
 def remove_plan(item):
-    item.plan.clear()
-    item.decision_status = "Undecided"
+    if item.plan:
+        db.session.delete(item.plan[0])
+        item.decision_status = "Undecided"
     db.session.commit()
 
 def complete_plan(item, plan):

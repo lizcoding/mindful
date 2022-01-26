@@ -3,8 +3,16 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 import Features, EmotionOptions, EntitiesOptions, KeywordsOptions, SentimentOptions
 from flask import (Flask, redirect, flash, request, render_template, session)
 from jinja2 import StrictUndefined
-from markupsafe import re
-from model import connect_to_db, User
+from model import connect_to_db
+from google.oauth2 import id_token
+from google.auth.transport import requests
+import google.oauth2.credentials
+import google_auth_oauthlib.flow
+import googleapiclient
+# from markupsafe import re
+import functools
+import random
+import string
 import flask_login
 import cloudinary.uploader
 import datetime
@@ -13,17 +21,14 @@ import json
 import os
 
 # <------- UP NEXT ----------------------------------------------------------------->
-# [ ] Implement Google OAuth
 # [ ] Add more features to Flask Login: https://flask-login.readthedocs.io/en/latest/#flask_login.login_required
+# [ ] Keep One: return deadline or return window
+# [ ] Add display logic (make reccomendation) for sentiment analysis data
 
 # <------- TO-DO's: Odds and Ends -------------------------------------------------->
 # [ ] Show top 3 items OR plans at the very top of the page
-# [ ] Keep One: return deadline or return window
 # [ ] Modify "Add Details" text for items with existing details
-# [ ] Add display logic (make reccomendation) for sentiment analysis data
 # [ ] Build out Plans (focus on non-return actions)
-# [ ] Enable deletion of items
-# [ ] Disable Cache for back button on logout
 
 # <------- END OF MVP - On the Horizon ---------------------------------------------->
 # END OF MVP: Cloudinary API, Google Maps API, IBM NLU API integration. Flask login and Google OAuth.
@@ -33,8 +38,7 @@ import os
 # <------- SPRINT 2: General Plans -------------------------------------------------->
 # Testing
 # User Experience
-# Dynamic search for retailers + items
-# Webpage scaping for data + research existing datasets
+# Autocomplete for retailers and autofill fields
 # Some Design
 
 # <------- EXTRAS ------------------------------------------------------------------->
@@ -66,20 +70,65 @@ natural_language_understanding = NaturalLanguageUnderstandingV1(
 )
 natural_language_understanding.set_service_url(os.environ['IBM_NATURAL_LANGUAGE_URL'])
 
-# Takes in unicode user_id
+# Configure Google OAuth
+CLIENT_ID = os.environ["client_id"]
+# LOGIN_SCOPES = ['https://www.googleapis.com/openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile']
+# CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/calendar.events']
+# API_SERVICE_NAME = 'openid'
+# API_VERSION = 'v2'
+
+
+
+
+def get_random_string():
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(20))
+    return result_str
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return crud.get_user_by_id(user_id)
 
 
+@app.context_processor
+def inject_client_id():
+    return dict(client_id=CLIENT_ID)
+
+
 @app.route("/")
 def login_page():
-    print(flask_login.current_user)
     if not flask_login.current_user.is_authenticated:
         return render_template("login.html")
     else:
         return redirect("/dashboard")
+
+
+@app.route("/tokensignin", methods=['GET', 'POST'])
+def verify_token():
+    token = request.form.get('credential')
+
+    try:
+        # Specify the CLIENT_ID of the app that accesses the backend:
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
         
+        if not crud.get_user_by_email(idinfo['email']):
+            password = get_random_string()
+            user = crud.create_user(email=idinfo['email'], password=password, first_name=idinfo['given_name'])
+        else:
+            user = crud.get_user_by_email(idinfo['email'])
+        
+        today = datetime.date.today().isoformat()
+        session["today"] = today
+        flask_login.login_user(user)
+        return redirect("/dashboard")
+    
+    except ValueError:
+        # Invalid token
+        print("ValueError")
+        return redirect("/")
+
 
 @app.route("/create_account", methods=["POST"])
 def register_user():
@@ -129,7 +178,7 @@ def dashboard():
     tracked_items = [item for item in user.items if item.decision_status != "Complete"]
     tracked_items.sort(key=lambda x: x.return_deadline)
     
-    plans = [item.plan for item in user.items if item.plan]
+    plans = [item.plan for item in tracked_items if item.plan and item.decision_status != "Complete"]
     
     today = datetime.date.fromisoformat(session["today"])
     deltas = []
@@ -157,8 +206,12 @@ def item_details(item_id):
     item = crud.get_item_by_id(item_id)
     today = datetime.date.fromisoformat(session["today"])
     days_left = item.return_deadline - today
-
-    return render_template("item.html", item=item, today=today, days_left=days_left)
+    all_scores = [sentiment.general_sentiment_score for sentiment in item.sentiments]
+    if all_scores: 
+        overall_score = functools.reduce(lambda a, b: a + b, all_scores)
+    else:
+        overall_score = None
+    return render_template("item.html", item=item, today=today, days_left=days_left, overall_score=overall_score)
 
 
 @app.route("/add_item", methods=['POST'])
@@ -175,12 +228,14 @@ def add_item():
     if not crud.get_retailer_by_name(user, retailer_name):
         main_url = request.form.get("main_url")
         returns_url = request.form.get("returns_url")
-        return_window = int(request.form.get("return_window"))
+        return_window = request.form.get("return_window")
+        if return_window:
+            return_window = int(return_window)
         retailer = crud.create_retailer(name=retailer_name, main_url=main_url, returns_url=returns_url, return_window=return_window)
     else:
         retailer = crud.get_retailer_by_name(user, retailer_name)
     
-    item = crud.create_item(user.user_id, retailer.retailer_id, brand, item_url, price, return_deadline, return_type)
+    item = crud.create_item(user.id, retailer.retailer_id, brand, item_url, price, return_deadline, return_type)
     
     text = request.form.get("text")
     email = request.form.get("email")
@@ -306,15 +361,14 @@ def add_sentiment(item_id):
 @app.route("/item/<item_id>/add_plan", methods=['POST'])
 @flask_login.login_required
 def add_plan(item_id):
-    if not crud.get_item_by_id(item_id).plan:
+    item = crud.get_item_by_id(item_id)
+    if not item.plan:
         action = request.form.get("action")
-        item = crud.get_item_by_id(item_id)
         crud.create_plan(item, action=action)
-        flash("Plan created!")
     else:
         flash("This item had a plan in progress.")
 
-    return redirect(f"/item/{item_id}")
+    return redirect(f"/plan/{item.plan[0].plan_id}")
 
 
 @app.route("/item/<item_id>/keep")
@@ -328,6 +382,15 @@ def keep_item(item_id):
         crud.complete_plan(item, plan)
 
     return redirect(f"/profile")
+
+@app.route("/item/<item_id>/delete")
+@flask_login.login_required
+def delete_item(item_id):
+    
+    item = crud.get_item_by_id(item_id)
+    crud.delete_item(item)
+
+    return redirect(f"/dashboard")
 
 
 @app.route("/plan/<plan_id>")

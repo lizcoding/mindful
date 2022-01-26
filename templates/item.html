@@ -3,157 +3,225 @@
 {% block title %}Item {{ item.item_id }}{% endblock %}
 
 {% block js %}
-<script>
-  function toggle_display(button_id, element_id) {
-    element = document.getElementById(element_id);
-    button = document.getElementById(button_id);
-    if (element.hasAttribute("hidden")) {
-      element.removeAttribute("hidden");
-      button.innerHTML = 'Close Add Details';
-    } else {
-      element.setAttribute("hidden", "true");
-      button.innerHTML= "Add Item Details";
-    }
-  }
-</script>
 {% endblock %}
 
-{% block content %} 
-  <!-- Bootstrap Carousel: https://getbootstrap.com/docs/4.3/components/carousel/ -->
-  <h1>Item {{ item.item_id }}</h1>
-  {% for image in item.images %}
-    <img src="{{ image.cloudinary_url }}" height="400px" width="auto">
-  {% endfor %}
+{% block content %}
+<div id="item-page" class="content-block container-fluid">
+<div id="item-block" class="container">
+   <!-- Bootstrap Carousel: https://getbootstrap.com/docs/4.3/components/carousel/ -->
+   <div class="row gx-5 row-cols-sm-6 row-cols-xs-6 row-cols-md-6 row-cols-lg-12 row-cols-xl-12">
+     <div class="col-md">
+       <div class="d-flex justify-content-center">
+        {% for image in item.images %}
+        <img id="item-img" class="item-fluid" src="{{ image.cloudinary_url }}">
+        {% endfor %}
+       </div>
+     </div>
+    <div class="col-md">
+      <div class="container">
+        <div class="btn-group item-buttons" role="group" aria-label="Item Buttons">
+          {% if not item.plan %}
+          <!-- Create Plan button -->
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPlanModal">
+          Create Plan
+          </button></h4>
+          {% endif %}
+          
+          <!-- Keep Item button -->
+          <a class="btn btn-primary" href="/item/{{item.item_id}}/keep" role="button">Keep Item</a>
+            
+          <!-- Delete Item button -->
+          <a class="btn btn-primary" href="/item/{{item.item_id}}/delete" role="button">Delete Item</a>
   
-  <div>
-  <h2>Details</h2>
-  {% if item.retailer %}
-    <p>{{ item.retailer.name }}
-        {% if item.brand and (item.brand != item.retailer.name) %}
-    : {{ item.brand }}
+          <!-- Add Detail button -->
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addDetailModal">
+          Add Detail
+          </button></h4>
+        </div>
+      <div>
+      <h2>Details</h2>
+      {% if item.retailer %}
+        <p>{{ item.retailer.name }}
+            {% if item.brand and (item.brand != item.retailer.name) %}
+        : {{ item.brand }}
+            {% endif %}
+        </p>
+      {% endif %}
+      <p>${{item.price}}</p>
+      <p>Return Deadline: {{ item.return_deadline }}</p>
+      {% if days_left.days >= 0 %}
+          <p>Days left before return deadline: {{days_left.days}} </p>
+          {% if days_left.days == 0 %}
+              <p style="color:red;">Must return this item today!</p>
+          {% endif %}
+      {% else %}
+        <p style="color:red;">Item has passed return window. Make a back-up plan!</p>
+      {% endif %}
+      <p>{% if item.size %}Size: {{ item.size }} {% endif %}</p>
+      <p>{% if item.care %}Care: {{ item.care }} {% endif %}</p>
+      <p>{% if item.materials %}Materials: {{ item.materials }} {% endif %}</p>
+      </div>
+    
+      <div>
+        <h4>Staus: {{ item.decision_status }}</h4>
+        {% if item.plan %}
+          <h4>Plan: <a href="/plan/{{item.plan[0].plan_id}}">{{ item.plan[0].action }}</a></h4>
         {% endif %}
-    </p>
-  {% endif %}
-  <p>${{item.price}}</p>
-  <p>Return Deadline: {{ item.return_deadline }}</p>
-  {% if days_left.days >= 0 %}
-      <p>Days left before return deadline: {{days_left.days}} </p>
-      {% if days_left.days == 0 %}
-          <p style="color:red;">Must return this item today!</p>
-      {% endif %}
-  {% else %}
-    <p style="color:red;">Item has passed return window. Make a back-up plan!</p>
-  {% endif %}
-  <p>{% if item.size %}Size: {{ item.size }} {% endif %}</p>
-  <p>{% if item.care %}Care: {{ item.care }} {% endif %}</p>
-  <p>{% if item.materials %}Materials: {{ item.materials }} {% endif %}</p>
+      </div>
+      <!-- Item To-Do's -->
+      <div>
+        <h3>Item To-Do's </h3>
+        <ul>
+          <li>Add Item Details</li>
+          <li>Create a Plan</li>
+          <!-- Every-Day, twice a week, or weekly (allow user to choose days) -->
+          <li>Complete purchase reflection</li>
+        </ul>
+      </div>
+    
+      <!-- Display Reflection Results -->
+      <div>
+        {% if item.sentiments %}
+    
+          <h4>Reflection Results: {{item.sentiments[-1].date}}</h4>
+          
+          <p>Based on your 
+            {% if item.sentiments|length == 1 %} first journal entry,
+            {% else %} previous {{item.sentiments|length}} journal entries,
+            {% endif %} you 
+            {% if overall_score < 0.50 %} should consider returning this item or create a back-up plan!
+            {% elif overall_score < 0.70 %} seem to like the item. Reflect more on this purchase before making a decision!
+            {% else %} really enjoy this item! We reccomend keeping it! Way to go!
+            {% endif %}
+          </p>
+        {% endif %}
+      </div>
+      </div>
+    </div>  
+  </div>
   </div>
 
-  <div>
-    <h4>Staus: {{ item.decision_status }}</h4>
-    {% if item.plan %}
-      <h4>Plan: <a href="/plan/{{item.plan[0].plan_id}}">{{ item.plan[0].action }}</a></h4>
+  <div class="modal fade" id="addDetailModal" tabindex="-1" role="dialog" aria-labelledby="addDetailModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title" id="addDetailModalTitle">Add Detail</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+
+    <div class="modal-body">
+      <div class="d-flex">
+          <form id="item_detail" action="/item/{{item.item_id}}/add_detail" method="POST">
+            <h3>Add Item Details</h3>
+            
+            <div class="form-group">
+              <label for="alpha_size">Size: </label>
+              <select name="alpha_size">
+                  <option value="XS">XS</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+              </select>
+              <label for="int_size">Size: </label>
+              <input type="number" name="int_size">
+            </div>
+
+            <div class="form-group">
+              <label for="care">Care: </label>
+              <label>Machine Wash</label>
+              <input type="radio" name="care" value="machine washable">
+              <label>Hand Wash</label>
+              <input type="radio" name="care" value="hand wash">
+              <label>Dryclean Only</label>
+              <input type="radio" name="care" value="dryclean only">
+            </div>
+
+            <div class="form-group">
+              <label>Materials: </label>
+              <label>Cotton</label><input type="checkbox" name="cotton" value="cotton">
+              <label>Wool</label><input type="checkbox" name="wool" value="wool">
+              <label>Leather</label><input type="checkbox" name="leather" value="leather">
+              <label>Faux Leather</label><input type="checkbox" name="faux_leather" value="faux leather">
+              <label>Elastane</label><input type="checkbox" name="elastane" value="elastane">
+              <label>Polyester</label><input type="checkbox" name="polyester" value="polyester">
+              <label>Acrylic</label><input type="checkbox" name="acrylic" value="acrylic">
+              <label>Viscose</label><input type="checkbox" name="viscose" value="viscose">
+              <label>Silk</label><input type="checkbox" name="silk" value="silk">
+              <label>Cashmere</label><input type="checkbox" name="cashmere" value="cashmere">
+            </div>
+            <button type="submit">Add Item Details</button>
+          </form>
+          <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+   
+
+  <div class="modal fade" id="createPlanModal" tabindex="-1" role="dialog" aria-labelledby="createPlanModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title" id="createPlanModalTitle">Create Plan</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+
+  <div class="modal-body">
+      <div class="d-flex">
+        <form action="/item/{{item.item_id}}/add_plan" method="POST">
+          <label>Action: </label>
+          {% if days_left.days >= 0 %}
+            <label>Return</label>
+            <input type="radio" name="action" value="return" required>
+          {% endif %}
+          <label>Donate</label>
+          <input type="radio" name="action" value="donate" required>
+          <label>Gift</label>
+          <input type="radio" name="action" value="gift" required>
+          <label>Resell</label>
+          <input type="radio" name="action" value="resell" required>
+          <button type="submit">Add Plan</button>
+        </form>
+      </div>
+      <button type="submit">Create Plan</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- <div class="d-flex">
+    {% if not item.sentiments or item.sentiments[-1].date != today %}
+    <div>
+      <form action="/item/{{item.item_id}}/add_sentiment" method="POST">
+      <div>
+        <h3>Reflect on your purchase</h3>
+      <label for="reflection">Write a short reflection (30-200 characters) on your purchase. Are you
+        happy that you bought the item, or are you undecided? Is the item what you expected? Have you tried
+        on the item? How does the item fit? How much use will you get out of this item? Is the item worth
+        the price you paid? How satisfied are you with the purchase?</label>
+      <textarea id="reflection" name="reflection" rows="4" cols="50" minlength="30" maxlength="200" required></textarea>  
+      </div>
+      <button type="submit">Submit Reflection</button>
+      </form>
+    </div>
     {% endif %}
   </div>
-  <!-- Item To-Do's -->
-  <div>
-    <h3>Item To-Do's </h3>
-    <ul>
-      <li>Add Item Details</li>
-      <li>Create a Plan</li>
-      <!-- Every-Day, twice a week, or weekly (allow user to choose days) -->
-      <li>Complete purchase reflection</li>
-    </ul>
-  </div>
 
-  <!-- Display Reflection Results -->
-  <div>
-    {% if item.sentiments %}
-
-      <h4>Reflection Results: {{item.sentiments[-1].date}}</h4>
-      <p>{{item.sentiments[-1]}}</p>
-      <p>"sadness": {{item.sentiments[-1].sadness}}</p>
-      <p>"joy": {{item.sentiments[-1].joy}}</p>
-      <p>"fear": {{item.sentiments[-1].fear}}</p>
-      <p>"disgust": {{item.sentiments[-1].disgust}}</p>
-      <p>"anger": {{item.sentiments[-1].anger}}</p>
-
-
-      {% if item.sentiments[-1].entities %}
-        <p>{{item.sentiments[-1].entities}}</p>
-      {% endif %}
-
-      {% if item.sentiments[-1].keywords %}
-        <p>{{item.sentiments[-1].keywords}}</p>
-      {% endif %}
-
-      {% if item.sentiments[-1].targets %}
-        <p>{{item.sentiments[-1].targets}}</p>
-      {% endif %}
-
-    {% endif %}
-  </div>
-
-  {% if not item.sentiments or item.sentiments[-1].date != today %}
-  <!-- Sentiment/Daily Reflection Form -->
-  <div>
-    <form action="/item/{{item.item_id}}/add_sentiment" method="POST">
-    <div>
-      <h3>Reflect on your purchase</h3>
-    <label for="reflection">Write a short reflection (30-200 characters) on your purchase. Are you
-      happy that you bought the item, or are you undecided? Is the item what you expected? Have you tried
-      on the item? How does the item fit? How much use will you get out of this item? Is the item worth
-      the price you paid? How satisfied are you with the purchase?</label>
-    <textarea id="reflection" name="reflection" rows="4" cols="50" minlength="30" maxlength="200" required></textarea>  
-    </div>
-    <button type="submit">Submit Reflection</button>
-    </form>
-  </div>
-  {% endif %}
-
-
-  <div>
-  <button type="button" id ="detail_button" onclick="toggle_display('detail_button', 'item_detail')">Click to add item details</button>
-  <form id="item_detail" action="/item/{{item.item_id}}/add_detail" method="POST" hidden>
-    <h3>Add Item Details</h3>
-    <label for="alpha_size">Size: </label>
-    <select name="alpha_size">
-        <option value="XS">XS</option>
-        <option value="S">S</option>
-        <option value="M">M</option>
-        <option value="L">L</option>
-        <option value="XL">XL</option>
-    </select>
-    <label for="int_size">Size: </label>
-    <input type="number" name="int_size">
-    <label for="care">Care: </label>
-    <label>Machine Wash</label>
-    <input type="radio" name="care" value="machine washable">
-    <label>Hand Wash</label>
-    <input type="radio" name="care" value="hand wash">
-    <label>Dryclean Only</label>
-    <input type="radio" name="care" value="dryclean only">
-    <div>
-    <label>Materials: </label>
-    <label>Cotton</label><input type="checkbox" name="cotton" value="cotton">
-    <label>Wool</label><input type="checkbox" name="wool" value="wool">
-    <label>Leather</label><input type="checkbox" name="leather" value="leather">
-    <label>Faux Leather</label><input type="checkbox" name="faux_leather" value="faux leather">
-    <label>Elastane</label><input type="checkbox" name="elastane" value="elastane">
-    <label>Polyester</label><input type="checkbox" name="polyester" value="polyester">
-    <label>Acrylic</label><input type="checkbox" name="acrylic" value="acrylic">
-    <label>Viscose</label><input type="checkbox" name="viscose" value="viscose">
-    <label>Silk</label><input type="checkbox" name="silk" value="silk">
-    <label>Cashmere</label><input type="checkbox" name="cashmere" value="cashmere">
-    </div>
-    <button type="submit">Add Item Details</button>
-  </form>
-  </div>
+   -->
   
-  <!-- Add Keep Item button -->
-  <button type="submit" formaction="/item/{{item.item_id}}/keep">Click to keep item</button>
-  
-  {% if not item.plan %}
+  <!-- {% if not item.plan %}
   <div>
   <h3>Make a Plan!</h3>
   <form action="/item/{{item.item_id}}/add_plan" method="POST">
@@ -171,6 +239,7 @@
     <button type="submit">Add Plan</button>
   </form>
   </div>
-  {% endif %}
-
+  {% endif %} -->
+  
+</div>
 {% endblock %}

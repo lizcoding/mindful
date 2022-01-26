@@ -44,6 +44,8 @@ function initMap() {
                     placeGmapsLink.textContent = "Directions From Current Location";
                     url = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${results[i].geometry.location}&destination_place_id=${results[i].place_id}&travelmode=driving`;
                     placeGmapsLink.href = url;
+                    placeGmapsLink.target = "_blank";
+                    placeGmapsLink.rel = "noopener noreferrer"
                     content.appendChild(placeGmapsLink);
                     
                     infowindow.setContent(content);

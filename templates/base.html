@@ -23,33 +23,59 @@ Bootstrap Extras: https://getbootstrap.com/docs/4.3/utilities/borders/
   <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 
-  <!-- Page-specific JavaScript Block -->
-  {% block js %}{% endblock %}
-
+  <!-- Load Google Sign-In dependencies -->
+  <meta name="google-signin-client_id" content="{{client_id}}">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
+  <script>
+    function toggle_display(button_id, element_id) {
+      element = document.getElementById(element_id);
+      button = document.getElementById(button_id);
+      if (element.hasAttribute("hidden")) {
+        element.removeAttribute("hidden");
+        button.innerHTML = 'Close Add Details';
+      } else {
+        element.setAttribute("hidden", "true");
+        button.innerHTML= "Add Item Details";
+      }
+    };
+  </script>
 </head>
 
 <body>
-  <!-- Header -->
-  <!-- Bootstrap Navbar: https://getbootstrap.com/docs/4.3/components/navbar/ -->
+  <!-- Navbar: https://getbootstrap.com/docs/4.3/components/navbar/ -->
   {% block navbar %}
-    <a href="/">Mindful</a> 
-    <a href="/profile">Profile</a> 
-    <a href="/logout">Logout</a> 
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a class="navbar-brand" href="/"><img src="/static/img/balloonicorn.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">Mindful</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+      <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
+          <li class="nav-item"><a id="logout" class="g_id_signout nav-link" href="/logout">Sign Out</a></li>
+      </ul>
+    </div>
+
+  </nav>
   {% endblock %}
 
-  <!-- Page Body Block -->
-  
+  <!-- Flashed Messages -->
   {% for msg in get_flashed_messages() %}
     <p class="flash-msg">
       {{ msg }}
     </p>
   {% endfor %}
+  
+  <!-- Page Content -->
+  {% block content %} {% endblock %}
 
-  {% block content %} PAGE CONTENT {% endblock %}
-
-  <!-- Footer -->
-  <!-- Bootstrap Navbar: https://getbootstrap.com/docs/4.3/components/navbar/ -->
-  <div class="footer">Mindful 2022 - lizcoding</div>
+  <div class="row">
+    <div class="col-12">
+      <footer class="footer">Mindful 2022 - lizcoding</footer>
+    </div>
+  </div>
 
   <!-- Bootstrap JS, jQuery, Popper.js -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
