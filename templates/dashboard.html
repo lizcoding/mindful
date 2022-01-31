@@ -15,7 +15,7 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
     <div class="d-flex justify-content-between">
         <div class="flex-column">
             <h4 class="dashboard-h4">LET'S GET MINDFUL, {{ user.first_name }}!</h4>
-            <h1 id="dashboard-h1">Your Items</h2>
+            <h1 id="dashboard-h1">Your Items</h1>
         </div>
         <div class="d-flex justify-content-end align-items-center">
             <h4 class="dashboard-h4 add-items-anchor">
@@ -25,7 +25,6 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
         </div>
     </div>
 
-    
     {% if tracked_items %}
     <div class="card-deck">
         {% for item, days_left in tracked_items|zip(deltas) %}
@@ -37,11 +36,13 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
                     {% if item.plan %}
                         <p><a href="/plan/{{item.plan[0].plan_id}}">Plan: {{ item.plan[0].action }}</a></p>
                     {% endif %}
-                    <p>Return Deadline: {{item.return_deadline}}</p>
-                    {% if days_left.days >= 0 %}
-                        <p>Days before return deadline: {{days_left.days}} </p>
-                        {% if days_left.days == 0 %}<p style="color:red;">Must return this item today!</p>{% endif %}
-                    {% else %}<p style="color:red;">Item has passed return window. Make a back-up plan!</p>
+                    {% if item.return_type != "ineligable" %}
+                        <p>Return Deadline: {{item.return_deadline}}</p>
+                        {% if days_left.days >= 0 %}
+                            <p>Days before return deadline: {{days_left.days}} </p>
+                            {% if days_left.days == 0 %}<p style="color:red;">Must return this item today!</p>{% endif %}
+                        {% else %}<p style="color:red;">Item has passed return window. Make a back-up plan!</p>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -49,7 +50,9 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
         {% endfor %}
     </div>
     {% else %}
-    <p>Nothing to see here! Add an item to be tracked.</p>
+    <div class="flex-column" style="height: 100%;">
+        <p>Nothing to see here! Add an item to be tracked.</p>
+    </div>
     {% endif %} 
     <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable" role="document">
@@ -72,11 +75,6 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
                         <label for="brand">Brand: </label>
                         <input type="text" name="brand" required>
                     </div>
-                    
-                    <!-- <div>
-                    <label for="return_window">Return Window Policy (Days): </label>
-                    <input type="number" name="return_window" required>
-                    </div> -->
 
                     <div class="form-group">
                         <label for="return_deadline">Last day to return item: </label>
@@ -96,6 +94,8 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
                         <input type="radio" name="return_type" value="by mail" required>
                         <label>Both</label>
                         <input type="radio" name="return_type" value="both" required>
+                        <label>Not Returnable</label>
+                        <input type="radio" name="return_type" value="ineligable" required>
                     </div>
 
                     <div class="form-group">
@@ -105,20 +105,10 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
                     <label>Email</label>
                     <input type="checkbox" name="email" value="email">
                     </div>
-                    
-                    <div class="form-group">
-                    <label for="main_url">Main URL: </label>
-                    <input type="url" placeholder="https://" pattern="https://.*" name="main_url" required>    
-                    </div>
 
                     <div class="form-group">
                     <label for="returns_url">Returns URL: </label>
                     <input type="url" placeholder="https://" pattern="https://.*" name="returns_url" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="returns_url">Item URL: </label>
-                        <input type="url" placeholder="https://" pattern="https://.*" name="item_url" required>
                     </div>
 
                     <div class="form-group">
@@ -127,15 +117,12 @@ Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/
                     let the user take a picture with the camera when this is used.)
                     * TO-DO: Add "required" after Cloudinary integration
                     -->
-                    <label for="image">Upload Item Images: </label>
+                    <label for="image">Upload Item Image: </label>
                     <input type="file" name="image">
                     </div>
                     
-                    <div class="form-group"><button type="submit">Add Item</button></div>
+                    <div class="form-group"><button type="submit" class="btn btn-primary">Add Item</button></div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
             </div>
         </div>

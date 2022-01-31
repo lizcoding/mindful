@@ -8,21 +8,46 @@
 <!-- Bootstrap Progress: https://getbootstrap.com/docs/4.3/components/progress/ -->
 
 {% block content %}
+<div id="content-block" class="content-block container-fluid">
+    <div class="d-flex justify-content-between">
+        <div class="flex-column">
+            <h4 class="dashboard-h4">YOU'VE BEEN MINDFUL, {{ user.first_name }}!</h4>
+            <h1 id="dashboard-h1">Profile</h1>
+        </div>
+    </div>
+    <div id="user-stats">
+        <!-- <p>Items Returned: </p>
+        <p>Items Gifted: </p>
+        <p>Items Donated: </p>
+        <p>Items Sold: </p>
+        <p>Resell Revenue: </p> -->
+    </div>
+    <div class="left-cal" class="calendar-container">
+        <iframe src={{ liz_calendar }} style="border: 0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
+    </div>
 
-<h1>Profile</h1>
-<h2>Hi, {{ user.first_name }}</h3>
-<h4>Past Items</h4>
-{% if completed_items %}
-    {% for item in completed_items %}
-        <ul>
-            <li>Item: {{item}}</li>
-            {% if item.plan %}
-            <li>Plan: {{item.plan}}</li>
-            {% endif %}
-        </ul>
-    {% endfor %}
-{% else %}
-    <p>Nothing to see here!</p>
-{% endif %}
+
+    {% if completed_items %}
+        <h4 class="dashboard-h4">PAST ITEMS</h4>
+        <div class="card-deck">
+            {% for item in completed_items %}
+            <div class="card">
+                <a href="/item/{{item.item_id}}"><img src="{{item.images[0].cloudinary_url}}" class="card-img-top img-fluid" max-width="100%" height="auto" alt=""></a>
+                <div class="card-body">
+                    <div class="card-text">
+                        <p><a href="/item/{{item.item_id}}">Status: {{ item.decision_status }}</a></p>
+                        {% if item.plan %}
+                            <p><a href="/plan/{{item.plan[0].plan_id}}">Plan: {{ item.plan[0].action }}</a></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Nothing to see here!</p>
+    {% endif %}
+</div>
+
 
 {% endblock %}

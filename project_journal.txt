@@ -185,7 +185,10 @@ PROJECT JOURNAL WEEK 3 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/18: Week 3 - Tuesday
     Today's Goals:
-
+    # [X] Keep One: return deadline or return window
+    # [X] Add display logic (make reccomendation) for sentiment analysis data
+    # [X] Show top 3 items OR plans at the very top of the page
+    # [X] Styling: Forms, Dashboard, Item Details, and Plan pages
 
     Today's Reflection:
 
@@ -193,7 +196,8 @@ PROJECT JOURNAL WEEK 3 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/19: Week 3 - Wednesday
     Today's Goals:
-
+    # [X] Start Styling: Login Page
+    # [X] Edit Styling: Plan Page (make content fit page)
 
     Today's Reflection:
 
@@ -201,6 +205,11 @@ PROJECT JOURNAL WEEK 3 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/20: Week 3 - Thursday
     Today's Goals:
+    # [X] Build out Plans (focus on non-return actions)
+        # [X] Donate: Donation locations nearest you
+        # [X] Sell: Provide links to reselling sites
+    # [X] Remove main url and returns url from DB and "Add Item" form
+    # [X] Build out Profile display
 
 
     Today's Reflection:
@@ -209,7 +218,9 @@ PROJECT JOURNAL WEEK 3 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 1/21: Week 3 - Friday
     Today's Goals:
-
+    # [X] Allow for longer Reflection entries (500 words)
+    # [X] Edit "Returns can be made: ..." -> "Returns: [ ] In person ... [ ] N/A" to imply final sale
+    # [X] Consider removing "Add Details" form, db objects, and respective data
 
     Today's Reflection:
 

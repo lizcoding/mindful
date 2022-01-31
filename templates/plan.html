@@ -5,48 +5,39 @@
 {% block content %}
 <div id="item-page" class="content-block container-fluid">
   <div id="item-block" class="container">
-    <div class="row gx-5 row-cols-sm-6 row-cols-xs-6 row-cols-md-12 row-cols-lg-12 row-cols-xl-12">
-      <div class="col-lg">
+    <div class="row gx-5 row-cols-sm-6 row-cols-xs-6 row-cols-md-6 row-cols-lg-12 row-cols-xl-12">
+      <div class="col-md">
         <div class="d-flex justify-content-center">
           {% for image in item.images %}
-          <img id="item-img" src="{{ image.cloudinary_url }}">
+          <img id="item-img" class="item-fluid" src="{{ image.cloudinary_url }}">
           {% endfor %}
          </div>
       </div>
-      <div class="col-lg">
-        <div class="container-fluid">
+      <div class="col-md">
+        <div class="container">
           <div>
-            <div class="btn-group plan-buttons">
+            <div class="btn-group plan-buttons" role="group" aria-label="Plan Buttons">
               <a class="btn btn-primary" href="/plan/{{plan.plan_id}}/remove_plan" role="button">Remove Plan</a>
               <a class="btn btn-primary" href="/plan/{{plan.plan_id}}/complete_plan" role="button">Complete Plan</a>
-
             </div>
-
-            <h3>Details</h3>
-            {% if item.retailer %}
-            <p id="retailer_name">{{ item.retailer.name }}</p>
-            {% endif %}
-            <p>
-            {% if item.brand and (item.brand != item.retailer.name) %}
-              {{ item.brand }}
-            {% endif %}
-            </p>
-            
-            <p>Return Deadline: {{ item.return_deadline }}</p>
-            <p>{% if item.size %}Size: {{ item.size }} {% endif %}</p>
-            <p>{% if item.care %}Care: {{ item.care }} {% endif %}</p>
-            <p>{% if item.materials %}Materials: {{ item.materials }} {% endif %}</p>
-            </div>
-            
             <div>
-            <h4>Status: {{ item.decision_status }}</h4>
-            <h4>Plan: {{ plan.action }}</h4>
+              <h4>Plan: {{ plan.action }}</h4>
+              <h4>Item Details:</h4>
+              {% if item.retailer %}
+              <p>{{ item.retailer.name }}{% if item.brand and (item.brand != item.retailer.name) %}: {{ item.brand }}{% endif %}</p>
+              {% endif %}
+              <p>${{ item.price }}</p>
+              <p id="plan-action" style="display: none;">{{ plan.action }}</p>    
+              {% if plan.action == "Return" %}
+              <p>Return Deadline: {{ item.return_deadline }}</p>
+              {% endif %}
             </div>
           </div>
-          <div class="container-fluid">
-            {% if plan.action == "return" %}
+            
+          <div>
+            {% if plan.action == "Return" %}
               {% if (item.return_type == 'by mail') or (item.return_type == 'both') %}
-              <h4>Request a shipping label for mail-back return: <a href="{{item.retailer.returns_url}}">here</a></h4>
+              <p>Request a shipping label for mail-back return: <a href="{{item.retailer.returns_url}}" target="_blank" rel="noopener noreferrer">here</a></p>
               {% endif%}
               {% if (item.return_type == 'in store') or (item.return_type == 'both') %}
               <h4>Nearest location for in-store returns: </h4>
@@ -56,9 +47,59 @@
                 async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
               </script>
               {% endif %}
+            {% elif plan.action == "Resell" %}
+              <div>
+                <h4>Online resale marketplaces: </h4>
+                <div class="conatiner-fluid">
+                  <a class="resale-link" href="https://depop.com" target="_blank" ref="noopener noreferrer">
+                    <img class="img-fluid resell-logo" src="/static/img/depop-logo-vector.png">
+                  </a>
+                  <a class="resale-link" href="https://ebay.com" target="_blank" ref="noopener noreferrer">
+                    <img class="img-fluid resell-logo" src="/static/img/ebay-logo.svg.png">
+                  </a>
+                  <a class="resale-link" href="https://therealreal.com" target="_blank" ref="noopener noreferrer">
+                    <img class="img-fluid resell-logo" src="/static/img/therealreal.png">
+                  </a>
+                  <a class="resale-link" href="https://craigslist.com" target="_blank" ref="noopener noreferrer">
+                    <img class="img-fluid resell-logo" src="/static/img/craigslist-logo.png">
+                  </a>
+                  <a class="resale-link" href="https://etsy.com" target="_blank" ref="noopener noreferrer">
+                    <img class="img-fluid resell-logo" src="/static/img/etsy-logo.svg.png">
+                  </a>
+                  <a class="resale-link" href="https://poshmark.com" target="_blank" ref="noopener noreferrer">
+                    <img class="img-fluid resell-logo" src="/static/img/poshmark-logo-transparent.png">
+                  </a>
+                </div>
+              </div>
+              <div>
+                <h4>Consignment stores near you: </h4>
+                <div id="map" style="height: 400px; width: 400px;"></div>
+                <script src="/static/js/gmaps.js"></script>
+                <script
+                  async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
+                </script>
+              </div>
+
+            {% elif plan.action == "Donate" %}
+              <h4>Nearest location to donate: </h4>
+              <div id="map" style="height: 400px; width: 400px;"></div>
+              <script src="/static/js/gmaps.js"></script>
+              <script
+                async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
+              </script>
+
+            {% elif plan.action == "Gift" %}
+              <div>
+                <p>Recipient Name: </p>
+                <p>Email: </p>
+                <p>Mobile: </p>
+                <p>Message (optional): </p>
+              </div>
+
             {% endif %}
           </div>
         </div>
+      </div>
     </div>  
   </div>
 </div>

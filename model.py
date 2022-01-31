@@ -1,6 +1,7 @@
 # Mindful Database
 """Models mindful app"""
 
+from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
@@ -17,11 +18,6 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(50), nullable=False, unique=True)
     first_name = db.Column(db.String(20), nullable=False)
     password_hash = db.Column(db.String(128))
-    street = db.Column(db.String(40))
-    unit = db.Column(db.String(10))
-    city = db.Column(db.String(20))
-    state = db.Column(db.String(2))
-    zip = db.Column(db.String(5))
     phone_number = db.Column(db.Integer)
     # items = a list of Item objects
     # plans = a list of Plan objects
@@ -43,9 +39,7 @@ class Retailer(db.Model):
 
     retailer_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
-    main_url = db.Column(db.String(100), nullable=False)
     returns_url = db.Column(db.String(200), nullable=False)
-    return_window = db.Column(db.Integer) # number of days until return
     # items = a list of Item objects
 
     def __repr__(self):
@@ -62,24 +56,11 @@ class Item(db.Model):
     retailer_id = db.Column(db.Integer, db.ForeignKey("retailers.retailer_id"), nullable=False)
     return_deadline = db.Column(db.Date, nullable=False)
     return_type = db.Column(db.String(10))
-    item_url = db.Column(db.String(200), nullable=False)
-    text_reminder = db.Column(db.Boolean)
-    email_reminder = db.Column(db.Boolean)
-    entry_date = db.Column(db.Date)
-    order_date = db.Column(db.Date)
-    delivery_date = db.Column(db.Date)
-    order_status = db.Column(db.String(10))
+    text_reminder = db.Column(db.Boolean, default=False)
+    email_reminder = db.Column(db.Boolean, default=False)
     decision_status = db.Column(db.String(10), nullable=False)
     price = db.Column(db.Numeric, nullable=False)
-    final_sale = db.Column(db.Boolean)
-    item_category = db.Column(db.String(10))
-    item_type = db.Column(db.String(10))
     brand = db.Column(db.String(30))
-    country_sizing = db.Column(db.String(3))
-    size = db.Column(db.String(10))
-    color = db.Column(db.String(10))
-    care = db.Column(db.String(20))
-    materials = db.Column(db.String(100))
     # images = a list of Image objects
     # sentiments = a list of Sentiment objects
 
@@ -130,7 +111,7 @@ class Sentiment(db.Model):
     sentiment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey("items.item_id"), nullable=False)
     date = db.Column(db.Date, nullable=False)
-    entry = db.Column(db.String(200), nullable=False)
+    entry = db.Column(db.String(500), nullable=False)
     general_sentiment_label = db.Column(db.String(20), nullable=False)
     general_sentiment_score = db.Column(db.Numeric, nullable=False)
     

@@ -26,11 +26,8 @@ def get_user_by_email(email):
 
 
 # Retailer object CRUD functions
-def create_retailer(name, main_url, returns_url, return_window=None):
-    if not return_window:
-        retailer = Retailer(name=name, main_url=main_url, returns_url=returns_url)
-    else:
-        retailer = Retailer(name=name, main_url=main_url, returns_url=returns_url, return_window=return_window)
+def create_retailer(name, returns_url):
+    retailer = Retailer(name=name, returns_url=returns_url)
     db.session.add(retailer)
     db.session.commit()
     return retailer
@@ -48,9 +45,9 @@ def get_retailer_by_name(user, name):
 
 
 # Item object CRUD functions
-def create_item(user_id, retailer_id, brand, item_url, price, return_deadline, return_type):
-    item = Item(user_id=user_id, retailer_id=retailer_id, brand=brand, price=price, item_url=item_url, 
-                return_deadline=return_deadline, return_type=return_type, decision_status="Undecided")
+def create_item(user_id, retailer_id, brand, price, return_deadline, return_type):
+    item = Item(user_id=user_id, retailer_id=retailer_id, brand=brand, price=price,
+        return_deadline=return_deadline, return_type=return_type, decision_status="Undecided")
     db.session.add(item)
     db.session.commit()
     return item
@@ -97,21 +94,8 @@ def delete_entities(sentiment):
 def set_item_reminders(item, text, email):
     if text:
         item.text_reminders = True
-    else:
-        item.text_reminders = False
     if email:
         item.email_reminders = True
-    else:
-        item.email_reminders = False
-    db.session.commit()
-
-def set_item_details(item, materials, size, care):
-    if materials:
-        item.materials = materials
-    if size:
-        item.size = size
-    if care:
-        item.care = care
     db.session.commit()
 
 def set_item_status(item, status):
@@ -124,7 +108,7 @@ def create_plan(item, action):
     item.decision_status = "In-Progess"
     db.session.add(plan)
     
-    if action == "return":
+    if action == "Return":
         plan.deadline = item.return_deadline
     
     db.session.commit()

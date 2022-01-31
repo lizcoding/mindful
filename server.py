@@ -20,30 +20,22 @@ import crud
 import json
 import os
 
-# <------- UP NEXT ----------------------------------------------------------------->
-# [ ] Add more features to Flask Login: https://flask-login.readthedocs.io/en/latest/#flask_login.login_required
-# [ ] Keep One: return deadline or return window
-# [ ] Add display logic (make reccomendation) for sentiment analysis data
+# <------- UP NEXT ------------------------------------------------------------------------------->
+# [ ] New Feature: Twilio SMS + Email
+    # [ ] Gift Plan: Send email/text to contact asking if they want the gift
+# [ ] New Feature: Google Calendar API
+# [ ] New Feature: Facebook Sign-In (OAuth)
 
-# <------- TO-DO's: Odds and Ends -------------------------------------------------->
-# [ ] Show top 3 items OR plans at the very top of the page
-# [ ] Modify "Add Details" text for items with existing details
-# [ ] Build out Plans (focus on non-return actions)
+# <------- TO-DO's: Complete by End of Sprint 2 -------------------------------------------------->
+# [ ] Allow user to navigate back to Item page from Plan
+# [ ] Add more features to Flask Login
+# [ ] Add small icons to item images w/ tooltips to show how many weeks left until return deadline
+# [ ] Allow user to view past Reflection entries
 
-# <------- END OF MVP - On the Horizon ---------------------------------------------->
-# END OF MVP: Cloudinary API, Google Maps API, IBM NLU API integration. Flask login and Google OAuth.
-# All database objects have functional + robust CRUD and HTML displays logically  
-# TO-DO: Review code and refactor/modularize where appropriate. Ask for a code review.
-
-# <------- SPRINT 2: General Plans -------------------------------------------------->
-# Testing
-# User Experience
-# Autocomplete for retailers and autofill fields
-# Some Design
-
-# <------- EXTRAS ------------------------------------------------------------------->
-# Try to get Joe to break my site :)
-# Ask Anjelica to rate features for automation
+# <------- END OF SPRINT 2 ----------------------------------------------------------------------->
+# END OF SPRINT 2: Google Calendar API, Twilio SMS + Email APIs, Facebook Sign-In (OAuth)
+# MVP: Cloudinary API, Google Maps API, IBM Natural Language Understanding API, Flask Login, Google Sign-In (OAuth)
+# Review code and refactor/modularize where appropriate
 
 
 app = Flask(__name__)
@@ -77,11 +69,10 @@ CLIENT_ID = os.environ["client_id"]
 # API_SERVICE_NAME = 'openid'
 # API_VERSION = 'v2'
 
-
-
+# Liz Calendar
+LIZ_CALENDAR = os.environ["liz_calendar"]
 
 def get_random_string():
-    # choose from all lowercase letter
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(20))
     return result_str
@@ -94,7 +85,7 @@ def load_user(user_id):
 
 @app.context_processor
 def inject_client_id():
-    return dict(client_id=CLIENT_ID)
+    return dict(client_id=CLIENT_ID, liz_calendar=LIZ_CALENDAR)
 
 
 @app.route("/")
@@ -218,7 +209,6 @@ def item_details(item_id):
 @flask_login.login_required
 def add_item():
     user = crud.get_user_by_id(flask_login.current_user.id)
-    item_url = request.form.get("item_url")
     return_deadline = request.form.get("return_deadline")
     return_type = request.form.get("return_type")
     brand = request.form.get("brand")
@@ -226,16 +216,12 @@ def add_item():
     price = request.form.get("price")
 
     if not crud.get_retailer_by_name(user, retailer_name):
-        main_url = request.form.get("main_url")
         returns_url = request.form.get("returns_url")
-        return_window = request.form.get("return_window")
-        if return_window:
-            return_window = int(return_window)
-        retailer = crud.create_retailer(name=retailer_name, main_url=main_url, returns_url=returns_url, return_window=return_window)
+        retailer = crud.create_retailer(name=retailer_name, returns_url=returns_url)
     else:
         retailer = crud.get_retailer_by_name(user, retailer_name)
     
-    item = crud.create_item(user.id, retailer.retailer_id, brand, item_url, price, return_deadline, return_type)
+    item = crud.create_item(user.id, retailer.retailer_id, brand, price, return_deadline, return_type)
     
     text = request.form.get("text")
     email = request.form.get("email")
@@ -250,39 +236,7 @@ def add_item():
     return redirect("/dashboard")
 
 
-@app.route("/item/<item_id>/add_detail", methods=['POST'])
-@flask_login.login_required
-def add_detail(item_id):
-    cotton = request.form.get("cotton")
-    wool = request.form.get("wool")
-    leather = request.form.get("leather")
-    faux_leather = request.form.get("faux_leather")
-    elastane = request.form.get("elastane")
-    polyester = request.form.get("polyester")
-    acrylic = request.form.get("acrylic")
-    viscose = request.form.get("viscose")
-    silk = request.form.get("wool")
-    cashmere = request.form.get("wool")
-    
-    form_values = [cotton, wool, leather, faux_leather, elastane,
-                    polyester, acrylic, viscose, silk, cashmere]
-            
-    materials = f'{[material for material in form_values if material]}'
-    num_size = request.form.get("int_size")
-    str_size = request.form.get("alpha_size")
-    if num_size:
-        size = num_size
-    else:
-        size = str_size
-
-    care = request.form.get("care")
-    item = crud.get_item_by_id(item_id)
-    crud.set_item_details(item, materials, size, care)
-
-    return redirect(f"/item/{item_id}")
-
-
-@app.route("/item/<item_id>/add_sentiment", methods=['POST'])
+@app.route("/item/<item_id>/enter_reflection", methods=['POST'])
 @flask_login.login_required
 def add_sentiment(item_id):
     item = crud.get_item_by_id(item_id)
@@ -304,9 +258,10 @@ def add_sentiment(item_id):
         keywords=KeywordsOptions(emotion=True, sentiment=True, limit=3),
         sentiment=SentimentOptions(targets=['item', 'fit', 'size', 'value', 
         'worth', 'keep', 'return', 'quality', 'wear', 'color']))).get_result()
-
-    response_dump = json.dumps(response, indent=2)
-    print(response_dump)
+    
+    # For debugging
+    # response_dump = json.dumps(response, indent=2)
+    # print(response_dump)
 
     if not response.get("emotion"):
         document_emotions = []
@@ -421,6 +376,14 @@ def complete_plan(plan_id):
     crud.complete_plan(item, plan)
 
     return redirect(f"/profile")
+
+
+@app.route("/journal")
+@flask_login.login_required
+def journal():
+    user = crud.get_user_by_id(flask_login.current_user.id)
+    #TO-DO
+    return render_template("journal.html")
 
 
 if __name__ == "__main__":

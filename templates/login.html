@@ -4,54 +4,108 @@
 {% block navbar %} {% endblock %}
 
 {% block content %} 
-
-<h1>Welcome to Mindful</h1>
-
-
-<h2>Create an Account</h2>
-<form action="/create_account" method="POST">
-  <p>
-    First Name: <input type="text" name="first_name" required>
-  </p>
-  <p>
-    Email: <input type="text" name="email" required>
-  </p>
-
-  <p>
-    Password: <input type="password" name="password" required>
-  </p>
-
-  <p>
-    <input type="submit">
-  </p>
-</form>
-
-<h2>Log In</h2>
-<form action="/login" method="POST">
-  <p>
-    Email: <input type="text" name="email" required>
-  </p>
-
-  <p>
-    Password: <input type="password" name="password" required>
-  </p>
-
-  <p>
-    <input type="submit">
-  </p>
-</form>
-<div id="g_id_onload"
-data-client_id="{{client_id}}"
-data-login_uri="/tokensignin"
-data-auto_prompt="false"
-data-auto_select="true">
+<div id="login-page">
+  <div class="container">
+    <h1>Welcome to Mindful</h1>
+    <div>
+      <form>
+        <div class="mb-3"><h2>Create an Account</h2>
+          <label for="createEmail" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="createEmail" aria-describedby="emailHelp">
+          <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="mb-3">
+          <label for="createPassword" class="form-label">Password</label>
+          <input type="password" class="form-control" id="createPassword">
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="rememberMe">
+          <label class="form-check-label" for="rememberMe">Remember Me</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+    <div>
+      <form>
+        <div class="mb-3"><h2>Sign In</h2>
+          <label for="userEmail" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="userEmail">
+        </div>
+        <div class="mb-3">
+          <label for="userPassword" class="form-label">Password</label>
+          <input type="password" class="form-control" id="userPassword">
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="rememberUser">
+          <label class="form-check-label" for="rememberUser">Remember Me</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+    <div>
+      <div id="g_id_onload"
+      data-client_id="{{client_id}}"
+      data-login_uri="/tokensignin"
+      data-auto_prompt="false"
+      data-auto_select="true">
+      </div>
+      <div class="g_id_signin"
+      data-type="standard"
+      data-size="large"
+      data-theme="outline"
+      data-text="sign_in_with"
+      data-shape="rectangular"
+      data-logo_alignment="left">
+      </div>
+    </div>
+  </div>  
 </div>
-<div class="g_id_signin"
-data-type="standard"
-data-size="large"
-data-theme="outline"
-data-text="sign_in_with"
-data-shape="rectangular"
-data-logo_alignment="left">
-</div>
+
+  <!-- <h2>Create an Account</h2>
+  <form action="/create_account" method="POST">
+    <p>
+      First Name: <input type="text" name="first_name" required>
+    </p>
+    <p>
+      Email: <input type="text" name="email" required>
+    </p>
+
+    <p>
+      Password: <input type="password" name="password" required>
+    </p>
+
+    <p>
+      <input type="submit">
+    </p>
+  </form>
+
+  <h2>Log In</h2>
+  <form action="/login" method="POST">
+    <p>
+      Email: <input type="text" name="email" required>
+    </p>
+
+    <p>
+      Password: <input type="password" name="password" required>
+    </p>
+
+    <p>
+      <input type="submit">
+    </p>
+  </form>
+  <div id="g_id_onload"
+  data-client_id="{{client_id}}"
+  data-login_uri="/tokensignin"
+  data-auto_prompt="false"
+  data-auto_select="true">
+  </div>
+  <div class="g_id_signin"
+  data-type="standard"
+  data-size="large"
+  data-theme="outline"
+  data-text="sign_in_with"
+  data-shape="rectangular"
+  data-logo_alignment="left">
+  </div>
+</div> -->
 {% endblock %}

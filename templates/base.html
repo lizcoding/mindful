@@ -1,9 +1,3 @@
-<!-- 
-Bootstrap Layout: https://getbootstrap.com/docs/4.3/layout/overview/
-Bootstrap Images: https://getbootstrap.com/docs/4.3/content/images/
-Bootstrap Extras: https://getbootstrap.com/docs/4.3/utilities/borders/ 
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,42 +13,36 @@ Bootstrap Extras: https://getbootstrap.com/docs/4.3/utilities/borders/
   <link rel="stylesheet" href="/static/css/styles.css">
 
   <!-- Load React dependencies on all pages for this app -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
   <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script> -->
 
   <!-- Load Google Sign-In dependencies -->
   <meta name="google-signin-client_id" content="{{client_id}}">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  
-  <script>
-    function toggle_display(button_id, element_id) {
-      element = document.getElementById(element_id);
-      button = document.getElementById(button_id);
-      if (element.hasAttribute("hidden")) {
-        element.removeAttribute("hidden");
-        button.innerHTML = 'Close Add Details';
-      } else {
-        element.setAttribute("hidden", "true");
-        button.innerHTML= "Add Item Details";
-      }
-    };
-  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@0,700;1,700&family=Comfortaa:wght@700&family=Karla:wght@400;700&family=Outfit:wght@900&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&family=Staatliches&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
   <!-- Navbar: https://getbootstrap.com/docs/4.3/components/navbar/ -->
   {% block navbar %}
-    <nav class="navbar navbar-expand-sm navbar-light bg-light">
-      <a class="navbar-brand" href="/"><img src="/static/img/balloonicorn.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">Mindful</a>
+    <nav class="navbar navbar-expand-sm">
+      <a class="navbar-brand nav-item logo" href="/">Mindful</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+        <img src="https://img.icons8.com/small/16/ffffff/menu.png"/>
       </button>
 
     <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
       <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
-          <li class="nav-item"><a id="logout" class="g_id_signout nav-link" href="/logout">Sign Out</a></li>
+        <li class="nav-item"><a class="nav-link" href="/dashboard">dashboard</a></li>
+        <!-- <li class="nav-item"><a class="nav-link" href="/journal">journal</a></li> -->
+        <li class="nav-item"><a class="nav-link" href="/profile">profile</a></li>
+        <li class="nav-item"><a id="logout" class="g_id_signout nav-link" href="/logout">sign out</a></li>
       </ul>
     </div>
 
@@ -70,16 +58,19 @@ Bootstrap Extras: https://getbootstrap.com/docs/4.3/utilities/borders/
   
   <!-- Page Content -->
   {% block content %} {% endblock %}
-
-  <div class="row">
-    <div class="col-12">
-      <footer class="footer">Mindful 2022 - lizcoding</footer>
+  <div>
+    <div class="row">
+      <div class="col-12">
+        <footer class="footer">Mindful 2022 - lizcoding</footer>
+      </div>
     </div>
   </div>
 
-  <!-- Bootstrap JS, jQuery, Popper.js -->
+
+  <!-- Bootstrap JS, jQuery, Popper.js, Vue -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script> -->
 </body>
 </html>
