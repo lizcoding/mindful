@@ -48,7 +48,7 @@
             {% endif %}
 
             {% if days_left.days > 0 %}
-              <h4>Days left before return deadline: {{days_left.days}} </h4>
+              <h4>Days until return deadline: {{days_left.days}} </h4>
             {% endif %}
           </div>
           {% endif %}
@@ -82,12 +82,21 @@
               <h4>Plan: <a href="/plan/{{item.plan[0].plan_id}}">{{ item.plan[0].action }}</a></h4>
             {% endif %}
           </div>          
-          {% if not item.plan or (item.sentiments[-1].date == today) %}
+          {% if not (item.plan and item.sentiments) %}
             <div>
-              <h4>Item To-Do's </h4>
+              {% if item.sentiments and item.plan %}
+              {% if item.sentiments[-1].date != today %}
+              <h4>Item To-Do's: </h4>
+              {% endif %}
+              {% elif not (item.plan and item.sentiments) %} 
+              <h4>Item To-Do's: </h4>
+              {% endif %}
               <ul>
                 {% if not item.plan %}
                 <li>Create a Plan</li>
+                {% endif %}
+                {% if not item.sentiments %}
+                <li>Write a purchase reflection</li>
                 {% endif %}
                 {% if item.sentiments %}
                 {% if item.sentiments[-1].date != today %}
@@ -95,7 +104,7 @@
                 <li>Write a purchase reflection</li>
                 {% endif %}
                 {% endif %}
-              </ul>  
+              </ul> 
             </div>
           {% endif %}
         </div>

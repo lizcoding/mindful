@@ -1,9 +1,9 @@
 # Mindful Database
-"""Models mindful app"""
+"""Models Mindful App"""
 
 from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
+from flask_login import UserMixin, user_accessed
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 
@@ -21,6 +21,7 @@ class User(db.Model, UserMixin):
     phone_number = db.Column(db.Integer)
     # items = a list of Item objects
     # plans = a list of Plan objects
+    # calendar = a list of one Calendar object
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -46,6 +47,20 @@ class Retailer(db.Model):
         return f"<Retailer retailer_id={self.retailer_id} name={self.name}>"
 
 
+class Calendar(db.Model):
+    """A user's Mindful calendar."""
+    __tablename__ = 'calendars'
+
+    calendar_id = db.Column(db.String(200), primary_key=True)
+    user_id = db.Column(db.String(50), db.ForeignKey("users.id"), nullable=False)
+    # items = a list of Item objects
+
+    user = db.relationship("User", backref="calendar")
+
+    def __repr__(self):
+        return f"<Calendar calendar_id={self.calendar_id} user_id={self.user_id}>"
+
+
 class Item(db.Model):
     """A tracked item."""
     
@@ -54,6 +69,7 @@ class Item(db.Model):
     item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.String(50), db.ForeignKey("users.id"), nullable=False)
     retailer_id = db.Column(db.Integer, db.ForeignKey("retailers.retailer_id"), nullable=False)
+    calendar_id = db.Column(db.String(200), db.ForeignKey("calendars.calendar_id"))
     return_deadline = db.Column(db.Date, nullable=False)
     return_type = db.Column(db.String(10))
     text_reminder = db.Column(db.Boolean, default=False)
@@ -64,6 +80,7 @@ class Item(db.Model):
     # images = a list of Image objects
     # sentiments = a list of Sentiment objects
 
+    calendar = db.relationship("Calendar", backref="items")
     user = db.relationship("User", backref="items")
     plan = db.relationship("Plan", backref="items")
     retailer = db.relationship("Retailer", backref="items")
@@ -143,6 +160,7 @@ class Entity(db.Model):
     sentiment_score = db.Column(db.Numeric, nullable=False)
     sentiment_label = db.Column(db.String(20), nullable=False)
     relevance = db.Column(db.Numeric, nullable=False)
+    # sentiment = a list of one Sentiment object
     
     # emotion
     sadness = db.Column(db.Numeric, default=None)
@@ -150,7 +168,6 @@ class Entity(db.Model):
     fear = db.Column(db.Numeric, default=None)
     disgust = db.Column(db.Numeric, default=None)
     anger = db.Column(db.Numeric, default=None)
-    # sentiment = a list of one Sentiment object
 
     def __repr__(self):
         return f"<Entity entity_id={self.entity_id} sentiment_id={self.sentiment_id} entity_type={self.entity_type} text={self.text} sentiment_score={self.sentiment_score} sentiment_label={self.sentiment_label} relevance={self.relevance}>"
@@ -166,6 +183,7 @@ class Keyword(db.Model):
     text = db.Column(db.String(20), nullable=False)
     sentiment_score = db.Column(db.Numeric, nullable=False)
     relevance = db.Column(db.Numeric, nullable=False)
+    # sentiment = a list of one Sentiment object
     
     # emotion 
     sadness = db.Column(db.Numeric, default=None)
@@ -173,7 +191,6 @@ class Keyword(db.Model):
     fear = db.Column(db.Numeric, default=None)
     disgust = db.Column(db.Numeric, default=None)
     anger = db.Column(db.Numeric, default=None)
-    # sentiment = a list of one Sentiment object
     
     def __repr__(self):
         return f"<Keyword keyword_id={self.keyword_id} sentiment_id={self.sentiment_id} text={self.text} sentiment_score={self.sentiment_score} relevance={self.relevance}>"
@@ -189,13 +206,14 @@ class Target(db.Model):
     text = db.Column(db.String(20), nullable=False)
     sentiment_score = db.Column(db.Numeric, nullable=False)
     sentiment_label = db.Column(db.String(20), nullable=False)
+    # sentiment = a list of one Sentiment object
+
     # emotion 
     sadness = db.Column(db.Numeric, default=None)
     joy = db.Column(db.Numeric, default=None)
     fear = db.Column(db.Numeric, default=None)
     disgust = db.Column(db.Numeric, default=None)
     anger = db.Column(db.Numeric, default=None)
-    # sentiment = a list of one Sentiment object
     
     def __repr__(self):
         return f"<Target target_id={self.target_id} sentiment_id={self.sentiment_id} text={self.text} sentiment_score={self.sentiment_score} sentiment_label={self.sentiment_label}>"

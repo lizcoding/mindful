@@ -1,14 +1,15 @@
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 import Features, EmotionOptions, EntitiesOptions, KeywordsOptions, SentimentOptions
-from flask import (Flask, redirect, flash, request, render_template, session)
+from flask import (Flask, redirect, flash, url_for, request, render_template, session)
 from jinja2 import StrictUndefined
 from model import connect_to_db
 from google.oauth2 import id_token
 from google.auth.transport import requests
-import google.oauth2.credentials
-import google_auth_oauthlib.flow
-import googleapiclient
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 # from markupsafe import re
 import functools
 import random
@@ -21,21 +22,28 @@ import json
 import os
 
 # <------- UP NEXT ------------------------------------------------------------------------------->
-# [ ] New Feature: Twilio SMS + Email
-    # [ ] Gift Plan: Send email/text to contact asking if they want the gift
-# [ ] New Feature: Google Calendar API
-# [ ] New Feature: Facebook Sign-In (OAuth)
+# [ ] Twilio Verify integration for Sign-In
+# [ ] Twilio SMS + Sendgrid integration for Gift plans
+# [ ] Edit Google Maps API calls (enable multiple results)
+# [ ] New Feature: Testing
 
 # <------- TO-DO's: Complete by End of Sprint 2 -------------------------------------------------->
 # [ ] Allow user to navigate back to Item page from Plan
 # [ ] Add more features to Flask Login
-# [ ] Add small icons to item images w/ tooltips to show how many weeks left until return deadline
 # [ ] Allow user to view past Reflection entries
 
+# <------- TO-DO's: Styling Sprint --------------------------------------------------------------->
+# [ ] Add small icons to item images w/ tooltips 
+    # [ ] to show how many weeks left until return deadline
+    # [ ] to show item's plan type
+# [ ] Add underline animation to navbar links
+# [ ] Edit Plan HTML: Item Image behavior
+
 # <------- END OF SPRINT 2 ----------------------------------------------------------------------->
-# END OF SPRINT 2: Google Calendar API, Twilio SMS + Email APIs, Facebook Sign-In (OAuth)
+# END OF SPRINT 2: Google Calendar API, Twilio Verify, Testing
 # MVP: Cloudinary API, Google Maps API, IBM Natural Language Understanding API, Flask Login, Google Sign-In (OAuth)
 # Review code and refactor/modularize where appropriate
+# Lint code
 
 
 app = Flask(__name__)
@@ -62,14 +70,15 @@ natural_language_understanding = NaturalLanguageUnderstandingV1(
 )
 natural_language_understanding.set_service_url(os.environ['IBM_NATURAL_LANGUAGE_URL'])
 
-# Configure Google OAuth
+# Configure Google Calendar OAuth
 CLIENT_ID = os.environ["client_id"]
-# LOGIN_SCOPES = ['https://www.googleapis.com/openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile']
-# CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/calendar.events']
-# API_SERVICE_NAME = 'openid'
-# API_VERSION = 'v2'
+CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/calendar.events']
+API_SERVICE_NAME = 'calendar'
+API_VERSION = 'v3'
+CLIENT_SECRETS_FILE = os.environ['client_secrets_file']
 
 # Liz Calendar
+LIZ_MINDFUL_CALENDAR = os.environ["liz_mindful_calendar"]
 LIZ_CALENDAR = os.environ["liz_calendar"]
 
 def get_random_string():
@@ -85,7 +94,7 @@ def load_user(user_id):
 
 @app.context_processor
 def inject_client_id():
-    return dict(client_id=CLIENT_ID, liz_calendar=LIZ_CALENDAR)
+    return dict(client_id=CLIENT_ID, liz_calendar=LIZ_CALENDAR, liz_mindful_calendar=LIZ_MINDFUL_CALENDAR)
 
 
 @app.route("/")
@@ -103,7 +112,7 @@ def verify_token():
     try:
         # Specify the CLIENT_ID of the app that accesses the backend:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
-        
+
         if not crud.get_user_by_email(idinfo['email']):
             password = get_random_string()
             user = crud.create_user(email=idinfo['email'], password=password, first_name=idinfo['given_name'])
@@ -157,6 +166,8 @@ def handle_login():
 @app.route("/logout")
 @flask_login.login_required
 def logout():
+    if session.get('credentials'):
+        del session['credentials']
     flask_login.logout_user()
     return redirect("/")
 
@@ -229,7 +240,7 @@ def add_item():
 
     file = request.files["image"]
     image = crud.create_image(item)
-    result = cloudinary.uploader.upload(file, api_key=CLOUDINARY_KEY, api_secret=CLOUDINARY_SECRET, cloud_name=CLOUD_NAME)
+    result = cloudinary.uploader.upload(file, api_key=CLOUDINARY_KEY, api_secret=CLOUDINARY_SECRET, cloud_name=CLOUD_NAME, folder=f'mindful/{user.id}/')
     img_url = result['secure_url']
     crud.add_image_url(image, img_url)
 
@@ -386,6 +397,133 @@ def journal():
     return render_template("journal.html")
 
 
+@app.route("/authorize_calendar")
+@flask_login.login_required
+def authorize_calendar():
+  # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+  flow = Flow.from_client_secrets_file(
+      CLIENT_SECRETS_FILE, scopes=CALENDAR_SCOPES)
+
+  # The URI created here must exactly match one of the authorized redirect URIs
+  # for the OAuth 2.0 client, which you configured in the API Console. If this
+  # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
+  # error.
+  flow.redirect_uri = url_for('oauth2callback', _external=True)
+
+  authorization_url, state = flow.authorization_url(
+      # Enable offline access so that you can refresh an access token without
+      # re-prompting the user for permission. Recommended for web server apps.
+      access_type='offline',
+      # Enable incremental authorization. Recommended as a best practice.
+      include_granted_scopes='false')
+
+  # Store the state so the callback can verify the auth server response.
+  session['state'] = state
+
+  return redirect(authorization_url)
+
+
+@app.route('/oauth2callback')
+def oauth2callback():
+  # Specify the state when creating the flow in the callback so that it can
+  # verified in the authorization server response.
+  state = session['state']
+
+  flow = Flow.from_client_secrets_file(
+      CLIENT_SECRETS_FILE, scopes=CALENDAR_SCOPES, state=state)
+  flow.redirect_uri = url_for('oauth2callback', _external=True)
+
+  # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+  authorization_response = request.url
+  flow.fetch_token(authorization_response=authorization_response)
+
+  # Store credentials in the session.
+  # ACTION ITEM: In a production app, you likely want to save these
+  #              credentials in a persistent database instead.
+  credentials = flow.credentials
+  session['credentials'] = credentials_to_dict(credentials)
+
+  return redirect("/calendar")
+
+
+@app.route("/calendar")
+@flask_login.login_required
+def calendar():
+    if not session.get('credentials'):
+        return redirect('/authorize_calendar')
+    user = crud.get_user_by_id(flask_login.current_user.id)
+
+    # Load credentials from the session.
+    credentials = Credentials(**session['credentials'])
+
+    service = build(API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+    if not user.calendar:
+        calendar = {
+        'summary': 'Mindful',
+        'timeZone': 'America/Los_Angeles'
+        }
+        google_calendar = service.calendars().insert(body=calendar).execute()
+        crud.create_calendar(user, google_calendar['id'])
+
+    calendar = user.calendar[0]
+
+    if calendar.items:
+        unadded_items = [item for item in user.items if item not in calendar.items]
+    else:
+        unadded_items = user.items
+    
+    if unadded_items:
+        # item_event tuples returns a tuple of (item, event)
+        unadded_events = item_event_tuples(unadded_items)
+        for event_tuple in unadded_events:
+            item = event_tuple[0]
+            event = event_tuple[1]
+            calendarId = calendar.calendar_id
+            added_event = service.events().insert(calendarId=calendarId, body=event).execute()
+            crud.add_calendar_item(item, calendar)
+
+    # Save credentials back to session in case access token was refreshed.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+    session['credentials'] = credentials_to_dict(credentials)
+    
+    return render_template("calendar.html", user=user)
+
+
+def credentials_to_dict(credentials):
+  return {'token': credentials.token,
+          'refresh_token': credentials.refresh_token,
+          'token_uri': credentials.token_uri,
+          'client_id': credentials.client_id,
+          'client_secret': credentials.client_secret,
+          'scopes': credentials.scopes}
+
+
+def item_event_tuples(items_list):
+    tuple_list = []
+    for item in items_list:
+        event = {
+                'summary': 'Return Deadline',
+                'description': f'Return Deadline for Item: <a href="http://localhost:5000/item/{item.item_id}">http://localhost:5000/item/{item.item_id}</a>',
+                'start': {
+                    'date': f'{item.return_deadline}'
+                },
+                'end': {
+                    'date': f'{item.return_deadline}'
+                },
+                'reminders': {
+                    'useDefault': True,
+                }
+            }
+        tuple_list.append((item, event))
+    return tuple_list
+
+
 if __name__ == "__main__":
+    # When running locally, disable OAuthlib's HTTPs verification.
+    # ACTION ITEM for developers:
+    #     When running in production *do not* leave this option enabled.
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
     connect_to_db(app)
     app.run(host="0.0.0.0", debug=True)

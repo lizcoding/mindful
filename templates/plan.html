@@ -27,7 +27,8 @@
               <p>{{ item.retailer.name }}{% if item.brand and (item.brand != item.retailer.name) %}: {{ item.brand }}{% endif %}</p>
               {% endif %}
               <p>${{ item.price }}</p>
-              <p id="plan-action" style="display: none;">{{ plan.action }}</p>    
+              <p id="plan-action" style="display: none;">{{ plan.action }}</p>
+              <p id="retailer-name" style="display: none;">{{ item.retailer.name }}</p>      
               {% if plan.action == "Return" %}
               <p>Return Deadline: {{ item.return_deadline }}</p>
               {% endif %}
@@ -44,13 +45,13 @@
               <div id="map" style="height: 400px; width: 400px;"></div>
               <script src="/static/js/gmaps.js"></script>
               <script
-                async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
+                async defer src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
               </script>
               {% endif %}
             {% elif plan.action == "Resell" %}
               <div>
                 <h4>Online resale marketplaces: </h4>
-                <div class="conatiner-fluid">
+                <div>
                   <a class="resale-link" href="https://depop.com" target="_blank" ref="noopener noreferrer">
                     <img class="img-fluid resell-logo" src="/static/img/depop-logo-vector.png">
                   </a>

@@ -4,7 +4,7 @@
 # from flask_sqlalchemy import _record_queries
 from sqlalchemy import ForeignKey
 from sqlalchemy.sql.elements import TextClause
-from model import db, User, Retailer, Item, Plan, Image, Sentiment, Entity, Target, Keyword, connect_to_db
+from model import Calendar, db, User, Retailer, Item, Plan, Image, Sentiment, Entity, Target, Keyword, connect_to_db
 
 
 # User object CRUD functions
@@ -23,6 +23,18 @@ def get_user_by_id(user_id):
     
 def get_user_by_email(email):
     return User.query.filter(User.email == email).first()
+
+
+# Calendar object CRUD functions
+def create_calendar(user, calendar_id):
+    calendar = Calendar(calendar_id=calendar_id, user_id=user.id)
+    db.session.add(calendar)
+    db.session.commit()
+    return calendar
+
+def add_calendar_item(item, calendar):
+    item.calendar_id = calendar.calendar_id
+    db.session.commit()
 
 
 # Retailer object CRUD functions

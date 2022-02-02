@@ -42,7 +42,6 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
     Push to tomorrow:
         1. [0] Test Plan Routes and Plan CRUD functions
 
-
 ----------------------------------------------------------------------------------
 1/12: Week 1 - Wednesday
     Today's Goals:
@@ -77,10 +76,6 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
                 1. [X] Add form with text area to item details page
                 2. [0] Ensure Sentiment object instantiation from form submission
                 3. [0] Limit sentiment entries to one per item per day (add entry_date attribute to sentiment table)
-        
-    Today's Reflection:
-
-
 
 ----------------------------------------------------------------------------------
 1/14: Week 1 - Friday
@@ -92,9 +87,6 @@ PROJECT JOURNAL WEEK 1 ---------------------------------------------------------
         2. [X] Pre-Weekend TO-DO's (Found on server.py)
             Total: [7]
             Completed: [3]
-    
-    Today's Reflection:
-
 
 ----------------------------------------------------------------------------------
 1/15-1/16: Weekend Progress
@@ -117,7 +109,7 @@ TO-DO server.py comments completed:
 PROJECT JOURNAL WEEK 2 -----------------------------------------------------------
 
 1/17: Week 2 - Monday
-    HOLIDAY: MLK (No Class)
+    HOLIDAY: MLK Day (No Class)
 
 ----------------------------------------------------------------------------------
 1/18: Week 2 - Tuesday
@@ -138,9 +130,6 @@ PROJECT JOURNAL WEEK 2 ---------------------------------------------------------
     # [X] Change session["today"] format from the start
     # [X] Edit Add Item Form: can't add dates in the past
 
-    Today's Reflection:
-
-
 ----------------------------------------------------------------------------------
 1/19: Week 2 - Wednesday
     Today's Goals:
@@ -148,27 +137,17 @@ PROJECT JOURNAL WEEK 2 ---------------------------------------------------------
     # [X] Start Research: OAuth login (login with google, sync with Google Calendar)
     # [X] Start Research: Implement Flask Login (more features)
 
-    Today's Reflection:
-
-
 ----------------------------------------------------------------------------------
 1/20: Week 2 - Thursday
     Today's Goals:
     # [0] Implement Google OAuth
     # [X] Start implemenation of Flask Login
 
-
-    Today's Reflection:
-
-
 ----------------------------------------------------------------------------------
 1/21: Week 2 - Friday
     Today's Goals:
     # [0] Implement Google OAuth
     # [X] Complete Flask Login implemenation
-
-    Today's Reflection:
-
 
 ----------------------------------------------------------------------------------
 PROJECT JOURNAL WEEK 3 -----------------------------------------------------------
@@ -179,9 +158,6 @@ PROJECT JOURNAL WEEK 3 ---------------------------------------------------------
     # [X] Disable Cache for back button on logout
     # [X] Enable deletion of items
 
-    Today's Reflection:
-
-
 ----------------------------------------------------------------------------------
 1/18: Week 3 - Tuesday
     Today's Goals:
@@ -190,17 +166,11 @@ PROJECT JOURNAL WEEK 3 ---------------------------------------------------------
     # [X] Show top 3 items OR plans at the very top of the page
     # [X] Styling: Forms, Dashboard, Item Details, and Plan pages
 
-    Today's Reflection:
-
-
 ----------------------------------------------------------------------------------
 1/19: Week 3 - Wednesday
     Today's Goals:
     # [X] Start Styling: Login Page
     # [X] Edit Styling: Plan Page (make content fit page)
-
-    Today's Reflection:
-
 
 ----------------------------------------------------------------------------------
 1/20: Week 3 - Thursday
@@ -211,10 +181,6 @@ PROJECT JOURNAL WEEK 3 ---------------------------------------------------------
     # [X] Remove main url and returns url from DB and "Add Item" form
     # [X] Build out Profile display
 
-
-    Today's Reflection:
-
-
 ----------------------------------------------------------------------------------
 1/21: Week 3 - Friday
     Today's Goals:
@@ -222,91 +188,47 @@ PROJECT JOURNAL WEEK 3 ---------------------------------------------------------
     # [X] Edit "Returns can be made: ..." -> "Returns: [ ] In person ... [ ] N/A" to imply final sale
     # [X] Consider removing "Add Details" form, db objects, and respective data
 
-    Today's Reflection:
-
-
-----------------------------------------------------------------------------------
-PROJECT JOURNAL WEEK 4 -----------------------------------------------------------
-
-1/24: Week 4 - Monday
-    Today's Goals:
-
-
-    Today's Reflection:
-
-
-----------------------------------------------------------------------------------
-1/25: Week 4 - Tuesday
-    Today's Goals:
-
-
-    Today's Reflection:
-
-
-----------------------------------------------------------------------------------
-1/26: Week 4 - Wednesday
-    Today's Goals:
-
-
-    Today's Reflection:
-
-
-----------------------------------------------------------------------------------
-1/27: Week 4 - Thursday
-    Today's Goals:
-
-
-    Today's Reflection:
-
-
-----------------------------------------------------------------------------------
-1/28: Week 4 - Friday
-    Today's Goals:
-
-
-    Today's Reflection:
-
-
 ----------------------------------------------------------------------------------
 PROJECT JOURNAL WEEK 5 -----------------------------------------------------------
 
 1/31: Week 5 - Monday
     Today's Goals:
-
-
-    Today's Reflection:
-
+    # [X] Start Google Calendar API integration
 
 ----------------------------------------------------------------------------------
 2/1: Week 5 - Tuesday
     Today's Goals:
-
-
-    Today's Reflection:
-
+    # [X] Finish Google Calendar API integration
+    # [X] Research Twilio APIs
 
 ----------------------------------------------------------------------------------
 2/2: Week 5 - Wednesday
     Today's Goals:
-
-
-    Today's Reflection:
-
+    # [ ] Start Twilio Verify integration for Sign-In
+    # [ ] Start Twilio SMS + Sendgrid integration for Gift plans
+    # [ ] Edit Google Maps API calls (enable multiple results)
 
 ----------------------------------------------------------------------------------
 2/3: Week 5 - Thursday
     Today's Goals:
-
-
-    Today's Reflection:
-
-
+    # [ ] Continue Twilio integration
+    
 ----------------------------------------------------------------------------------
 2/4: Week 5 - Friday
     Today's Goals:
+    # [ ] Finish Twilio integration
+    # [ ] Start Testing
+    
+----------------------------------------------------------------------------------
+2/5: Week 5 - Saturday
+    Today's Goals:
+    # [ ] Continue Testing
+    # [ ] Finish Item Journal Route
 
-
-    Today's Reflection:
-
+----------------------------------------------------------------------------------
+2/6: Week 5 - Sunday
+    Today's Goals:
+    # [ ] Refactor Code
+    # [ ] Finish Testing
 
 ----------------------------------------------------------------------------------

@@ -12,8 +12,9 @@ function initMap() {
       });
     
     let request = {}
-    if (document.getElementById("plan-action").textContent == "return") {
-      const retailer_name = document.getElementById("retailer_name").textContent
+    const plan_action = document.getElementById("plan-action").textContent;
+    if (plan_action == "Return") {
+      const retailer_name = document.getElementById("retailer-name").textContent;
       
       request = {
         query: `${retailer_name}`,
@@ -21,14 +22,14 @@ function initMap() {
         locationBias: {radius: 100, center: {lat: latitude, lng: longitude}}
       };
 
-    } else if (document.getElementById("plan-action").textContent == "resell") {
+    } else if (plan_action == "Resell") {
       request = {
         query: "consignment store",
         fields: ['name', 'geometry', 'formatted_address', 'place_id'],
         locationBias: {radius: 100, center: {lat: latitude, lng: longitude}}
       };
 
-    } else if (document.getElementById("plan-action").textContent == "donate") {
+    } else if (plan_action == "Donate") {
       request = {
         query: "donation center",
         fields: ['name', 'geometry', 'formatted_address', 'place_id'],
@@ -36,7 +37,6 @@ function initMap() {
       };
     }
     let service = new google.maps.places.PlacesService(map);
-
     service.findPlaceFromQuery(request, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         for (let i = 0; i < results.length; i++) {
