@@ -15,6 +15,13 @@ def create_user(email, password, first_name):
     db.session.commit()
     return user
 
+def set_phone_number(user, phone_number):
+    user.phone_number = phone_number
+    db.session.commit()
+def verify_user(user):
+    user.verified = True
+    db.session.commit()
+
 def get_users():
     return User.query.all()
 

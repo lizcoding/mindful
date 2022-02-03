@@ -17,8 +17,9 @@ class User(db.Model, UserMixin):
     id = db.Column(db.String(50), primary_key=True)
     email = db.Column(db.String(50), nullable=False, unique=True)
     first_name = db.Column(db.String(20), nullable=False)
+    verified = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(128))
-    phone_number = db.Column(db.Integer)
+    phone_number = db.Column(db.String(12))
     # items = a list of Item objects
     # plans = a list of Plan objects
     # calendar = a list of one Calendar object

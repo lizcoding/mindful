@@ -4,12 +4,13 @@ from ibm_watson.natural_language_understanding_v1 import Features, EmotionOption
 from flask import (Flask, redirect, flash, url_for, request, render_template, session)
 from jinja2 import StrictUndefined
 from model import connect_to_db
+from twilio.rest import Client
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+# from googleapiclient.errors import HttpError
 # from markupsafe import re
 import functools
 import random
@@ -18,12 +19,12 @@ import flask_login
 import cloudinary.uploader
 import datetime
 import crud
-import json
 import os
 
 # <------- UP NEXT ------------------------------------------------------------------------------->
-# [ ] Twilio Verify integration for Sign-In
-# [ ] Twilio SMS + Sendgrid integration for Gift plans
+# [ ] Twilio integration for Gift plans
+    # [ ] SMS
+    # [ ] SendGrid
 # [ ] Edit Google Maps API calls (enable multiple results)
 # [ ] New Feature: Testing
 
@@ -38,10 +39,12 @@ import os
     # [ ] to show item's plan type
 # [ ] Add underline animation to navbar links
 # [ ] Edit Plan HTML: Item Image behavior
+# [ ] Style Login page
+# [ ] Change Balloonicorn site image to Mindful M
 
 # <------- END OF SPRINT 2 ----------------------------------------------------------------------->
-# END OF SPRINT 2: Google Calendar API, Twilio Verify, Testing
-# MVP: Cloudinary API, Google Maps API, IBM Natural Language Understanding API, Flask Login, Google Sign-In (OAuth)
+# END OF SPRINT 2: Google Calendar API, Twilio Verify, Twilio SMS, Twilio SendGrid, Testing
+# MVP: Cloudinary API, Google Maps API, IBM Natural Language Understanding API, Flask Login, Google Sign-In (OAuth2)
 # Review code and refactor/modularize where appropriate
 # Lint code
 
@@ -53,9 +56,16 @@ app.jinja_env.filters['zip'] = zip
 # Required to use Flask sessions
 app.secret_key = os.environ['MINDFUL_KEY']
 
+# Configure Flask Login
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "/"
+
+# Configure Twilio APIs
+TWILIO_ACCOUNT_SID = os.environ['TWILIO_ACCOUNT_SID']
+TWILIO_AUTH_TOKEN = os.environ['TWILIO_AUTH_TOKEN']
+VERIFY_SERVICE_SID = os.environ['VERIFY_SERVICE_SID']
+client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 # Configure Cloudinary API
 CLOUD_NAME = os.environ['CLOUD_NAME']
@@ -81,10 +91,46 @@ CLIENT_SECRETS_FILE = os.environ['client_secrets_file']
 LIZ_MINDFUL_CALENDAR = os.environ["liz_mindful_calendar"]
 LIZ_CALENDAR = os.environ["liz_calendar"]
 
+
 def get_random_string():
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(20))
     return result_str
+
+
+def start_verification(to, channel='sms'):
+    if channel not in ('sms', 'call'):
+        channel = 'sms'
+
+    verification = client.verify \
+        .services(VERIFY_SERVICE_SID) \
+        .verifications \
+        .create(to=to, channel=channel)
+    
+    return verification.sid
+
+
+def check_verification(phone, code):
+    user_id = session.get("user_id")
+    user = crud.get_user_by_id(user_id)
+    
+    try:
+        verification_check = client.verify \
+            .services(VERIFY_SERVICE_SID) \
+            .verification_checks \
+            .create(to=phone, code=code)
+
+        if verification_check.status == "approved":
+            crud.verify_user(user)
+            flask_login.login_user(user)
+            flash('Your phone number has been verified! Welcome to Mindful.')
+            return redirect("/dashboard")
+        else:
+            flash('The code you provided is incorrect. Please try again.')
+    except Exception as e:
+        flash("Error validating code: {}".format(e))
+
+    return redirect("/verify")
 
 
 @login_manager.user_loader
@@ -104,6 +150,18 @@ def login_page():
     else:
         return redirect("/dashboard")
 
+
+@app.route("/verify", methods=['GET', 'POST'])
+def verify():
+    # Verify a user on registration with their phone number
+    if request.method == 'POST':
+        phone = session.get('phone')
+        code = request.form['code']
+        
+        return check_verification(phone, code)
+
+    return render_template("verify.html")
+    
 
 @app.route("/tokensignin", methods=['GET', 'POST'])
 def verify_token():
@@ -132,32 +190,53 @@ def verify_token():
 
 @app.route("/create_account", methods=["POST"])
 def register_user():
-    email = request.form.get("email")
+    email = request.form.get("createEmail")
     user = crud.get_user_by_email(email)
 
     if user:
         flash("That email is already associated with an account.")
     else:
-        password = request.form.get("password")
-        first_name = request.form.get("first_name")
-        crud.create_user(email, password, first_name)
-        flash("Account created!")
-      
+        password = request.form.get("createPassword")
+        first_name = request.form.get("firstName")
+        
+        
+        channel = request.form.get("channel")
+        mobile_number = request.form.get("mobileNumber")
+        phone = "+1" + "".join(mobile_number.split("-"))
+        session['phone'] = phone
+        vsid = start_verification(phone, channel)
+        
+        if vsid is not None:
+                # the verification was sent to the user and the username is valid
+                # redirect to verification check
+                user = crud.create_user(email, password, first_name)
+                crud.set_phone_number(user, phone)
+                session['user_id'] = user.id           
+                return redirect("/verify")
+        
     return redirect("/")
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def handle_login():
-    email = request.form.get("email")
-    password = request.form.get("password")
+    email = request.form.get("userEmail")
+
+    password = request.form.get("userPassword")
     user = crud.get_user_by_email(email)
 
     if user:
         if user.email == email and user.check_password(password):
-            today = datetime.date.today().isoformat()
-            session["today"] = today
-            flask_login.login_user(user)
-            return redirect("/dashboard")
+            if user.verified == True:         
+                today = datetime.date.today().isoformat()
+                session["today"] = today
+                flask_login.login_user(user)
+                return redirect("/dashboard")
+            else:
+                session["phone"] = user.phone_number
+                vsid = start_verification(session["phone"])
+                if vsid is not None:
+                    session['user_id'] = user.id           
+                    return redirect(url_for('verify'))
     else:
         flash("Invalid login credentials.")
         return redirect("/")
@@ -387,6 +466,22 @@ def complete_plan(plan_id):
     crud.complete_plan(item, plan)
 
     return redirect(f"/profile")
+
+@app.route("/item/<item_id>/send_offer", methods=['POST'])
+@flask_login.login_required
+def send_offer(item_id):
+    item = crud.get_item_by_id(item_id)
+
+    name = request.form.get("recipient_name")
+    email = request.form.get("recipient_email")
+    mobile = request.form.get("recipient_mobile")
+    message = request.form.get("message")
+    if not message:
+        message = "Default Gift Message"
+
+    # TO-DO: Twilio SMS + SendGrid for Gift Plan
+    
+    return redirect(f"/item/{item.item_id}")
 
 
 @app.route("/journal")

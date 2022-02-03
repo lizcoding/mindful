@@ -21,8 +21,8 @@
               <a class="btn btn-primary" href="/plan/{{plan.plan_id}}/complete_plan" role="button">Complete Plan</a>
             </div>
             <div>
-              <h4>Plan: {{ plan.action }}</h4>
-              <h4>Item Details:</h4>
+              <h4>{{ plan.action }}</h4>
+              <!-- <h4>Details</h4> -->
               {% if item.retailer %}
               <p>{{ item.retailer.name }}{% if item.brand and (item.brand != item.retailer.name) %}: {{ item.brand }}{% endif %}</p>
               {% endif %}
@@ -45,7 +45,7 @@
               <div id="map" style="height: 400px; width: 400px;"></div>
               <script src="/static/js/gmaps.js"></script>
               <script
-                async defer src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
+                async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
               </script>
               {% endif %}
             {% elif plan.action == "Resell" %}
@@ -90,13 +90,30 @@
               </script>
 
             {% elif plan.action == "Gift" %}
-              <div>
-                <p>Recipient Name: </p>
-                <p>Email: </p>
-                <p>Mobile: </p>
-                <p>Message (optional): </p>
+              <div style="padding-top: 1em;">
+                <h4>Send Offer</h4>
+                <form action="/item/{{item.item_id}}/send_offer>" method="POST" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label for="recipient_name">Recipient Name: </label>
+                    <input type="text" name="recipient_name" maxlength="30" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="recipient_email">Email: </label>
+                    <input type="email" name="recipient_email" maxlength="100" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="recipient_mobile">Cell Phone: </label>
+                    <input type="tel" name="recipient_mobile" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="message">Message (Optional): </label>
+                    <textarea id="message" name="message" maxlength="100"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
               </div>
-
             {% endif %}
           </div>
         </div>

@@ -204,20 +204,24 @@ PROJECT JOURNAL WEEK 5 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 2/2: Week 5 - Wednesday
     Today's Goals:
-    # [ ] Start Twilio Verify integration for Sign-In
-    # [ ] Start Twilio SMS + Sendgrid integration for Gift plans
-    # [ ] Edit Google Maps API calls (enable multiple results)
+    # [X] Start Twilio Verify integration for Sign-In
+        # [X] Finish Twilio Verify integration for Sign-In
+    # [X] Start Twilio SMS + Sendgrid integration for Gift plans
 
 ----------------------------------------------------------------------------------
 2/3: Week 5 - Thursday
     Today's Goals:
     # [ ] Continue Twilio integration
+        # [ ] Finish Twilio SMS integration for Gift plans
+        # [ ] Finish Twilio Sendgrid integration for Gift plans
+    # [ ] Start Testing
     
 ----------------------------------------------------------------------------------
 2/4: Week 5 - Friday
     Today's Goals:
     # [ ] Finish Twilio integration
-    # [ ] Start Testing
+    # [ ] Edit Google Maps API calls (enable multiple results)
+    # [ ] Continue Testing
     
 ----------------------------------------------------------------------------------
 2/5: Week 5 - Saturday
