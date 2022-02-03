@@ -212,7 +212,7 @@ PROJECT JOURNAL WEEK 5 ---------------------------------------------------------
 2/3: Week 5 - Thursday
     Today's Goals:
     # [ ] Continue Twilio integration
-        # [ ] Finish Twilio SMS integration for Gift plans
+        # [X] Finish Twilio SMS integration for Gift plans
         # [ ] Finish Twilio Sendgrid integration for Gift plans
     # [ ] Start Testing
     
@@ -235,4 +235,23 @@ PROJECT JOURNAL WEEK 5 ---------------------------------------------------------
     # [ ] Refactor Code
     # [ ] Finish Testing
 
+----------------------------------------------------------------------------------
+PROJECT JOURNAL - STYLE SPRINT ---------------------------------------------------
+
+2/7: Week 6 - Monday
+    Today's Goals:
+
+
+----------------------------------------------------------------------------------
+2/8: Week 6 - Tuesday
+    Today's Goals:
+
+
+----------------------------------------------------------------------------------
+2/9: Week 6 - Wednesday
+    Today's Goals:
+
+
+----------------------------------------------------------------------------------
+LAST DAY OF PROJECT WORK: Stick a fork in it, its done!
 ----------------------------------------------------------------------------------

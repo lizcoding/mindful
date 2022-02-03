@@ -92,22 +92,25 @@
             {% elif plan.action == "Gift" %}
               <div style="padding-top: 1em;">
                 <h4>Send Offer</h4>
-                <form action="/item/{{item.item_id}}/send_offer>" method="POST" enctype="multipart/form-data">
+                <form action="/item/{{item.item_id}}/send_offer" method="POST" enctype="multipart/form-data">
                   <div class="form-group">
                     <label for="recipient_name">Recipient Name: </label>
                     <input type="text" name="recipient_name" maxlength="30" required>
                   </div>
-                  <div class="form-group">
+                  <!-- <div class="form-group">
                     <label for="recipient_email">Email: </label>
                     <input type="email" name="recipient_email" maxlength="100" required>
-                  </div>
+                  </div> -->
                   <div class="form-group">
                     <label for="recipient_mobile">Cell Phone: </label>
                     <input type="tel" name="recipient_mobile" required>
                   </div>
                   <div class="form-group">
                     <label for="message">Message (Optional): </label>
-                    <textarea id="message" name="message" maxlength="100"></textarea>
+                    <div>
+                      <textarea id="message" name="message" maxlength="100"></textarea>
+                    </div>
+
                   </div>
                   <div class="form-group">
                     <button type="submit" class="btn btn-primary">Submit</button>

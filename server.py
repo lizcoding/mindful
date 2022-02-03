@@ -23,7 +23,7 @@ import os
 
 # <------- UP NEXT ------------------------------------------------------------------------------->
 # [ ] Twilio integration for Gift plans
-    # [ ] SMS
+    # [X] SMS
     # [ ] SendGrid
 # [ ] Edit Google Maps API calls (enable multiple results)
 # [ ] New Feature: Testing
@@ -65,6 +65,7 @@ login_manager.login_view = "/"
 TWILIO_ACCOUNT_SID = os.environ['TWILIO_ACCOUNT_SID']
 TWILIO_AUTH_TOKEN = os.environ['TWILIO_AUTH_TOKEN']
 VERIFY_SERVICE_SID = os.environ['VERIFY_SERVICE_SID']
+TWILIO_PHONE_NUMBER = os.environ['TWILIO_PHONE_NUMBER']
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 # Configure Cloudinary API
@@ -467,20 +468,32 @@ def complete_plan(plan_id):
 
     return redirect(f"/profile")
 
+
 @app.route("/item/<item_id>/send_offer", methods=['POST'])
 @flask_login.login_required
 def send_offer(item_id):
     item = crud.get_item_by_id(item_id)
 
     name = request.form.get("recipient_name")
-    email = request.form.get("recipient_email")
-    mobile = request.form.get("recipient_mobile")
+    # email = request.form.get("recipient_email")
+    mobile_input = request.form.get("recipient_mobile")
+    phone_number = "+1" + "".join(mobile_input.split("-"))
     message = request.form.get("message")
-    if not message:
-        message = "Default Gift Message"
-
-    # TO-DO: Twilio SMS + SendGrid for Gift Plan
     
+    if not message:
+        message = f'Hi, {name}. This is the Gift plan default message.'
+
+    text = client.messages \
+                .create(
+                     body=message,
+                     from_=TWILIO_PHONE_NUMBER,
+                     to=phone_number
+                 )
+    
+    flash("Message Sent!")
+
+    # TO-DO: Twilio SendGrid for Gift Plan
+
     return redirect(f"/item/{item.item_id}")
 
 
