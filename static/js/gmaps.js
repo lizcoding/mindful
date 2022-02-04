@@ -8,7 +8,7 @@ function initMap() {
     // Show a map centered at latitude / longitude.
     let map = new google.maps.Map(document.getElementById('map'), {
         center: {lat:latitude, lng: longitude},
-        zoom: 11
+        zoom: 10
       });
     
     let request = {}
@@ -18,26 +18,31 @@ function initMap() {
       
       request = {
         query: `${retailer_name}`,
-        fields: ['name', 'geometry', 'formatted_address', 'place_id'],
-        locationBias: {radius: 100, center: {lat: latitude, lng: longitude}}
+        // fields: ['name', 'geometry', 'formatted_address', 'place_id'],
+        type: "store",
+        location: {lat: latitude, lng: longitude},
+        radius: 1600
       };
 
     } else if (plan_action == "Resell") {
       request = {
         query: "consignment store",
-        fields: ['name', 'geometry', 'formatted_address', 'place_id'],
-        locationBias: {radius: 100, center: {lat: latitude, lng: longitude}}
+        // fields: ['name', 'geometry', 'formatted_address', 'place_id'],
+        type: "store",
+        location: {lat: latitude, lng: longitude},
+        radius: 1600
       };
 
     } else if (plan_action == "Donate") {
       request = {
         query: "donation center",
-        fields: ['name', 'geometry', 'formatted_address', 'place_id'],
-        locationBias: {radius: 100, center: {lat: latitude, lng: longitude}}
+        // fields: ['name', 'geometry', 'formatted_address', 'place_id'],
+        location: {lat: latitude, lng: longitude},
+        radius: 1600
       };
     }
     let service = new google.maps.places.PlacesService(map);
-    service.findPlaceFromQuery(request, function(results, status) {
+    service.textSearch(request, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         for (let i = 0; i < results.length; i++) {
             const infowindow = new google.maps.InfoWindow({

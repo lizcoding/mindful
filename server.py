@@ -5,6 +5,8 @@ from flask import (Flask, redirect, flash, url_for, request, render_template, se
 from jinja2 import StrictUndefined
 from model import connect_to_db
 from twilio.rest import Client
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from google.oauth2.credentials import Credentials
@@ -21,17 +23,10 @@ import datetime
 import crud
 import os
 
-# <------- UP NEXT ------------------------------------------------------------------------------->
-# [ ] Twilio integration for Gift plans
-    # [X] SMS
-    # [ ] SendGrid
-# [ ] Edit Google Maps API calls (enable multiple results)
-# [ ] New Feature: Testing
-
 # <------- TO-DO's: Complete by End of Sprint 2 -------------------------------------------------->
 # [ ] Allow user to navigate back to Item page from Plan
-# [ ] Add more features to Flask Login
-# [ ] Allow user to view past Reflection entries
+# [ ] Flask Remember Me
+# [ ] New Feature: Testing
 
 # <------- TO-DO's: Styling Sprint --------------------------------------------------------------->
 # [ ] Add small icons to item images w/ tooltips 
@@ -47,6 +42,15 @@ import os
 # MVP: Cloudinary API, Google Maps API, IBM Natural Language Understanding API, Flask Login, Google Sign-In (OAuth2)
 # Review code and refactor/modularize where appropriate
 # Lint code
+
+# <------- BEYOND HACKBRIGHT ----------------------------------------------------------------------->
+# [ ] Webscrape Add Item data from Item url
+# [ ] Implement Password match for account creation
+# [ ] Enable show password toggle for Login/Signup
+# [ ] Show app usage data on profile page
+# [ ] Allow user to view past Reflection entries
+
+
 
 
 app = Flask(__name__)
@@ -66,6 +70,7 @@ TWILIO_ACCOUNT_SID = os.environ['TWILIO_ACCOUNT_SID']
 TWILIO_AUTH_TOKEN = os.environ['TWILIO_AUTH_TOKEN']
 VERIFY_SERVICE_SID = os.environ['VERIFY_SERVICE_SID']
 TWILIO_PHONE_NUMBER = os.environ['TWILIO_PHONE_NUMBER']
+SENDGRID_API_KEY = os.environ['SENDGRID_API_KEY']
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 # Configure Cloudinary API
@@ -123,6 +128,9 @@ def check_verification(phone, code):
 
         if verification_check.status == "approved":
             crud.verify_user(user)
+            if user.phone_number:
+                crud.remove_phone_number(user)
+
             flask_login.login_user(user)
             flash('Your phone number has been verified! Welcome to Mindful.')
             return redirect("/dashboard")
@@ -212,6 +220,8 @@ def register_user():
                 # redirect to verification check
                 user = crud.create_user(email, password, first_name)
                 crud.set_phone_number(user, phone)
+                today = datetime.date.today().isoformat()
+                session['today'] = today
                 session['user_id'] = user.id           
                 return redirect("/verify")
         
@@ -475,23 +485,39 @@ def send_offer(item_id):
     item = crud.get_item_by_id(item_id)
 
     name = request.form.get("recipient_name")
-    # email = request.form.get("recipient_email")
+    email = request.form.get("recipient_email")
     mobile_input = request.form.get("recipient_mobile")
-    phone_number = "+1" + "".join(mobile_input.split("-"))
-    message = request.form.get("message")
-    
-    if not message:
-        message = f'Hi, {name}. This is the Gift plan default message.'
 
-    text = client.messages \
-                .create(
-                     body=message,
-                     from_=TWILIO_PHONE_NUMBER,
-                     to=phone_number
-                 )
+    offer_message = request.form.get("message")
     
-    flash("Message Sent!")
-
+    if not offer_message:
+        offer_message = f'Hi, {name}. This is the Gift plan default message.'
+    
+    if mobile_input:
+        phone_number = "+1" + "".join(mobile_input.split("-"))
+        text = client.messages \
+                    .create(
+                        body=offer_message,
+                        from_=TWILIO_PHONE_NUMBER,
+                        to=phone_number
+                    )
+    if email:
+        message = Mail(
+        from_email='lizcodingdev@gmail.com',
+        to_emails=email,
+        subject='Mindful Gift Offer',
+        html_content='<strong>and easy to do anywhere, even with Python</strong>')
+        try:
+            sg = SendGridAPIClient(SENDGRID_API_KEY)
+            response = sg.send(message)
+            print(response.status_code)
+            print(response.body)
+            print(response.headers)
+        except Exception as e:
+            print(e.message)
+    
+    flash("Offer Sent!")
+    
     # TO-DO: Twilio SendGrid for Gift Plan
 
     return redirect(f"/item/{item.item_id}")

@@ -28,6 +28,7 @@
               {% endif %}
               <p>${{ item.price }}</p>
               <p id="plan-action" style="display: none;">{{ plan.action }}</p>
+              <p id="gmaps-key" style="display: none;">{{ gmaps_key }}</p>
               <p id="retailer-name" style="display: none;">{{ item.retailer.name }}</p>      
               {% if plan.action == "Return" %}
               <p>Return Deadline: {{ item.return_deadline }}</p>
@@ -97,13 +98,13 @@
                     <label for="recipient_name">Recipient Name: </label>
                     <input type="text" name="recipient_name" maxlength="30" required>
                   </div>
-                  <!-- <div class="form-group">
+                  <div class="form-group">
                     <label for="recipient_email">Email: </label>
-                    <input type="email" name="recipient_email" maxlength="100" required>
-                  </div> -->
+                    <input type="email" name="recipient_email" maxlength="100">
+                  </div>
                   <div class="form-group">
                     <label for="recipient_mobile">Cell Phone: </label>
-                    <input type="tel" name="recipient_mobile" required>
+                    <input type="tel" name="recipient_mobile" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
                   </div>
                   <div class="form-group">
                     <label for="message">Message (Optional): </label>

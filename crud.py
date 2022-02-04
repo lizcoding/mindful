@@ -18,6 +18,11 @@ def create_user(email, password, first_name):
 def set_phone_number(user, phone_number):
     user.phone_number = phone_number
     db.session.commit()
+
+def remove_phone_number(user):
+    user.phone_number = None
+    db.session.commit()
+    
 def verify_user(user):
     user.verified = True
     db.session.commit()
