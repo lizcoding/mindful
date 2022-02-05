@@ -220,29 +220,35 @@ PROJECT JOURNAL WEEK 5 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 2/4: Week 5 - Friday
     Today's Goals:
-    # [ ] Flask Remember Me
-    # [ ] Allow user to navigate back to Item page from Plan
-    # [ ] Start Testing
+    # [0] Flask Remember Me
+    # [X] Make Calendar Route iframe dynamic
+    # [O] Start Testing
+    # [X] Add small icons to item images w/ tooltips 
+        # [X] to show how many days left until return deadline
+        # [X] to show item's plan type
+    # [X] Add underline animation to navbar links
 
     
 ----------------------------------------------------------------------------------
 2/5: Week 5 - Saturday
     Today's Goals:
-    # [ ] Continue Testing
-    # [ ] Make Calendar Route iframe dynamic
+    # [ ] Flask Remember Me
+    # [ ] Start Testing
+    
 
 ----------------------------------------------------------------------------------
 2/6: Week 5 - Sunday
     Today's Goals:
     # [ ] Refactor Code
-    # [ ] Finish Testing
+    # [ ] Continue Testing
+    
 
 ----------------------------------------------------------------------------------
-PROJECT JOURNAL - STYLE SPRINT ---------------------------------------------------
+PROJECT JOURNAL - STYLING SPRINT -------------------------------------------------
 
 2/7: Week 6 - Monday
     Today's Goals:
-
+    # [ ] Allow user to navigate back to Item page from Plan
 
 ----------------------------------------------------------------------------------
 2/8: Week 6 - Tuesday

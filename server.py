@@ -24,24 +24,23 @@ import crud
 import os
 
 # <------- TO-DO's: Complete by End of Sprint 2 -------------------------------------------------->
-# [ ] Allow user to navigate back to Item page from Plan
 # [ ] Flask Remember Me
-# [ ] New Feature: Testing
+# [ ] Flask Password Recovery
+# [ ] Testing
 
 # <------- TO-DO's: Styling Sprint --------------------------------------------------------------->
-# [ ] Add small icons to item images w/ tooltips 
-    # [ ] to show how many weeks left until return deadline
-    # [ ] to show item's plan type
-# [ ] Add underline animation to navbar links
 # [ ] Edit Plan HTML: Item Image behavior
+    # [ ] Allow user to navigate back to Item page from Plan
 # [ ] Style Login page
-# [ ] Change Balloonicorn site image to Mindful M
+# [ ] Edit Mindful M favicon to have rounded edges
+# [ ] Edit navbar link font style
+# [ ] Style Calendar page
+# [ ] Style flashed messages
 
 # <------- END OF SPRINT 2 ----------------------------------------------------------------------->
 # END OF SPRINT 2: Google Calendar API, Twilio Verify, Twilio SMS, Twilio SendGrid, Testing
 # MVP: Cloudinary API, Google Maps API, IBM Natural Language Understanding API, Flask Login, Google Sign-In (OAuth2)
 # Review code and refactor/modularize where appropriate
-# Lint code
 
 # <------- BEYOND HACKBRIGHT ----------------------------------------------------------------------->
 # [ ] Webscrape Add Item data from Item url
@@ -49,8 +48,6 @@ import os
 # [ ] Enable show password toggle for Login/Signup
 # [ ] Show app usage data on profile page
 # [ ] Allow user to view past Reflection entries
-
-
 
 
 app = Flask(__name__)
@@ -548,7 +545,7 @@ def authorize_calendar():
       # Enable offline access so that you can refresh an access token without
       # re-prompting the user for permission. Recommended for web server apps.
       access_type='offline',
-      # Enable incremental authorization. Recommended as a best practice.
+      # Disable incremental authorization. Enable is recommended as a best practice.
       include_granted_scopes='false')
 
   # Store the state so the callback can verify the auth server response.
@@ -622,7 +619,7 @@ def calendar():
     #              credentials in a persistent database instead.
     session['credentials'] = credentials_to_dict(credentials)
     
-    return render_template("calendar.html", user=user)
+    return render_template("calendar.html", user=user, calendar_id=calendar.calendar_id)
 
 
 def credentials_to_dict(credentials):

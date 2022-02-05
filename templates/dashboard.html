@@ -3,7 +3,7 @@
 {% block title %} Dashboard {% endblock %}
 
 {% block content %}
-<div id="content-block" class="content-block container-fluid">
+<div class="items-header-block">
     <div class="d-flex justify-content-between">
         <div class="flex-column">
             <h4 class="dashboard-h4">LET'S GET MINDFUL, {{ user.first_name }}!</h4>
@@ -16,28 +16,66 @@
             </button></h4>
         </div>
     </div>
+</div>
 
+<div id="content-block" class="content-block">
     {% if tracked_items %}
-    <div class="card-deck">
-        {% for item, days_left in tracked_items|zip(deltas) %}
-        <div class="card">
-        <a href="/item/{{item.item_id}}"><img src="{{item.images[0].cloudinary_url}}" class="card-img-top img-fluid" max-width="100%" height="auto" alt=""></a>
-            <div class="card-body">
-                <div class="card-text">
-                    <p><a href="/item/{{item.item_id}}">Status: {{ item.decision_status }}</a></p>
-                    {% if item.plan %}
-                        <p><a href="/plan/{{item.plan[0].plan_id}}">Plan: {{ item.plan[0].action }}</a></p>
-                    {% endif %}
-                    {% if item.return_type != "ineligable" %}
-                        <p>Return Deadline: {{item.return_deadline}}</p>
+
+    <!-- TO-DO: Horizontal Scroll Buttons -->
+    <!-- <div id="scroll-right-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#5e2bff" class="bi bi-chevron-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+    </div>
+    <div id="scroll-left-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#5e2bff" class="bi bi-chevron-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+          </svg>
+    </div> -->
+    
+    <div class="img-container">
+        {% for item, days_left in tracked_items|zip(deltas) %}      
+        <div class="dashboard-img">
+            <div class="item-info">
+                {% if not item.plan %}
+                    {% if item.return_type != "ineligible" %}
+                    <a href="/item/{{item.item_id}}">
                         {% if days_left.days >= 0 %}
-                            <p>Days before return deadline: {{days_left.days}} </p>
-                            {% if days_left.days == 0 %}<p style="color:red;">Must return this item today!</p>{% endif %}
-                        {% else %}<p style="color:red;">Item has passed return window. Make a back-up plan!</p>
+                        <div class="info-banner" id="return-info">{{days_left.days}} Days Left To Return </div>
+                        {% elif days_left.days == 0 %}
+                        <div class="info-banner" id="return-info">Must return this item today! </div>
+                        {% else %}
+                        <div class="info-banner" id="return-info">Item has passed return window. Make a back-up plan! </div>
                         {% endif %}
+                    </a>
                     {% endif %}
-                </div>
+                    <a href="/item/{{item.item_id}}">
+                        <div class="info-banner" id="status-info">No Plan </div>
+                    </a>
+                    
+                {% endif %}
+                {% if item.plan %}
+                    {% if item.plan[0].action == "Return" %}
+                    <a href="/item/{{item.item_id}}">
+                        {% if days_left.days >= 0 %}
+                        <div class="info-banner" id="return-info">{{days_left.days}} Days Left To Return </div>
+                        {% elif days_left.days == 0 %}
+                        <div class="info-banner" id="return-info">Must return this item today! </div>
+                        {% else %}
+                        <div class="info-banner" id="return-info">Item has passed return window. Make a new back-up plan! </div>
+                        {% endif %}
+                    </a>
+                    {% else %}
+                    <a href="/item/{{item.item_id}}">
+                        <div class="info-banner" id="return-info">Plan in progress </div>
+                    </a>
+
+                    {% endif %}
+                    <a href="/plan/{{item.plan[0].plan_id}}"><div class="info-banner" id="status-info">{{item.plan[0].action}} Plan </div></a>
+                {% endif %}                     
+                <!-- <div class="info-banner" id="price-info">$185.00</div> -->
             </div>
+            <a href="/item/{{item.item_id}}"><img class="img-src" src="{{item.images[0].cloudinary_url}}" alt=""></a>
         </div>
         {% endfor %}
     </div>
@@ -87,7 +125,7 @@
                         <label>Both</label>
                         <input type="radio" name="return_type" value="both" required>
                         <label>Not Returnable</label>
-                        <input type="radio" name="return_type" value="ineligable" required>
+                        <input type="radio" name="return_type" value="ineligible" required>
                     </div>
 
                     <div class="form-group">
@@ -104,21 +142,16 @@
                     </div>
 
                     <div class="form-group">
-                    <!--
-                    Accept any file with an image/* MIME type. (Many mobile devices also 
-                    let the user take a picture with the camera when this is used.)
-                    * TO-DO: Add "required" after Cloudinary integration
-                    -->
                     <label for="image">Upload Item Image: </label>
-                    <input type="file" name="image">
+                    <input type="file" name="image" required>
                     </div>
-                    
                     <div class="form-group"><button type="submit" class="btn btn-primary">Add Item</button></div>
                 </form>
             </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 
