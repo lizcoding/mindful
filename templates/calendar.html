@@ -4,19 +4,20 @@
 
 {% block content %}
 <div id="content-block" class="content-block container-fluid">
-    <div class="d-flex justify-content-between">
-        <div class="flex-column">
-            <h4 class="dashboard-h4">LET'S PLAN TO BE MINDFUL, {{ user.first_name }}!</h4>
-            <h1 id="dashboard-h1">Calendar</h1>
+    <div class="row calendar">
+        <div class="col">
+            <div class="d-flex justify-content-between">
+                <div class="flex-column">
+                    <h4 class="dashboard-h4">LET'S PLAN TO BE MINDFUL, {{ user.first_name }}!</h4>
+                    <h1 id="dashboard-h1">Calendar</h1>
+                </div>
+            </div>
         </div>
-    </div>
-    <div>
-        <!-- <iframe src={{ liz_calendar }} style="border: 0" width="720" height="540" frameborder="0" scrolling="no"></iframe> -->
-        <iframe src="https://calendar.google.com/calendar/embed?src={{calendar_id}}&ctz=America%2FLos_Angeles" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-        <!-- <iframe src={{ liz_mindful_calendar }} style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe> -->
-    </div>
-    <div class="calendar-container">
-
+        <div class="col calendar">
+            <div class="calendar-container">
+                <iframe src="https://calendar.google.com/calendar/embed?src={{calendar_id}}&ctz=America%2FLos_Angeles" style="border: 0" width="880" height="660" frameborder="0" scrolling="no"></iframe>
+            </div>       
+        </div>
     </div>
 </div>
 {% endblock %}

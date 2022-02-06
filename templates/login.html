@@ -5,123 +5,99 @@
 
 {% block content %} 
 <div id="login-page" class="content-block">
-  <h1>Welcome to Mindful</h1>
-  <div id="login-page-container">
-    <div id="create-account" class="container-fluid">
-      
-      <form action="/create_account" method="POST">
-        <div class="mb-3"><h2>Create an Account</h2></div>
+  <div id="login-row" class="row" height="100%">
+    <div class="col form-col">
+
+      <div id="login-header">
+        <h1 id="login-logo" class="logo">Mindful</h1>
+        <h2 id="about-h2">Never miss your return deadline again.</h2>
+      </div>
+
+      <div id="sign-in" class="container-fluid">
+        <form action="/login" method="POST">
           <div class="mb-3">
-            <label for="firstName" class="form-label">First Name</label>
-            <input type="text" class="form-control" name="firstName" id="firstName" maxlength="20" required>
-          </div>
-          <div class="mb-3">
-            <label for="mobileNumber" class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" name="mobileNumber" id="mobileNumber" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="123-456-7890" required>
-            <div id="mobileNumberHelp" class="form-text">Enter your US-based mobile number for account verification.</div>
-          </div>
-          <div>
-            <label for="channel">Verification method:</label>
-            <label><input type="radio" name="channel" value="sms" checked required/> SMS  </label>
-            <label><input type="radio" name="channel" value="call" /> Call</label>
-          </div>
-          <div>
-            <label for="createEmail" class="form-label">Email Address</label>
-            <input type="email" class="form-control" name="createEmail" id="createEmail" required>
+
+            <label for="userEmail" class="form-label">Email Address</label>
+            <input type="email" class="form-control" name="userEmail" id="userEmail">
           </div>
           <div class="mb-3">
-            <label for="createPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" name="createPassword" id="createPassword" required>
+            <label for="userPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" name="userPassword" id="userPassword">
           </div>
           <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe">
-            <label class="form-check-label" for="rememberMe">Remember Me</label>
+            <input type="checkbox" class="form-check-input" id="rememberUser">
+            <label class="form-check-label" name="rememberUser" for="rememberUser">Remember Me</label>
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-    </div>
-    <div id="sign-in" class="container-fluid">
-      <form action="/login" method="POST">
-        <div class="mb-3"><h2>Sign In</h2>
-          <label for="userEmail" class="form-label">Email Address</label>
-          <input type="email" class="form-control" name="userEmail" id="userEmail">
-        </div>
-        <div class="mb-3">
-          <label for="userPassword" class="form-label">Password</label>
-          <input type="password" class="form-control" name="userPassword" id="userPassword">
-        </div>
-        <div class="mb-3 form-check">
-          <input type="checkbox" class="form-check-input" id="rememberUser">
-          <label class="form-check-label" name="rememberUser" for="rememberUser">Remember Me</label>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <div>
-          <div id="g_id_onload"
-          data-client_id="{{client_id}}"
-          data-login_uri="http://localhost:5000/tokensignin"
-          data-auto_prompt="false"
+          <div class="mb-3">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+          </div>
+
+          <button class="btn btn primary" style="position: relative; width: 100%; background-color: white; color: #212529; border: 2px solid #212529;"><span>Sign In With Google</span><div class="g_id_signin" data-width="330" style="position: absolute; width: 100%; height: 100%;"></div></button>
+            
+          <div id="g_id_onload" 
+          data-client_id="{{client_id}}" 
+          data-login_uri="http://localhost:5000/tokensignin" 
+          data-auto_prompt="false" 
           data-auto_select="true">
+          </div> 
+
+        </form>
+      </div>
+     
+
+      <div id="create-account" class="container-fluid" style="display: none;">
+        <form action="/create_account" method="POST">
+          <div class="mb-3"><h2>Create an Account</h2></div>
+            <div class="mb-3">
+              <label for="firstName" class="form-label">First Name</label>
+              <input type="text" class="form-control" name="firstName" id="firstName" maxlength="20" required>
+            </div>
+            <div class="mb-3">
+              <label for="mobileNumber" class="form-label">Phone Number</label>
+              <input type="tel" class="form-control" name="mobileNumber" id="mobileNumber" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="123-456-7890" required>
+              <div id="mobileNumberHelp" class="form-text">Enter your US-based mobile number for account verification.</div>
+            </div>
+            <div>
+              <label for="channel">Verification method:</label>
+              <label><input type="radio" name="channel" value="sms" checked required/> SMS  </label>
+              <label><input type="radio" name="channel" value="call" /> Call</label>
+            </div>
+            <div>
+              <label for="createEmail" class="form-label">Email Address</label>
+              <input type="email" class="form-control" name="createEmail" id="createEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="createPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" name="createPassword" id="createPassword" required>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">Remember Me</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+    <div class="col about-col">
+        <h1 class="about-h1 h1-top logo">Become more <span style="color: #5e2bff;">Mindful</span></h1>
+          <!-- Lottie Animation Source: https://lottiefiles.com/83548-online-shopping-black-friday -->
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+        <lottie-player src="https://assets9.lottiefiles.com/packages/lf20_5ngs2ksb.json"  background="transparent"  speed="1"  style="width: 550px; height: 550px;"  loop autoplay></lottie-player>      
+        <h1 class="about-h1 h1-bottom logo">online shopping.</h1>
+        <div class="d-flex flex-row-reverse col">
+          <div id="about-pitch">
+            <p style="padding-top: 0.6em;">Mindful is a powerful tool that helps you reflect on your purchase satisfaction through sentiment and emotion analyis, using <span style="color: #5e2bff;">IBM Artificial Intelligence</span>.</p>
+            <p>
+              With meaningful resources such as <span style="color: #5e2bff;">Google Calendar</span> and <span style="color: #5e2bff;">Google Maps</span> at your fingertips, if a purchase doesn't bring you joy, it won't be forgotten at the bottom of your closet!
+            </p>
+            <div class="login-toggle"> 
+              <button type="submit" id="toggle" class="btn btn-primary">Get Started</button>
+            </div>
           </div>
-          <div class="g_id_signin"
-          data-type="standard"
-          data-size="large"
-          data-theme="outline"
-          data-text="sign_in_with"
-          data-shape="rectangular"
-          data-logo_alignment="left">
-          </div>
+          
         </div>
-      </form>
     </div>
   </div>
   </div>  
-</div>
-
-  <!-- <h2>Create an Account</h2>
-  <form action="/create_account" method="POST">
-    <p>
-      First Name: <input type="text" name="first_name" required>
-    </p>
-    <p>
-      Email: <input type="text" name="email" required>
-    </p>
-
-    <p>
-      Password: <input type="password" name="password" required>
-    </p>
-
-    <p>
-      <input type="submit">
-    </p>
-  </form>
-
-  <h2>Log In</h2>
-  <form action="/login" method="POST">
-    <p>
-      Email: <input type="text" name="email" required>
-    </p>
-
-    <p>
-      Password: <input type="password" name="password" required>
-    </p>
-
-    <p>
-      <input type="submit">
-    </p>
-  </form>
-  <div id="g_id_onload"
-  data-client_id="{{client_id}}"
-  data-login_uri="/tokensignin"
-  data-auto_prompt="false"
-  data-auto_select="true">
-  </div>
-  <div class="g_id_signin"
-  data-type="standard"
-  data-size="large"
-  data-theme="outline"
-  data-text="sign_in_with"
-  data-shape="rectangular"
-  data-logo_alignment="left">
-  </div>
-</div> -->
+</div>   
 {% endblock %}

@@ -14,6 +14,7 @@ body {
     padding: 0.5rem 2rem;
     background-color: black;
     color: white;
+    border-bottom: 4px solid #5e2bff;
 }
 
 .logo {
@@ -24,6 +25,99 @@ body {
     padding: 0;
     margin: 0;
 }
+.btn-group.item-buttons > .btn.btn-primary {
+    border-radius: 0.25rem;
+}
+
+#login-logo {
+    font-size: 32px;
+}
+
+.about-h1 {
+    font-size: 76px;
+    font-weight: 900;
+    font-style: normal;
+    display: block;
+    white-space: nowrap;
+}
+
+.h1-top {
+    text-align: start;
+    padding-top: 9%;
+}
+
+.h1-bottom {
+    text-align: end;
+    right: 0;
+    bottom: 10%;
+}
+
+#about-h2 {
+    font-size: 16px;
+    font-weight: 500;
+    font-style: italic;
+}
+
+#about-pitch {
+    max-width: 45%;
+    padding-top: 0.5em;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+#login-row {
+    height: 100%;
+    gap: 3rem;
+}
+
+.flex-flow-reverse.col {
+    padding-bottom: 1rem;
+}
+
+.row.calendar {
+    flex: 1;
+}
+
+div.col.calendar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.col.form-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    min-width: 300px;
+    max-width: 350px;
+    padding-bottom: 3em;
+}
+
+.about-col {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-radius: .3rem;
+}
+
+lottie-player {
+    position: absolute;
+    z-index: -1;
+    top: 20%;
+    left: -10px;
+}
+
+.g_id_signin {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
 
 nav > a {
     color:white;
@@ -70,7 +164,6 @@ nav > a {
     transform-origin: bottom left;
 }
 
-
 .dashboard-img {
     padding: .5em;
     position: relative;
@@ -96,6 +189,7 @@ nav > a {
     padding-right: 0;
     right: 0;
 }
+
 
 .info-banner {
     display: flex;
@@ -137,8 +231,24 @@ nav > a {
     flex-direction: column;
 }
 
+.reflection-container {
+    padding-top: 0.5rem;
+}
+#reflection-header {
+    font-family: 'Roboto', 'sans-serif';
+    font-style: italic;
+    font-size: 46px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+#events-list {
+    flex-direction: column;
+    height: 100%;
+}
+
 .btn-group {
     display: flex;
+    gap: .25rem;
 }
 
 .item-buttons, .plan-buttons {
@@ -148,7 +258,7 @@ nav > a {
 #login-page {
     padding: 3em;
     padding-bottom: 0rem;
-    overflow: hidden;
+    overflow-y: scroll;
 }
 
 #item-page {
@@ -177,25 +287,43 @@ TO-DO: Horizontal Scroll Buttons
 
 */
 
-#login-page-container {
-    padding-top: 2em;
+#login-header {
     display: flex;
-    align-items: stretch;
-    gap: 5em;
+    flex-direction: column;
+    padding: 1em;
+    border-radius: 0.25rem;
 }
 
 #create-account, #sign-in {
     display: flex;
-    padding: 0;
+    padding: 1em;
+    background-color: white;
+    border-radius: 0.25rem;
 }
 
 #sign-in, form {
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 #create-account, form {
-    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
+.login-toggle {
+    display: flex;
+    font-family: 'Roboto', 'sans-serif';
+    justify-content: center;
+    padding-top: 2rem;
+
+    
+
+}
+#toggle {
+    background-color: black;
+    width: 50%;
+}
 #item-img {
     max-height: 90vh;
     width: auto;
@@ -212,17 +340,15 @@ a:hover {
     text-decoration: none;
 }
 
-.card-deck {
-    display: flex;
-    row-gap: 1rem;
-}
-.card {
-    min-width: 30%;
-    height: auto;
-    margin: 0px;
-}
+
 .col {
     padding-bottom: 0.5em;
+}
+
+.calendar-container {
+    display: flex;
+    justify-content: center;
+    flex: 1;
 }
 
 .footer {
@@ -230,7 +356,7 @@ a:hover {
     font-size: 14px;
     font-family: 'Roboto', sans-serif;
     padding: 0.5rem 2rem;
-    margin: none;
+    margin: 0;
     width: 100%;
 }
 
@@ -269,6 +395,7 @@ a:hover {
     border-radius: 0.25rem;
     background-color: #5e2bff;
 }
+
 .btn-primary:hover {
     background-color: #481fcf;
 }
@@ -280,4 +407,8 @@ div.gm-style-iw-d > div > h2 {
 .resell-logo {
     width: auto;
     height: 5vh;
+}
+.g_id_signin > div > iframe {
+    width: 100%;
+    margin: 0;
 }

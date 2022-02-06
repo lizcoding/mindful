@@ -12,8 +12,6 @@ from google.auth.transport import requests
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
-# from googleapiclient.errors import HttpError
-# from markupsafe import re
 import functools
 import random
 import string
@@ -31,11 +29,20 @@ import os
 # <------- TO-DO's: Styling Sprint --------------------------------------------------------------->
 # [ ] Edit Plan HTML: Item Image behavior
     # [ ] Allow user to navigate back to Item page from Plan
-# [ ] Style Login page
+
+# [ ] Style Create-Account Login Page
 # [ ] Edit Mindful M favicon to have rounded edges
 # [ ] Edit navbar link font style
 # [ ] Style Calendar page
 # [ ] Style flashed messages
+# [ ] Prioritize Store Donation Locations over Donation Drop-Off Boxes for Donation Plan Maps API Result
+# [ ] Edit style for Resell Plan Pages
+# [ ] Style Send Offer (Gift Plan) Form
+# [ ] Style Mindful Analysis Reflection Responses
+# [ ] Style Verify Page to match Login Page
+
+# IMPORTANT !!!
+# [ ] Make sure Calendar Route checks Calendar Object for items with deadlines in the past, and removes them from calendar.items
 
 # <------- END OF SPRINT 2 ----------------------------------------------------------------------->
 # END OF SPRINT 2: Google Calendar API, Twilio Verify, Twilio SMS, Twilio SendGrid, Testing
@@ -600,7 +607,7 @@ def calendar():
     calendar = user.calendar[0]
 
     if calendar.items:
-        unadded_items = [item for item in user.items if item not in calendar.items]
+        unadded_items = [item for item in user.items if item.return_deadline and item not in calendar.items]
     else:
         unadded_items = user.items
     
@@ -619,7 +626,7 @@ def calendar():
     #              credentials in a persistent database instead.
     session['credentials'] = credentials_to_dict(credentials)
     
-    return render_template("calendar.html", user=user, calendar_id=calendar.calendar_id)
+    return render_template("calendar.html", user=user, calendar_id=calendar.calendar_id, calendar_items=calendar.items)
 
 
 def credentials_to_dict(credentials):

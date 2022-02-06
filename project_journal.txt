@@ -233,14 +233,14 @@ PROJECT JOURNAL WEEK 5 ---------------------------------------------------------
 2/5: Week 5 - Saturday
     Today's Goals:
     # [ ] Flask Remember Me
-    # [ ] Start Testing
+    # [X] Style Login-Form Login Page
     
 
 ----------------------------------------------------------------------------------
 2/6: Week 5 - Sunday
     Today's Goals:
     # [ ] Refactor Code
-    # [ ] Continue Testing
+    # [ ] Testing
     
 
 ----------------------------------------------------------------------------------

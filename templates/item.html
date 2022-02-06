@@ -37,6 +37,17 @@
             <a class="btn btn-primary" href="/item/{{item.item_id}}/delete" role="button">Delete Item</a>
     
           </div>
+
+          <div class="reflection-container">
+            <h1 id="reflection-header">MINDFUL ANALYSIS</h1>
+            <p>-</p>
+            <p>-</p>
+            <p>-</p>
+            <p>-</p>
+            <p>-</p>
+
+          </div>
+
           {% if days_left.days >= 0 and (item.return_type != "ineligable") %}
           <div>
             {% if days_left.days == 0 %}
@@ -69,7 +80,6 @@
           {% endif %}
           </div>
           <div>
-            <h4>Details</h4>
             {% if item.retailer %}
               <p>{{ item.retailer.name }}{% if item.brand and (item.brand != item.retailer.name) %}: {{ item.brand }}{% endif %}</p>
             {% endif %}
