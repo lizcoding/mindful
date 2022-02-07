@@ -28,6 +28,9 @@ body {
 .btn-group.item-buttons > .btn.btn-primary {
     border-radius: 0.25rem;
 }
+.btn-group.plan-buttons > .btn.btn-primary {
+    border-radius: 0.25rem;
+}
 
 #login-logo {
     font-size: 32px;
@@ -118,6 +121,10 @@ lottie-player {
     left: 0;
 }
 
+#map {
+    border-radius: 0.3rem;
+    border: 2px solid rgb(33, 37, 41, 0.70);
+}
 
 nav > a {
     color:white;
@@ -190,6 +197,37 @@ nav > a {
     right: 0;
 }
 
+#reflection-results {
+    padding: 1em;
+    border: 2px solid rgb(33, 37, 41, 0.65);
+    color: #212529;
+    background-color: #e5e7e785;
+    /* border: solid 2px rgb(94, 43, 255, 0.5); */
+    border-radius: 0.5rem;
+    font-weight: 400;
+    font-family: 'Roboto', 'sans-serif';
+    margin-bottom: 1em;
+}
+
+#reflection-results p {
+    margin: 0;
+}
+
+#item-details {
+    padding: 1em;
+    border: 2px solid rgb(33, 37, 41, 0.65);
+    color: #212529;
+    background-color: #e5e7e785;
+    /* border: solid 2px rgb(94, 43, 255, 0.5); */
+    border-radius: 0.5rem;
+    font-weight: 400;
+    font-family: 'Roboto', 'sans-serif';
+    margin-bottom: 1em;
+}
+
+#item-details p {
+    margin: 0;
+}
 
 .info-banner {
     display: flex;
@@ -231,16 +269,28 @@ nav > a {
     flex-direction: column;
 }
 
-.reflection-container {
-    padding-top: 0.5rem;
-}
 #reflection-header {
     font-family: 'Roboto', 'sans-serif';
     font-style: italic;
     font-size: 46px;
     font-weight: 900;
     white-space: nowrap;
+    margin-bottom: 0.2rem;
 }
+
+#reflection-entry {
+    padding: 1em;
+    border: 2px solid rgb(33, 37, 41, 0.65);
+    color: #212529;
+    background-color: #e5e7e785;
+    /* border: solid 2px rgb(94, 43, 255, 0.5); */
+    border-radius: 0.5rem;
+    font-weight: 400;
+    font-style: italic;
+    font-family: 'Roboto', 'sans-serif';
+    margin-bottom: 1em;
+}
+
 #events-list {
     flex-direction: column;
     height: 100%;
@@ -248,11 +298,29 @@ nav > a {
 
 .btn-group {
     display: flex;
-    gap: .25rem;
+    gap: 0.25rem;
 }
 
+.btn-group.plan-buttons {
+    gap: 0.5rem;
+}
+
+/* #return-deadline-display {
+    display: flex;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    background-color: white;
+    border: 2px solid rgb(33, 37, 41, 1);
+    color: rgb(33, 37, 41, 1);
+    font-family: 'Roboto', 'sans-serif';
+    font-weight: 500;
+    margin-top: 0.65rem;
+    margin-bottom: 0.3rem;
+} */
+
 .item-buttons, .plan-buttons {
-    padding-bottom: 1rem;
+    padding-bottom: 0.25rem;
 }
 
 #login-page {
@@ -263,8 +331,10 @@ nav > a {
 
 #item-page {
     display: flex;
-    padding-top: 2em;
     flex: 1 1 0;
+    padding-top: 2em;
+    position: relative;
+    overflow: scroll;
 }
 
 /* 
@@ -324,12 +394,13 @@ TO-DO: Horizontal Scroll Buttons
     background-color: black;
     width: 50%;
 }
+
 #item-img {
-    max-height: 90vh;
+    max-height: 80vh;
     width: auto;
     max-width: 100%;
     margin-bottom: 1rem;
-    border-radius: calc(0.25rem - 1px);
+    border-radius: 0.25rem;
 }
 
 a {

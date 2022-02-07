@@ -2,26 +2,52 @@
 
 {% block title %} Verify Account {% endblock %}
 
-{% block content %}
+{% block navbar %} {% endblock %}
 
-<div id="content-block" class="content-block container-fluid">
-    <div class="d-flex justify-content-between">
-        <div class="flex-column">
-            <h4 class="dashboard-h4">YOU'RE ABOUT TO GET MINDFUL!</h4>
-            <h1 id="dashboard-h1">Verify Account</h1>
+{% block content %} 
+<div id="login-page" class="content-block">
+  <div id="login-row" class="row" height="100%">
+    <div class="col form-col">
+
+      <div id="login-header">
+        <h1 id="login-logo" class="logo">Mindful</h1>
+        <h2 id="about-h2">Never miss your return deadline again.</h2>
+      </div>
+
+      <div id="sign-in" class="container-fluid">
+        <div style="padding-top: 2em;">
+            <form accept-charset="UTF-8" method="POST">
+                <div class="form-group">
+                    <label for="code">Enter your code: </label>
+                    <input name="code" id="code" type="number"></select>
+                </div>
+                <div class="form-group">
+                    <button name="button" class="btn btn-primary" type="submit">Verify</button>
+                </div>             
+            </form>
+        </div>
+      </div>
+    </div>
+    <div class="col about-col">
+        <h1 class="about-h1 h1-top logo">Become more <span style="color: #5e2bff;">Mindful</span></h1>
+          <!-- Lottie Animation Source: https://lottiefiles.com/83548-online-shopping-black-friday -->
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+        <lottie-player src="https://assets9.lottiefiles.com/packages/lf20_5ngs2ksb.json"  background="transparent"  speed="1"  style="width: 550px; height: 550px;"  loop autoplay></lottie-player>      
+        <h1 class="about-h1 h1-bottom logo">online shopping.</h1>
+        <div class="d-flex flex-row-reverse col">
+          <div id="about-pitch">
+            <p style="padding-top: 0.6em;">Mindful is a powerful tool that helps you reflect on your purchase satisfaction through sentiment and emotion analyis, using <span style="color: #5e2bff;">IBM Artificial Intelligence</span>.</p>
+            <p>
+              With meaningful resources such as <span style="color: #5e2bff;">Google Calendar</span> and <span style="color: #5e2bff;">Google Maps</span> at your fingertips, if a purchase doesn't bring you joy, it won't be forgotten at the bottom of your closet!
+            </p>
+            <div class="login-toggle"> 
+              <button type="submit" id="toggle" class="btn btn-primary">Get Started</button>
+            </div>
+          </div>
+          
         </div>
     </div>
-    <div style="padding-top: 2em;">
-        <form accept-charset="UTF-8" method="POST">
-            <div class="form-group">
-                <label for="code">Enter your code: </label>
-                <input name="code" id="code" type="number"></select>
-            </div>
-            <div class="form-group">
-                <button name="button" class="btn btn-primary" type="submit">Verify</button>
-            </div>             
-        </form>
-    </div>
-</div>
-
+  </div>
+  </div>  
+</div>   
 {% endblock %}

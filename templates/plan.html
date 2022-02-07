@@ -8,47 +8,52 @@
     <div class="row gx-5 row-cols-sm-6 row-cols-xs-6 row-cols-md-6 row-cols-lg-12 row-cols-xl-12">
       <div class="col-md">
         <div class="d-flex justify-content-center">
-          {% for image in item.images %}
-          <img id="item-img" class="item-fluid" src="{{ image.cloudinary_url }}">
-          {% endfor %}
+          <div style="position: relative;">
+
+            <div class="item-info">
+              {% if plan.action == "Return" %}
+                <div class="info-banner" id="return-info">Return Deadline {{item.return_deadline}} </div>
+              {% endif %}
+              {% if item.retailer %}
+                <div class="info-banner" id="return-info">{{item.retailer.name}} </div>
+                  {% if item.brand and (item.brand != item.retailer.name) %}
+                    <div class="info-banner" id="return-info">{{item.brand}} </div>
+                  {% endif %}
+              {% endif %}
+              <div class="info-banner" id="return-info">${{item.price}} </div>
+            </div>
+
+            <a href="/item/{{item.item_id}}">
+              <img id="item-img" class="item-fluid" src="{{ item.images[0].cloudinary_url }}">
+            </a>
+          </div>
          </div>
       </div>
       <div class="col-md">
         <div class="container">
-          <div>
-            <div class="btn-group plan-buttons" role="group" aria-label="Plan Buttons">
-              <a class="btn btn-primary" href="/plan/{{plan.plan_id}}/remove_plan" role="button">Remove Plan</a>
-              <a class="btn btn-primary" href="/plan/{{plan.plan_id}}/complete_plan" role="button">Complete Plan</a>
-            </div>
-            <div>
-              <h4>{{ plan.action }}</h4>
-              <!-- <h4>Details</h4> -->
-              {% if item.retailer %}
-              <p>{{ item.retailer.name }}{% if item.brand and (item.brand != item.retailer.name) %}: {{ item.brand }}{% endif %}</p>
-              {% endif %}
-              <p>${{ item.price }}</p>
-              <p id="plan-action" style="display: none;">{{ plan.action }}</p>
-              <p id="gmaps-key" style="display: none;">{{ gmaps_key }}</p>
-              <p id="retailer-name" style="display: none;">{{ item.retailer.name }}</p>      
-              {% if plan.action == "Return" %}
-              <p>Return Deadline: {{ item.return_deadline }}</p>
-              {% endif %}
-            </div>
-          </div>
             
-          <div>
+            <!-- GOOGLE MAPS INFORMATION - DO NOT REMOVE -->
+            <p id="plan-action" style="display: none;">{{ plan.action }}</p>
+            <p id="gmaps-key" style="display: none;">{{ gmaps_key }}</p>
+            <p id="retailer-name" style="display: none;">{{ item.retailer.name }}</p>
+
+          <div style="display: flex; flex-direction: column;">
+
             {% if plan.action == "Return" %}
-              {% if (item.return_type == 'by mail') or (item.return_type == 'both') %}
-              <p>Request a shipping label for mail-back return: <a href="{{item.retailer.returns_url}}" target="_blank" rel="noopener noreferrer">here</a></p>
-              {% endif%}
               {% if (item.return_type == 'in store') or (item.return_type == 'both') %}
-              <h4>Nearest location for in-store returns: </h4>
-              <div id="map" style="height: 400px; width: 400px;"></div>
+              <div id="map" style="align-self: center; height: 500px; width: 500px;"></div>
               <script src="/static/js/gmaps.js"></script>
               <script
                 async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
               </script>
               {% endif %}
+
+              {% if (item.return_type == 'by mail') or (item.return_type == 'both') %}
+              <form action="{{item.retailer.returns_url}}">
+                <button type="submit" class="btn btn-primary" style="display: inline; margin-bottom: 0.5rem; margin-top: 0.65rem;">Request a return shipping label</button>
+              </form>
+              {% endif%}
+
             {% elif plan.action == "Resell" %}
               <div>
                 <h4>Online resale marketplaces: </h4>
@@ -119,6 +124,20 @@
                 </form>
               </div>
             {% endif %}
+
+            <div class="btn-group plan-buttons" role="group" aria-label="Plan Buttons">
+              <button class="btn btn-primary">
+                <a href="/plan/{{plan.plan_id}}/remove_plan" style="color: white;">Remove Plan</a>
+              </button>
+              <button class="btn btn-primary">
+                <a href="/plan/{{plan.plan_id}}/complete_plan" style="color: white;">Complete Plan</a>
+              </button>
+            </div>
+
+            <form action="/item/{{item.item_id}}">
+              <button type="submit" class="btn btn-primary" style="display: inline; margin-top: 0.3rem;">View Item Details</button>
+            </form>
+
           </div>
         </div>
       </div>

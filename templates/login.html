@@ -43,9 +43,51 @@
 
         </form>
       </div>
+
+    <div class="modal fade" id="createAccountModal" tabindex="-1" role="dialog" aria-labelledby="createAccountTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="createAccountTitle">Create Account</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="d-flex">
+                <form action="/create_account" method="POST">
+                  <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" name="firstName" id="firstName" maxlength="20" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="mobileNumber" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" name="mobileNumber" id="mobileNumber" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="123-456-7890" required>
+                    <div id="mobileNumberHelp" class="form-text">Enter your US-based mobile number for account verification.</div>
+                  </div>
+                  <div>
+                    <label for="channel">Verification method:</label>
+                    <label><input type="radio" name="channel" value="sms" checked required/> SMS  </label>
+                    <label><input type="radio" name="channel" value="call" /> Call</label>
+                  </div>
+                  <div>
+                    <label for="createEmail" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" name="createEmail" id="createEmail" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="createPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" name="createPassword" id="createPassword" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Create Account</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
      
 
-      <div id="create-account" class="container-fluid" style="display: none;">
+      <!-- <div id="create-account" class="container-fluid" style="display: none;">
         <form action="/create_account" method="POST">
           <div class="mb-3"><h2>Create an Account</h2></div>
             <div class="mb-3">
@@ -76,7 +118,8 @@
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-      </div>
+      </div> -->
+
     </div>
     <div class="col about-col">
         <h1 class="about-h1 h1-top logo">Become more <span style="color: #5e2bff;">Mindful</span></h1>
@@ -91,13 +134,12 @@
               With meaningful resources such as <span style="color: #5e2bff;">Google Calendar</span> and <span style="color: #5e2bff;">Google Maps</span> at your fingertips, if a purchase doesn't bring you joy, it won't be forgotten at the bottom of your closet!
             </p>
             <div class="login-toggle"> 
-              <button type="submit" id="toggle" class="btn btn-primary">Get Started</button>
+              <button type="button" id="toggle" class="btn btn-primary" data-toggle="modal" data-target="#createAccountModal">Get Started</button></h4>
             </div>
-          </div>
-          
+          </div>  
         </div>
+      </div>
     </div>
-  </div>
   </div>  
 </div>   
 {% endblock %}

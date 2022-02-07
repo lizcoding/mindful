@@ -22,32 +22,24 @@ import crud
 import os
 
 # <------- TO-DO's: Complete by End of Sprint 2 -------------------------------------------------->
-# [ ] Flask Remember Me
-# [ ] Flask Password Recovery
-# [ ] Testing
 
 # <------- TO-DO's: Styling Sprint --------------------------------------------------------------->
-# [ ] Edit Plan HTML: Item Image behavior
-    # [ ] Allow user to navigate back to Item page from Plan
-
-# [ ] Style Create-Account Login Page
-# [ ] Edit Mindful M favicon to have rounded edges
-# [ ] Edit navbar link font style
 # [ ] Style Calendar page
 # [ ] Style flashed messages
-# [ ] Prioritize Store Donation Locations over Donation Drop-Off Boxes for Donation Plan Maps API Result
+# [ ] Copy over Dashboard styling to Profile Page
 # [ ] Edit style for Resell Plan Pages
 # [ ] Style Send Offer (Gift Plan) Form
 # [ ] Style Mindful Analysis Reflection Responses
-# [ ] Style Verify Page to match Login Page
+    # [X] Create Containers
+    # [ ] Make Containers Dynamic
 
-# IMPORTANT !!!
-# [ ] Make sure Calendar Route checks Calendar Object for items with deadlines in the past, and removes them from calendar.items
-
-# <------- END OF SPRINT 2 ----------------------------------------------------------------------->
-# END OF SPRINT 2: Google Calendar API, Twilio Verify, Twilio SMS, Twilio SendGrid, Testing
-# MVP: Cloudinary API, Google Maps API, IBM Natural Language Understanding API, Flask Login, Google Sign-In (OAuth2)
-# Review code and refactor/modularize where appropriate
+# <------- FEATURE TO-DO's -------------------->
+# [ ] Flask Remember Me
+# [ ] Flask Password Recovery
+# [ ] Testing
+# [ ] IMPORTANT !!!
+    # [ ] Make sure Calendar Route checks Calendar Object for items with deadlines in the past, and removes them from calendar.items
+# [ ] Prioritize Store Donation Locations over Donation Drop-Off Boxes for Donation Plan Maps API Result
 
 # <------- BEYOND HACKBRIGHT ----------------------------------------------------------------------->
 # [ ] Webscrape Add Item data from Item url

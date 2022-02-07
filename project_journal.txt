@@ -232,23 +232,25 @@ PROJECT JOURNAL WEEK 5 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 2/5: Week 5 - Saturday
     Today's Goals:
-    # [ ] Flask Remember Me
+    # [0] Flask Remember Me
     # [X] Style Login-Form Login Page
     
 
 ----------------------------------------------------------------------------------
 2/6: Week 5 - Sunday
     Today's Goals:
-    # [ ] Refactor Code
-    # [ ] Testing
-    
+        # [X] Edit Plan HTML: Item Image behavior
+            # [ X] Allow user to navigate back to Item page from Plan
+        # [X] Style Create-Account Login Page
+        # [X] Edit Mindful M favicon to have rounded edges
+        # [X] Style Verify Page to match Login Page
 
 ----------------------------------------------------------------------------------
 PROJECT JOURNAL - STYLING SPRINT -------------------------------------------------
 
 2/7: Week 6 - Monday
     Today's Goals:
-    # [ ] Allow user to navigate back to Item page from Plan
+
 
 ----------------------------------------------------------------------------------
 2/8: Week 6 - Tuesday
