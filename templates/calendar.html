@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Calendar {% endblock %}
+{% block title %} Mindful | Calendar {% endblock %}
 
 {% block content %}
 <div id="content-block" class="content-block container-fluid">
@@ -10,6 +10,18 @@
                 <div class="flex-column">
                     <h4 class="dashboard-h4">LET'S PLAN TO BE MINDFUL, {{ user.first_name }}!</h4>
                     <h1 id="dashboard-h1">Calendar</h1>
+                    <div id="events-container">
+                        {% if calendar_items %}
+                        {% for item in calendar_items %}
+                        <a href="/item/{{item.item_id}}">
+                            <div class="event">
+                                <p style="font-weight: 600; margin-bottom: 0;">Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand != item.retailer.name) %} {{item.brand}}{% endif %}</p>
+                                <p style="margin: 0;">Return Deadline {{item.return_deadline}}</p>
+                            </div>
+                        </a>
+                        {% endfor %}
+                      {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

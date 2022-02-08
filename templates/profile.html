@@ -3,6 +3,7 @@
 {% block title %} Profile {% endblock %}
 
 {% block content %}
+
 <div id="content-block" class="content-block container-fluid">
     <div class="d-flex justify-content-between">
         <div class="flex-column">
@@ -24,24 +25,29 @@
     </div> 
     
     -->
-
+    <h4 class="dashboard-h4" style="padding-left: 0.5rem">PAST ITEMS</h4>
     {% if completed_items %}
-        <h4 class="dashboard-h4">PAST ITEMS</h4>
-        <div class="card-deck">
-            {% for item in completed_items %}
-            <div class="card">
-                <a href="/item/{{item.item_id}}"><img src="{{item.images[0].cloudinary_url}}" class="card-img-top img-fluid" max-width="100%" height="auto" alt=""></a>
-                <div class="card-body">
-                    <div class="card-text">
-                        <p><a href="/item/{{item.item_id}}">Status: {{ item.decision_status }}</a></p>
-                        {% if item.plan %}
-                            <p><a href="/plan/{{item.plan[0].plan_id}}">Plan: {{ item.plan[0].action }}</a></p>
+        <div class="img-container">
+            {% for item in completed_items %}         
+                <div class="dashboard-img">
+                    <div class="item-info">
+                        {% if item.retailer %}
+                            <div class="info-banner" id="return-info">{{item.retailer.name}} </div>
+                            {% if item.brand and (item.brand != item.retailer.name) %}
+                                <div class="info-banner" id="return-info">{{item.brand}} </div>
+                            {% endif %}
                         {% endif %}
+                        {% if item.plan %}
+                            <div class="info-banner" id="status-info">{{item.plan[0].action}} Plan </div>
+                        {% else%}
+                            <div class="info-banner" id="status-info">No Plan </div>
+                        {% endif %}
+                        <div class="info-banner" id="status-info">{{item.price}}</div>
                     </div>
+                    <img class="img-src" src="{{item.images[0].cloudinary_url}}" alt="">
                 </div>
-            </div>
             {% endfor %}
-        </div>
+            </div>
     {% else %}
         <p>Nothing to see here!</p>
     {% endif %}

@@ -21,24 +21,18 @@ import datetime
 import crud
 import os
 
-# <------- TO-DO's: Complete by End of Sprint 2 -------------------------------------------------->
+# <------- TO-DO's: Styling Sprint ----------------------------------------------------------------->
+# [ ] Edit style for Gift Plan Pages
+    # [ ] Style Send Offer (Gift Plan) Form
 
-# <------- TO-DO's: Styling Sprint --------------------------------------------------------------->
-# [ ] Style Calendar page
-# [ ] Style flashed messages
-# [ ] Copy over Dashboard styling to Profile Page
-# [ ] Edit style for Resell Plan Pages
-# [ ] Style Send Offer (Gift Plan) Form
-# [ ] Style Mindful Analysis Reflection Responses
-    # [X] Create Containers
-    # [ ] Make Containers Dynamic
 
-# <------- FEATURE TO-DO's -------------------->
-# [ ] Flask Remember Me
-# [ ] Flask Password Recovery
-# [ ] Testing
+# <------- FEATURE TO-DO's ------------------------------------------------------------------------>
+# [0] Flask Remember Me
+# [0] Flask Password Recovery
+# [0] Testing
 # [ ] IMPORTANT !!!
     # [ ] Make sure Calendar Route checks Calendar Object for items with deadlines in the past, and removes them from calendar.items
+    # [ ] When deleting an item or completing a plan, update Calendar table accordingly
 # [ ] Prioritize Store Donation Locations over Donation Drop-Off Boxes for Donation Plan Maps API Result
 
 # <------- BEYOND HACKBRIGHT ----------------------------------------------------------------------->
@@ -128,12 +122,12 @@ def check_verification(phone, code):
                 crud.remove_phone_number(user)
 
             flask_login.login_user(user)
-            flash('Your phone number has been verified! Welcome to Mindful.')
+            flash('Your phone number has been verified! Welcome to Mindful.', 'alert-success')
             return redirect("/dashboard")
         else:
-            flash('The code you provided is incorrect. Please try again.')
+            flash('The code you provided is incorrect. Please try again.', 'alert-danger')
     except Exception as e:
-        flash("Error validating code: {}".format(e))
+        flash("Error validating code: {}".format(e), 'alert-danger')
 
     return redirect("/verify")
 
@@ -199,7 +193,7 @@ def register_user():
     user = crud.get_user_by_email(email)
 
     if user:
-        flash("That email is already associated with an account.")
+        flash("That email is already associated with an account.", 'alert-warning')
     else:
         password = request.form.get("createPassword")
         first_name = request.form.get("firstName")
@@ -245,7 +239,7 @@ def handle_login():
                     session['user_id'] = user.id           
                     return redirect(url_for('verify'))
     else:
-        flash("Invalid login credentials.")
+        flash("Invalid login credentials.", 'alert-danger')
         return redirect("/")
 
 
@@ -268,13 +262,17 @@ def dashboard():
     
     plans = [item.plan for item in tracked_items if item.plan and item.decision_status != "Complete"]
     
+    new_date = datetime.date.today().isoformat()
     today = datetime.date.fromisoformat(session["today"])
+    if new_date != today:
+        session["today"] = new_date
+
     deltas = []
     for item in tracked_items:
         return_deadline = item.return_deadline
         delta = return_deadline - today
         deltas.append(delta)
-    
+
     return render_template("dashboard.html", user=user, tracked_items=tracked_items, plans=plans, today=today, deltas=deltas)
 
 
@@ -291,12 +289,17 @@ def show_profile():
 @app.route("/item/<item_id>")
 @flask_login.login_required
 def item_details(item_id):
+    # new_date = datetime.date.today().isoformat()
+    # today = datetime.date.fromisoformat(session["today"])
+    today = datetime.date.today()
+    # if new_date != today:
+    #     session["today"] = new_date
+    #     today = datetime.date.fromisoformat(session["today"])
     item = crud.get_item_by_id(item_id)
-    today = datetime.date.fromisoformat(session["today"])
     days_left = item.return_deadline - today
     all_scores = [sentiment.general_sentiment_score for sentiment in item.sentiments]
     if all_scores: 
-        overall_score = functools.reduce(lambda a, b: a + b, all_scores)
+        overall_score = functools.reduce(lambda a, b: a + b, all_scores) / len(all_scores)
     else:
         overall_score = None
     return render_template("item.html", item=item, today=today, days_left=days_left, overall_score=overall_score)
@@ -338,23 +341,33 @@ def add_item():
 def add_sentiment(item_id):
     item = crud.get_item_by_id(item_id)
     previous_sentiments = item.sentiments
+    new_date = datetime.date.today().isoformat()
     today = datetime.date.fromisoformat(session["today"])
+    if new_date != today:
+        session["today"] = new_date
+        today = session["today"]
     
     if previous_sentiments:
         for record in previous_sentiments[::]:
             if record.date == today:
-                flash("Today's reflection has already been entered!")
+                flash("Today's reflection has already been entered!", "alert-warning")
                 return redirect(f"/item/{item_id}")
     
     entry = request.form.get("reflection")
     
-    response = natural_language_understanding.analyze(text=entry, features=Features(
-        entities=EntitiesOptions(emotion=True, sentiment=True, limit=2),
-        emotion=EmotionOptions(targets=['item', 'fit', 'size', 'value', 
-        'worth', 'keep', 'return', 'quality', 'wear', 'color']),
-        keywords=KeywordsOptions(emotion=True, sentiment=True, limit=3),
-        sentiment=SentimentOptions(targets=['item', 'fit', 'size', 'value', 
-        'worth', 'keep', 'return', 'quality', 'wear', 'color']))).get_result()
+    try:
+        response = natural_language_understanding.analyze(text=entry, features=Features(
+            entities=EntitiesOptions(emotion=True, sentiment=True, limit=2),
+            emotion=EmotionOptions(targets=['item', 'fit', 'size', 'value', 
+            'worth', 'keep', 'return', 'quality', 'wear', 'color']),
+            keywords=KeywordsOptions(emotion=True, sentiment=True, limit=3),
+            sentiment=SentimentOptions(targets=['item', 'fit', 'size', 'value', 
+            'worth', 'keep', 'return', 'quality', 'wear', 'color']))).get_result()
+    except:
+        flash("Unable to generate sentiment analysis from text entered, please try again.", "alert-warning")
+        return redirect(f"/item/{item_id}")
+
+
     
     # For debugging
     # response_dump = json.dumps(response, indent=2)
@@ -379,7 +392,7 @@ def add_sentiment(item_id):
         keywords = [keyword for keyword in response["keywords"]]
 
     if not response.get("sentiment"):
-            flash("Unable to generate sentiment analysis from text entered.")
+            flash("Unable to generate sentiment analysis from text entered, please try again.", "alert-warning")
             return redirect(f"/item/{item_id}")
     elif not response["sentiment"].get("targets"):
             sentiment_targets = []
@@ -418,7 +431,7 @@ def add_plan(item_id):
         action = request.form.get("action")
         crud.create_plan(item, action=action)
     else:
-        flash("This item had a plan in progress.")
+        flash("This item had a plan in progress.", "alert-warning")
 
     return redirect(f"/plan/{item.plan[0].plan_id}")
 
@@ -450,9 +463,10 @@ def delete_item(item_id):
 def plan_details(plan_id):
     plan = crud.get_plan_by_id(plan_id)
     item = crud.get_item_by_id(plan.item_id)
+    user = crud.get_user_by_id(flask_login.current_user.id)
     gmaps_key = os.environ["gmaps_key"]
 
-    return render_template("plan.html", plan=plan, item=item, gmaps_key=gmaps_key)
+    return render_template("plan.html", plan=plan, item=item, gmaps_key=gmaps_key, user=user)
 
 
 @app.route("/plan/<plan_id>/remove_plan")
@@ -512,7 +526,7 @@ def send_offer(item_id):
         except Exception as e:
             print(e.message)
     
-    flash("Offer Sent!")
+    flash("Offer Sent!", "alert-success")
     
     # TO-DO: Twilio SendGrid for Gift Plan
 

@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
-{% block title %}Plan {{ plan.plan_id }}{% endblock %}
+{% block title %}
+Plan {{ plan.plan_id }} | {{item.retailer.name}}{% if item.brand and (item.brand != item.retailer.name) %} {{item.brand}}{% endif %}
+{% endblock %}
 
 {% block content %}
 <div id="item-page" class="content-block container-fluid">
@@ -29,8 +31,8 @@
           </div>
          </div>
       </div>
-      <div class="col-md">
-        <div class="container">
+      <div style="width: 510px;">
+        <div class="container" style="padding-left: 0.25rem; padding-right: 0.25rem;">
             
             <!-- GOOGLE MAPS INFORMATION - DO NOT REMOVE -->
             <p id="plan-action" style="display: none;">{{ plan.action }}</p>
@@ -40,8 +42,9 @@
           <div style="display: flex; flex-direction: column;">
 
             {% if plan.action == "Return" %}
+            <h1 id="reflection-header">Return</h1>
               {% if (item.return_type == 'in store') or (item.return_type == 'both') %}
-              <div id="map" style="align-self: center; height: 500px; width: 500px;"></div>
+              <div id="map" style="align-self: center; height: 450px; width: 500px;"></div>
               <script src="/static/js/gmaps.js"></script>
               <script
                 async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
@@ -50,88 +53,111 @@
 
               {% if (item.return_type == 'by mail') or (item.return_type == 'both') %}
               <form action="{{item.retailer.returns_url}}">
-                <button type="submit" class="btn btn-primary" style="display: inline; margin-bottom: 0.5rem; margin-top: 0.65rem;">Request a return shipping label</button>
+                <button type="submit" class="btn btn-primary" style="display: inline; margin-bottom: -0.25rem; margin-top: 0.65rem;">Request a return shipping label</button>
               </form>
               {% endif%}
 
             {% elif plan.action == "Resell" %}
               <div>
-                <h4>Online resale marketplaces: </h4>
-                <div>
-                  <a class="resale-link" href="https://depop.com" target="_blank" ref="noopener noreferrer">
-                    <img class="img-fluid resell-logo" src="/static/img/depop-logo-vector.png">
-                  </a>
-                  <a class="resale-link" href="https://ebay.com" target="_blank" ref="noopener noreferrer">
-                    <img class="img-fluid resell-logo" src="/static/img/ebay-logo.svg.png">
-                  </a>
-                  <a class="resale-link" href="https://therealreal.com" target="_blank" ref="noopener noreferrer">
-                    <img class="img-fluid resell-logo" src="/static/img/therealreal.png">
-                  </a>
-                  <a class="resale-link" href="https://craigslist.com" target="_blank" ref="noopener noreferrer">
-                    <img class="img-fluid resell-logo" src="/static/img/craigslist-logo.png">
-                  </a>
-                  <a class="resale-link" href="https://etsy.com" target="_blank" ref="noopener noreferrer">
-                    <img class="img-fluid resell-logo" src="/static/img/etsy-logo.svg.png">
-                  </a>
-                  <a class="resale-link" href="https://poshmark.com" target="_blank" ref="noopener noreferrer">
-                    <img class="img-fluid resell-logo" src="/static/img/poshmark-logo-transparent.png">
-                  </a>
-                </div>
+                <h1 id="reflection-header">Resell</h1>
               </div>
               <div>
-                <h4>Consignment stores near you: </h4>
-                <div id="map" style="height: 400px; width: 400px;"></div>
+                <div id="map" style="height: 450px; width: 500px; align-self: center;"></div>
                 <script src="/static/js/gmaps.js"></script>
                 <script
                   async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
                 </script>
               </div>
+              <div>
+                <a class="resale-link" href="https://depop.com" target="_blank" ref="noopener noreferrer">
+                  <img class="img-fluid resell-logo" src="/static/img/depop-logo-vector.png">
+                </a>
+                <a class="resale-link" href="https://ebay.com" target="_blank" ref="noopener noreferrer">
+                  <img class="img-fluid resell-logo" src="/static/img/ebay-logo.svg.png">
+                </a>
+                <a class="resale-link" href="https://therealreal.com" target="_blank" ref="noopener noreferrer">
+                  <img class="img-fluid resell-logo" src="/static/img/therealreal.png">
+                </a>
+                <a class="resale-link" href="https://craigslist.com" target="_blank" ref="noopener noreferrer">
+                  <img class="img-fluid resell-logo" src="/static/img/craigslist-logo.png">
+                </a>
+                <a class="resale-link" href="https://etsy.com" target="_blank" ref="noopener noreferrer">
+                  <img class="img-fluid resell-logo" src="/static/img/etsy-logo.svg.png">
+                </a>
+                <a class="resale-link" href="https://poshmark.com" target="_blank" ref="noopener noreferrer">
+                  <img class="img-fluid resell-logo" src="/static/img/poshmark.png">
+                </a>
+              </div>
 
             {% elif plan.action == "Donate" %}
-              <h4>Nearest location to donate: </h4>
-              <div id="map" style="height: 400px; width: 400px;"></div>
+            <h1 id="reflection-header">Donate</h1>
+              <div id="map" style="height: 450px; width: 500px; align-self: center;"></div>
               <script src="/static/js/gmaps.js"></script>
               <script
                 async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
               </script>
 
             {% elif plan.action == "Gift" %}
-              <div style="padding-top: 1em;">
+             <h1 id="reflection-header">Gift</h1>
+              <div style="padding-top: 1.25rem;">
                 <h4>Send Offer</h4>
-                <form action="/item/{{item.item_id}}/send_offer" method="POST" enctype="multipart/form-data">
-                  <div class="form-group">
-                    <label for="recipient_name">Recipient Name: </label>
-                    <input type="text" name="recipient_name" maxlength="30" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="recipient_email">Email: </label>
-                    <input type="email" name="recipient_email" maxlength="100">
-                  </div>
-                  <div class="form-group">
-                    <label for="recipient_mobile">Cell Phone: </label>
-                    <input type="tel" name="recipient_mobile" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
-                  </div>
-                  <div class="form-group">
-                    <label for="message">Message (Optional): </label>
-                    <div>
-                      <textarea id="message" name="message" maxlength="100"></textarea>
-                    </div>
+                <div>
+                  <form action="/item/{{item.item_id}}/send_offer" method="POST" enctype="multipart/form-data">
+                    <div class="row">
 
-                  </div>
-                  <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                  </div>
-                </form>
+                      <div class="col" style="padding-right: 0;">
+                        <input type="text" class="form-control" name="recipient_name" placeholder="Recipient name" maxlength="30" required>
+                      </div>
+
+                      <div class="col">
+                        <input type="email" class="form-control" name="recipient_email" placeholder="Recipient email" maxlength="100">
+                      </div>
+                    </div>
+                    <label for="default" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 0;">Mindful Default Message</label>
+                    <div class="row">
+                      <div class="col" id="default" style="color: #767e86; border: 1px solid #ced4da; background-color: #fff; border-radius: 0.25rem; padding: 0.375rem 0.75rem; margin: 0rem 1rem 0.25rem 1rem;">
+                          <!-- <p style="font-weight: 600; margin: 0;">Mindful Default Message</p> -->
+                          <p style="margin: 0; padding-bottom: 0.5rem;">
+                            Hello, this is Mindful. {{user.first_name}} has been reflecting on their recent purchase
+                            from {{item.retailer.name}}, and has decided to give the item a second life. They would like
+                            to gift you this item! Feel free to let {{user.first_name}} know if you would like to accept or decline.
+                          </p>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        <label for="message" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 0;">Custom Message (Optional)</label>
+                        <textarea id="message" class="form-control" name="message" maxlength="100" style="height: 15vh; padding-bottom: 0;"></textarea>
+                      </div>
+
+                    </div>
+                    <label for="default" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 0;">Recipient Mobile Number (US)</label>
+                    <div class="row">
+
+                      <div class="col" style="padding-right: 0;">
+                        <input type="tel" class="form-control" name="recipient_mobile" placeholder="123-456-7190" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
+                      </div>
+
+                      <div class="col" style="display: flex;">
+                        <button type="submit" class="btn btn-primary" style="display: flex; flex: 1; justify-content: center;">Send Gift Offer</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
               </div>
             {% endif %}
 
             <div class="btn-group plan-buttons" role="group" aria-label="Plan Buttons">
-              <button class="btn btn-primary">
-                <a href="/plan/{{plan.plan_id}}/remove_plan" style="color: white;">Remove Plan</a>
-              </button>
-              <button class="btn btn-primary">
-                <a href="/plan/{{plan.plan_id}}/complete_plan" style="color: white;">Complete Plan</a>
-              </button>
+              <div class="col" style="display: flex; padding: 0;">
+                <button class="btn btn-primary" style="display: flex; flex: 1; justify-content: center;">
+                  <a href="/plan/{{plan.plan_id}}/remove_plan" style="color: white;">Remove Plan</a>
+                </button>
+              </div>
+              <div class="col" style="display: flex; padding: 0;">
+                <button class="btn btn-primary" style="display: flex; flex: 1; justify-content: center;">
+                  <a href="/plan/{{plan.plan_id}}/complete_plan" style="color: white;">Complete Plan</a>
+                </button>
+              </div>
             </div>
 
             <form action="/item/{{item.item_id}}">

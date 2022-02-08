@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
-{% block title %}Item {{ item.item_id }}{% endblock %}
+{% block title %}
+Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand != item.retailer.name) %} {{item.brand}}{% endif %}
+{% endblock %}
 
 {% block content %}
 <div id="item-page" class="content-block container-fluid">
@@ -20,46 +22,76 @@
               <div class="info-banner" id="return-info">${{item.price}} </div>
             </div>
             
-            <img id="item-img" class="item-fluid" src="{{ item.images[0].cloudinary_url }}">
+            <img id="item-img" class="item-fluid" src="{{ item.images[0].cloudinary_url }}" defer>
 
           </div>
         </div>
       </div>
-      <div class="col-md">
+      <div style="width: 510px">
         <div>
           <div class="reflection-container">
-            <h1 id="reflection-header">MINDFUL ANALYSIS</h1>
+            <h1 id="reflection-header">MINDFUL REFLECTIONS</h1>
             <div id="reflection-entry">
-              <p>Mindful Reflection 02/06/2022</p>
-              <p style="margin: 0;">
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, 
-                sunt in culpa qui officia deserunt mollit anim id est laborum."
-              </p>
+              {% if item.sentiments %}
+                {% for reflection in item.sentiments|reverse %}
+                <p style="font-weight: 600; margin-bottom: 0;">Mindful Reflection {{reflection.date}}</p>
+                <p style="margin-top: 0; margin-bottom: 1rem;">"{{reflection.entry}}"</p>
+                {% endfor %}
+              {% else %}
+                <p style="font-weight: 600;">About Mindful Reflections</p>
+                <p style="margin: 0;">
+                  "Mindful's powerful journaling tool Mindful Reflections has IBM Watson® Natural Language Understanding (NLU) integration, which uses deep learning to extract meaning, sentiment, and emotion from your journal entries. 
+                  Using IBM Watson®'s out-of-the-box deep-learning models, Mindful enables you to reflect deeply on your online purchases. After submitting a reflection, Mindful
+                  analyzes data returned by IBM Watson® NLU, and suggests how to procceed with your items. Users may submit one reflection per-day, per-item."
+                </p>
+              {%endif%}
             </div>
             <!-- Display Reflection Results -->
-            <div id="reflection-results">
-              {% if item.sentiments %}            
-                <p>Based on your 
-                  {% if item.sentiments|length == 1 %} first journal entry,
-                  {% else %} previous {{item.sentiments|length}} journal entries,
-                  {% endif %} you 
-                  {% if overall_score < 0.50 %} should consider returning this item or create a back-up plan!
-                  {% elif overall_score < 0.70 %} seem to like the item. Reflect more on this purchase before making a decision!
-                  {% else %} really enjoy this item! We reccommend keeping it! Way to go!
-                  {% endif %}
-                </p>
 
+              {% if item.sentiments %}
+                
+                {% if overall_score < 0.50 or (item.sentiments[-1].general_sentiment_score < 0.50) %}
+                  <div class="reflection-results" id="negative-sentiment-style">
+                    <p class="sentiment-styles">
+                      Based on your 
+                      {% if item.sentiments|length == 1 %} first journal entry,
+                      {% else %} previous {{item.sentiments|length}} journal entries,
+                      {% endif %} you should consider returning this item or create a back-up plan!
+                    </p>
+                  </div>
+
+                {% elif overall_score < 0.70 %}
+                <div class="reflection-results" id="neutral-sentiment-style">
+                  <p class="sentiment-styles">
+                    Based on your 
+                    {% if item.sentiments|length == 1 %} first journal entry,
+                    {% else %} previous {{item.sentiments|length}} journal entries,
+                    {% endif %} you seem to like the item. Reflect more on this purchase before making a decision!
+                  </p>
+                </div>
+
+                {% else %}
+                  <div class="reflection-results" id="positive-sentiment-style">
+                    <p class="sentiment-styles">
+                      Based on your 
+                      {% if item.sentiments|length == 1 %} first journal entry,
+                      {% else %} previous {{item.sentiments|length}} journal entries,
+                      {% endif %} you really enjoy this item! We recommend keeping it! Way to go!
+                    </p>   
+                  </div>
+                {% endif %}
               {% else %}
-              <p style="margin: 0;">"Based on your last 9 reflections, you seem to really enjoy this item! We reccommend keeping it! Way to go!"</p>
+                <div class="reflection-results" id="about-sentiment-style">
+                  <p class="sentiment-styles">Once you submit your first reflection, your item recommendation will appear here! Let's get Mindful!</p>
+                </div>
               {% endif %}
-
               </div>
-          </div>
+
 
           <div id="item-details">
-                {% if days_left.days >= 0 and (item.return_type != "ineligable") %}
+            <div class="row">
+              <div class="col">
+                {% if days_left.days >= 0 and (item.return_type != "ineligible") %}
                 <div>
                   {% if days_left.days == 0 %}
                     <p style="color:red;">Your return deadline is today!</p>
@@ -70,38 +102,48 @@
                   {% endif %}
       
                   {% if days_left.days > 0 %}
-                  <p>Return Deadline {{ item.return_deadline }} <br>{{days_left.days}} days left to return</p>
+                  <p>Return Deadline {{ item.return_deadline }} <br>{{days_left.days}} days left to return this item</p>
                   {% endif %}
                 </div>
                 {% endif %}
 
                 {% if item.plan %}
-                  <p>{{ item.plan[0].action }} Plan</p>
+                <p>Created {{ item.plan[0].action }} Plan &#x2714;</p>
                 {% endif %}
-    
-                {% if not (item.plan and item.sentiments) %}
+                {% if item.sentiments %}
+                  {% if item.sentiments[-1].date == today %}
+                    <p>Daily Reflection &#x2714;</p>
+                  {% endif %}
+                {% endif %}
+
+              </div>
+
+              <div class="col">
                 <div>
-                  {% if item.sentiments and item.plan %}
-                  {% if item.sentiments[-1].date != today %}
-                  <p>Mindful Tasks: </p>
-                  {% endif %}
-                  {% elif not (item.plan and item.sentiments) %} 
-                  <p>Mindful Tasks: </p>
-                  {% endif %}
-                  {% if not item.plan %}
-                  <li>Create a Plan</li>
-                  {% endif %}
-                  {% if not item.sentiments %}
-                  <li>Write a purchase reflection</li>
-                  {% endif %}
                   {% if item.sentiments %}
-                  {% if item.sentiments[-1].date != today %}
-                  <!-- Every-Day, twice a week, or weekly (allow user to choose days) -->
-                  <li>Write a purchase reflection</li>
+                    {% if item.sentiments[-1].date != today %}
+                    <p>Mindful Tasks: </p>
+                    {% endif %}
                   {% endif %}
+
+                  {% if not (item.plan and item.sentiments) %} 
+                    <p>Mindful Tasks: </p>
                   {% endif %}
+
+                  {% if not item.plan %}
+                    <li>Create a Plan</li>
+                  {% endif %}
+
+                  {% if not item.sentiments %}
+                    <li>Write a purchase reflection</li>
+                  {% elif item.sentiments[-1].date != today %}
+                    <li>Write a purchase reflection</li>
+                  {% endif %}
+
                 </div>
-                {% endif %}
+
+              </div>
+            </div>
           </div>    
 
           <div class="btn-group item-buttons" role="group" aria-label="Item Buttons">
@@ -115,12 +157,15 @@
                 <a href="/plan/{{item.plan[0].plan_id}}" style="color: white;">View Plan</a>
               </button>
             {% endif %}
+
             {% if not item.sentiments %}
-            {% if not item.sentiments or (item.sentiments[-1].date != today) %}
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#enterReflectionModal">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#enterReflectionModal">
               Enter Reflection
               </button></h4>
-            {% endif %}
+            {% elif item.sentiments[-1].date != today %}
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#enterReflectionModal">
+              Enter Reflection
+              </button></h4>
             {% endif %}
             
             <!-- Keep Item button -->
@@ -199,3 +244,4 @@
   </div>
 </div>
 {% endblock %}
+

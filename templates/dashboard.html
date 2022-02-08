@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Dashboard {% endblock %}
+{% block title %} Mindful | Dashboard {% endblock %}
 
 {% block content %}
 <div class="items-header-block">
@@ -18,7 +18,7 @@
     </div>
 </div>
 
-<div id="content-block" class="content-block">
+<div id="content-block" class="content-block" style="padding-right: 2.5rem;">
     {% if tracked_items %}
 
     <!-- TO-DO: Horizontal Scroll Buttons -->
@@ -34,50 +34,50 @@
     </div> -->
     
     <div class="img-container">
-        {% for item, days_left in tracked_items|zip(deltas) %}      
-        <div class="dashboard-img">
-            <div class="item-info">
-                {% if not item.plan %}
-                    {% if item.return_type != "ineligible" %}
-                    <a href="/item/{{item.item_id}}">
-                        {% if days_left.days >= 0 %}
-                        <div class="info-banner" id="return-info">{{days_left.days}} Days Left To Return </div>
-                        {% elif days_left.days == 0 %}
-                        <div class="info-banner" id="return-info">Must return this item today! </div>
-                        {% else %}
-                        <div class="info-banner" id="return-info">Item has passed return window. Make a back-up plan! </div>
+    {% for item, days_left in tracked_items|zip(deltas) %}  
+            <div class="dashboard-img">
+                <div class="item-info">
+                    {% if not item.plan %}
+                        {% if item.return_type != "ineligible" %}
+                        <a href="/item/{{item.item_id}}">
+                            {% if days_left.days >= 0 %}
+                            <div class="info-banner" id="return-info">{{days_left.days}} Days Left To Return </div>
+                            {% elif days_left.days == 0 %}
+                            <div class="info-banner" id="return-info">Must return this item today! </div>
+                            {% else %}
+                            <div class="info-banner" id="return-info">Item has passed return window. Make a back-up plan! </div>
+                            {% endif %}
+                        </a>
                         {% endif %}
-                    </a>
+                        <a href="/item/{{item.item_id}}">
+                            <div class="info-banner" id="status-info">No Plan </div>
+                        </a>
+                        
                     {% endif %}
-                    <a href="/item/{{item.item_id}}">
-                        <div class="info-banner" id="status-info">No Plan </div>
-                    </a>
-                    
-                {% endif %}
-                {% if item.plan %}
-                    {% if item.plan[0].action == "Return" %}
-                    <a href="/item/{{item.item_id}}">
-                        {% if days_left.days >= 0 %}
-                        <div class="info-banner" id="return-info">{{days_left.days}} Days Left To Return </div>
-                        {% elif days_left.days == 0 %}
-                        <div class="info-banner" id="return-info">Must return this item today! </div>
+                    {% if item.plan %}
+                        {% if item.plan[0].action == "Return" %}
+                        <a href="/item/{{item.item_id}}">
+                            {% if days_left.days >= 0 %}
+                            <div class="info-banner" id="return-info">{{days_left.days}} Days Left To Return </div>
+                            {% elif days_left.days == 0 %}
+                            <div class="info-banner" id="return-info">Must return this item today! </div>
+                            {% else %}
+                            <div class="info-banner" id="return-info">Item has passed return window. Make a new back-up plan! </div>
+                            {% endif %}
+                        </a>
                         {% else %}
-                        <div class="info-banner" id="return-info">Item has passed return window. Make a new back-up plan! </div>
-                        {% endif %}
-                    </a>
-                    {% else %}
-                    <a href="/item/{{item.item_id}}">
-                        <div class="info-banner" id="return-info">Plan in progress </div>
-                    </a>
+                        <a href="/item/{{item.item_id}}">
+                            <div class="info-banner" id="return-info">Plan in progress </div>
+                        </a>
 
-                    {% endif %}
-                    <a href="/plan/{{item.plan[0].plan_id}}"><div class="info-banner" id="status-info">{{item.plan[0].action}} Plan </div></a>
-                {% endif %}                     
-                <!-- <div class="info-banner" id="price-info">$185.00</div> -->
+                        {% endif %}
+                        <a href="/item/{{item.item_id}}"><div class="info-banner" id="status-info">{{item.plan[0].action}} Plan </div></a>
+                    {% endif %}                     
+                    <!-- <div class="info-banner" id="price-info">$185.00</div> -->
+                </div>
+                <a href="/item/{{item.item_id}}"><img class="img-src" src="{{item.images[0].cloudinary_url}}" alt=""></a>
             </div>
-            <a href="/item/{{item.item_id}}"><img class="img-src" src="{{item.images[0].cloudinary_url}}" alt=""></a>
-        </div>
-        {% endfor %}
+    {% endfor %}
     </div>
     {% else %}
     <div class="flex-column" style="height: 100%;">

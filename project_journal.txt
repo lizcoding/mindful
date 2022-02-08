@@ -239,22 +239,36 @@ PROJECT JOURNAL WEEK 5 ---------------------------------------------------------
 ----------------------------------------------------------------------------------
 2/6: Week 5 - Sunday
     Today's Goals:
-        # [X] Edit Plan HTML: Item Image behavior
-            # [ X] Allow user to navigate back to Item page from Plan
-        # [X] Style Create-Account Login Page
-        # [X] Edit Mindful M favicon to have rounded edges
-        # [X] Style Verify Page to match Login Page
+    # [X] Edit Plan HTML: Item Image behavior
+        # [ X] Allow user to navigate back to Item page from Plan
+    # [X] Style Create-Account Login Page
+    # [X] Edit Mindful M favicon to have rounded edges
+    # [X] Style Verify Page to match Login Page
 
 ----------------------------------------------------------------------------------
 PROJECT JOURNAL - STYLING SPRINT -------------------------------------------------
 
 2/7: Week 6 - Monday
     Today's Goals:
+    # [X] Style flashed messages
+    # [X] Style Calendar page
+        # [X] Make Calendar page event list items clickable
+    # [X] Style Mindful Analysis Reflection Responses
+        # [X] Create Containers
+        # [X] Make Containers Dynamic
+        # [X] Set min-wideth for Containers
+    # [X] Copy over Dashboard styling to Profile Page
+    # [X] Style Create Account Modal
+    # [X] Edit style for Resell Plan Pages
+    # [X] Edit style for Donate Plan Pages
 
 
 ----------------------------------------------------------------------------------
 2/8: Week 6 - Tuesday
     Today's Goals:
+    # [ ] Edit style for Gift Plan Pages
+    # [ ] Style Send Offer (Gift Plan) Form
+
 
 
 ----------------------------------------------------------------------------------
