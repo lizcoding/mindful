@@ -1,2 +1,2 @@
-# mindful
+# Mindful
 Hackbright Capstone Project
