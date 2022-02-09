@@ -308,6 +308,8 @@ nav > a {
     font-weight: 900;
     white-space: nowrap;
     margin-bottom: 0.2rem;
+    line-height: 0.9;
+    margin: 0;
 }
 
 #reflection-entry {

@@ -42,7 +42,7 @@ Plan {{ plan.plan_id }} | {{item.retailer.name}}{% if item.brand and (item.brand
           <div style="display: flex; flex-direction: column;">
 
             {% if plan.action == "Return" %}
-            <h1 id="reflection-header">Return</h1>
+            <h1 id="reflection-header" style="line-height: 0.9; margin: 0;">Return</h1>
               {% if (item.return_type == 'in store') or (item.return_type == 'both') %}
               <div id="map" style="align-self: center; height: 450px; width: 500px;"></div>
               <script src="/static/js/gmaps.js"></script>
@@ -53,13 +53,13 @@ Plan {{ plan.plan_id }} | {{item.retailer.name}}{% if item.brand and (item.brand
 
               {% if (item.return_type == 'by mail') or (item.return_type == 'both') %}
               <form action="{{item.retailer.returns_url}}">
-                <button type="submit" class="btn btn-primary" style="display: inline; margin-bottom: -0.25rem; margin-top: 0.65rem;">Request a return shipping label</button>
+                <button type="submit" class="btn btn-primary" style="display: inline; margin-bottom: -0.75rem; margin-top: 0.65rem;">Request a return shipping label</button>
               </form>
               {% endif%}
 
             {% elif plan.action == "Resell" %}
               <div>
-                <h1 id="reflection-header">Resell</h1>
+                <h1 id="reflection-header" style="line-height: 0.9; margin: 0;">Resell</h1>
               </div>
               <div>
                 <div id="map" style="height: 450px; width: 500px; align-self: center;"></div>
@@ -68,7 +68,7 @@ Plan {{ plan.plan_id }} | {{item.retailer.name}}{% if item.brand and (item.brand
                   async src="https://maps.googleapis.com/maps/api/js?key={{gmaps_key}}&libraries=places&callback=initMap">
                 </script>
               </div>
-              <div>
+              <div style="margin-bottom: -.25rem; margin-top: 0.25rem;">
                 <a class="resale-link" href="https://depop.com" target="_blank" ref="noopener noreferrer">
                   <img class="img-fluid resell-logo" src="/static/img/depop-logo-vector.png">
                 </a>
@@ -90,7 +90,7 @@ Plan {{ plan.plan_id }} | {{item.retailer.name}}{% if item.brand and (item.brand
               </div>
 
             {% elif plan.action == "Donate" %}
-            <h1 id="reflection-header">Donate</h1>
+            <h1 id="reflection-header" style="line-height: 0.9; margin: 0;">Donate</h1>
               <div id="map" style="height: 450px; width: 500px; align-self: center;"></div>
               <script src="/static/js/gmaps.js"></script>
               <script
@@ -98,7 +98,7 @@ Plan {{ plan.plan_id }} | {{item.retailer.name}}{% if item.brand and (item.brand
               </script>
 
             {% elif plan.action == "Gift" %}
-             <h1 id="reflection-header">Gift</h1>
+             <h1 id="reflection-header" style="line-height: 0.9; margin: 0;">Gift</h1>
               <div style="padding-top: 1.25rem;">
                 <h4>Send Offer</h4>
                 <div>
