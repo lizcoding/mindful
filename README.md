@@ -14,8 +14,7 @@ Libraries: Flask Login
 
 ## <a name="features"></a>Features
 
-
-
+Mindful's features include a reflection journal, Google Calendar integration, Google Sign-in, account phone verification, Google Maps display and directions, and text/email for notifying friends via Mindful.
 
 
 
