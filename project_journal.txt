@@ -266,8 +266,9 @@ PROJECT JOURNAL - STYLING SPRINT -----------------------------------------------
 ----------------------------------------------------------------------------------
 2/8: Week 6 - Tuesday
     Today's Goals:
-    # [ ] Edit style for Gift Plan Pages
-    # [ ] Style Send Offer (Gift Plan) Form
+    # [X] Edit style for Gift Plan Pages
+        # [X] Style Send Offer (Gift Plan) Form
+    # [X] Start Demo Day Script
 
 
 

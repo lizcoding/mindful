@@ -44,8 +44,14 @@ def create_calendar(user, calendar_id):
     db.session.commit()
     return calendar
 
-def add_calendar_item(item, calendar):
+def add_calendar_item(item, calendar, event):
     item.calendar_id = calendar.calendar_id
+    item.event_id = event["id"]
+    db.session.commit()
+
+def remove_item_from_calendar(item):
+    item.calendar_id = None
+    item.event_id = None
     db.session.commit()
 
 

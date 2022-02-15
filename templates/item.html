@@ -5,10 +5,10 @@ Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand !
 {% endblock %}
 
 {% block content %}
-<div id="item-page" class="content-block container-fluid">
-  <div id="item-block" class="container">
-    <div class="row gx-5 row-cols-sm-6 row-cols-xs-6 row-cols-md-6 row-cols-lg-12 row-cols-xl-12">
-      <div class="col-md">
+<div id="item-page" class="content-block container-fluid" style="padding-left: 5rem; padding-right: 5rem;">
+  <div id="item-block" style="padding-left: 1rem; padding-right: 1rem">
+    <div class="row gx-5 row-cols-sm-6 row-cols-xs-6 row-cols-md-6 row-cols-lg-12 row-cols-xl-12" style="justify-content: space-around;">
+
         <div class="d-flex justify-content-center">
           <div style="position: relative;">
             
@@ -26,19 +26,17 @@ Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand !
 
           </div>
         </div>
-      </div>
-      <div style="width: 510px">
-        <div>
-          <div class="reflection-container">
-            <h1 id="reflection-header">MINDFUL REFLECTIONS</h1>
+
+      <div class="col-md-7" style="font-size: 18px;">
+        <div style="display: flex; flex-direction: column; height: 100%;">
             <div id="reflection-entry">
               {% if item.sentiments %}
                 {% for reflection in item.sentiments|reverse %}
-                <p style="font-weight: 600; margin-bottom: 0;">Mindful Reflection {{reflection.date}}</p>
+                <p style="font-weight: 500; margin-bottom: 0;">Mindful Reflection {{reflection.date}}</p>
                 <p style="margin-top: 0; margin-bottom: 1rem;">"{{reflection.entry}}"</p>
                 {% endfor %}
               {% else %}
-                <p style="font-weight: 600;">About Mindful Reflections</p>
+                <p style="font-weight: 500; font-style: normal; margin-bottom: 1rem;">Mindful Reflections</p>
                 <p style="margin: 0;">
                   "Mindful's powerful journaling tool Mindful Reflections has IBM Watson® Natural Language Understanding (NLU) integration, which uses deep learning to extract meaning, sentiment, and emotion from your journal entries. 
                   Using IBM Watson®'s out-of-the-box deep-learning models, Mindful enables you to reflect deeply on your online purchases. After submitting a reflection, Mindful
@@ -49,48 +47,51 @@ Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand !
             <!-- Display Reflection Results -->
 
               {% if item.sentiments %}
+
+                {% if item.sentiments|length == 1 %}
+                <div class="reflection-results" id="neutral-sentiment-style">
+                  <p class="sentiment-styles">
+                    Congratulations on completing your first journal entry!
+                    Reflect more on this purchase before making a decision.
+                  </p>
+                </div>
                 
-                {% if overall_score < 0.50 or (item.sentiments[-1].general_sentiment_score < 0.50) %}
+                {% elif overall_score < 0.50 or (item.sentiments[-1].general_sentiment_score < 0.50) %}
                   <div class="reflection-results" id="negative-sentiment-style">
                     <p class="sentiment-styles">
-                      Based on your 
-                      {% if item.sentiments|length == 1 %} first journal entry,
-                      {% else %} previous {{item.sentiments|length}} journal entries,
-                      {% endif %} you should consider returning this item or create a back-up plan!
+                      Based on your previous {{item.sentiments|length}} journal entries,
+                      you should consider returning this item or create a back-up plan!
                     </p>
                   </div>
 
                 {% elif overall_score < 0.70 %}
                 <div class="reflection-results" id="neutral-sentiment-style">
                   <p class="sentiment-styles">
-                    Based on your 
-                    {% if item.sentiments|length == 1 %} first journal entry,
-                    {% else %} previous {{item.sentiments|length}} journal entries,
-                    {% endif %} you seem to like the item. Reflect more on this purchase before making a decision!
+                    Based on your previous {{item.sentiments|length}} journal entries, 
+                    you seem to like the item. Reflect more on this purchase before making a decision!
                   </p>
                 </div>
 
                 {% else %}
                   <div class="reflection-results" id="positive-sentiment-style">
                     <p class="sentiment-styles">
-                      Based on your 
-                      {% if item.sentiments|length == 1 %} first journal entry,
-                      {% else %} previous {{item.sentiments|length}} journal entries,
-                      {% endif %} you really enjoy this item! We recommend keeping it! Way to go!
+                      Based on your previous {{item.sentiments|length}} journal entries,
+                      you really enjoy this item! We recommend keeping it! Way to go!
                     </p>   
                   </div>
                 {% endif %}
               {% else %}
                 <div class="reflection-results" id="about-sentiment-style">
-                  <p class="sentiment-styles">Once you submit your first reflection, your item recommendation will appear here! Let's get Mindful!</p>
+                  <p class="sentiment-styles">Your Mindful item recommendations will appear here! Two or more reflections are required for an accurate recommendation. Let's get Mindful!</p>
                 </div>
               {% endif %}
-              </div>
+
 
 
           <div id="item-details">
             <div class="row">
               <div class="col">
+                <p style="font-weight: 500; font-style: normal; margin-bottom: 0.5rem;">Item Details</p>
                 {% if days_left.days >= 0 and (item.return_type != "ineligible") %}
                 <div>
                   {% if days_left.days == 0 %}
@@ -106,38 +107,30 @@ Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand !
                   {% endif %}
                 </div>
                 {% endif %}
-
-                {% if item.plan %}
-                <p>Created {{ item.plan[0].action }} Plan &#x2714;</p>
-                {% endif %}
-                {% if item.sentiments %}
-                  {% if item.sentiments[-1].date == today %}
-                    <p>Daily Reflection &#x2714;</p>
-                  {% endif %}
-                {% endif %}
-
               </div>
 
               <div class="col">
                 <div>
-                  {% if item.sentiments %}
-                    {% if item.sentiments[-1].date != today %}
-                    <p>Mindful Tasks: </p>
-                    {% endif %}
-                  {% endif %}
 
-                  {% if not (item.plan and item.sentiments) %} 
-                    <p>Mindful Tasks: </p>
-                  {% endif %}
+                  <p style="font-weight: 500; font-style: normal; margin-bottom: 0.5rem;">Mindful Tasks</p>
 
                   {% if not item.plan %}
-                    <li>Create a Plan</li>
+                    <p>Create a Plan</p>
                   {% endif %}
 
                   {% if not item.sentiments %}
-                    <li>Write a purchase reflection</li>
+                    <p>Write a purchase reflection</p>
                   {% elif item.sentiments[-1].date != today %}
-                    <li>Write a purchase reflection</li>
+                    <p>Write a purchase reflection</p>
+                  {% endif %}
+
+                  {% if item.plan %}
+                  <p>Create a {{ item.plan[0].action }} Plan &#x2714;</p>
+                  {% endif %}
+                  {% if item.sentiments %}
+                    {% if item.sentiments[-1].date == today %}
+                      <p>Daily Reflection &#x2714;</p>
+                    {% endif %}
                   {% endif %}
 
                 </div>
@@ -146,7 +139,7 @@ Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand !
             </div>
           </div>    
 
-          <div class="btn-group item-buttons" role="group" aria-label="Item Buttons">
+          <div class="btn-group item-buttons" role="group" aria-label="Item Buttons" style="margin-bottom: 1rem;">
             {% if not item.plan %}
               <!-- Create Plan button -->
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPlanModal">
@@ -157,16 +150,20 @@ Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand !
                 <a href="/plan/{{item.plan[0].plan_id}}" style="color: white;">View Plan</a>
               </button>
             {% endif %}
-
+<!-- 
             {% if not item.sentiments %}
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#enterReflectionModal">
               Enter Reflection
               </button></h4>
-            {% elif item.sentiments[-1].date != today %}
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#enterReflectionModal">
+            {% elif item.sentiments[-1].date != today %} -->
+              <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#enterReflectionModal">
+              Enter Reflection
+              </button></h4> -->
+            <!-- {% endif %} -->
+
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#enterReflectionModal">
               Enter Reflection
               </button></h4>
-            {% endif %}
             
             <!-- Keep Item button -->
             <a class="btn btn-primary" href="/item/{{item.item_id}}/keep" role="button">Keep Item</a>
@@ -176,7 +173,7 @@ Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand !
     
           </div>
         </div>
-      </div>  
+      </div>
     </div>
   </div>
 </div>
@@ -194,19 +191,30 @@ Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand !
 
 <div class="modal-body">
     <div class="d-flex">
-      <form action="/item/{{item.item_id}}/add_plan" method="POST">
-        <div>
-          <label>Action: </label>
+      <form action="/item/{{item.item_id}}/add_plan" method="POST" style="width: 100%">
+        <div class="d-flex" style="gap: 2rem;">
           {% if days_left.days >= 0 and (item.return_type != "ineligable") %}
-            <label>Return</label>
+          <div>
+            <label style="padding-right: 0.15rem;">Return</label>
             <input type="radio" name="action" value="Return" required>
+          </div>
           {% endif %}
-          <label>Donate</label>
-          <input type="radio" name="action" value="Donate" required>
-          <label>Gift</label>
-          <input type="radio" name="action" value="Gift" required>
-          <label>Resell</label>
-          <input type="radio" name="action" value="Resell" required>
+          
+          <div>
+            <label style="padding-right: 0.15rem;">Donate</label>
+            <input type="radio" name="action" value="Donate" required>
+          </div>
+
+          <div>
+            <label style="padding-right: 0.15rem;">Gift</label>
+            <input type="radio" name="action" value="Gift" required>
+          </div>
+
+          <div>
+            <label style="padding-right: 0.15rem;">Resell</label>
+            <input type="radio" name="action" value="Resell" required>
+          </div>
+
         </div>
         <button type="submit" class="btn btn-primary">Add Plan</button>
       </form>
@@ -228,13 +236,12 @@ Item {{item.item_id}} | {{item.retailer.name}}{% if item.brand and (item.brand !
 
       <div class="modal-body">
         <div class="d-flex">
-          <form action="/item/{{item.item_id}}/enter_reflection" method="POST">
+          <form action="/item/{{item.item_id}}/enter_reflection" method="POST" style="width: 100%">
             <div>
               <label for="reflection">Write a short reflection (30-500 characters) on your purchase. Are you
-                happy that you bought the item, or are you undecided? Is the item what you expected? Have you tried
-                on the item? How does the item fit? How much use will you get out of this item? Is the item worth
-                the price you paid? How satisfied are you with the purchase?</label>
-              <textarea id="reflection" name="reflection" rows="4" cols="50" minlength="30" maxlength="500" required></textarea>  
+                happy that you bought the item, or are you undecided? Have you tried on the item? How does the
+                item fit? How much use will you get out of this item? How satisfied are you with your purchase?</label>
+              <textarea id="reflection" name="reflection" rows="10" cols="50" minlength="30" maxlength="500" style="width: 100%; margin-bottom: 0.5rem;" required></textarea>  
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>

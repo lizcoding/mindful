@@ -21,18 +21,18 @@ import datetime
 import crud
 import os
 
-# <------- TO-DO's: Styling Sprint ----------------------------------------------------------------->
-# [ ] Edit style for Gift Plan Pages
-    # [ ] Style Send Offer (Gift Plan) Form
-
 
 # <------- FEATURE TO-DO's ------------------------------------------------------------------------>
+# [X] FINISH SENDGRID ROUTE
+# [X] Refactor add reflection route
+
+# [ ] IMPORTANT !!!
+    # [ ] Make sure Calendar Route checks Calendar Object for items with deadlines in the past, and removes them from calendar.items
+    # [X] When deleting an item or completing a plan, update Calendar table accordingly
+
 # [0] Flask Remember Me
 # [0] Flask Password Recovery
 # [0] Testing
-# [ ] IMPORTANT !!!
-    # [ ] Make sure Calendar Route checks Calendar Object for items with deadlines in the past, and removes them from calendar.items
-    # [ ] When deleting an item or completing a plan, update Calendar table accordingly
 # [ ] Prioritize Store Donation Locations over Donation Drop-Off Boxes for Donation Plan Maps API Result
 
 # <------- BEYOND HACKBRIGHT ----------------------------------------------------------------------->
@@ -83,15 +83,20 @@ API_SERVICE_NAME = 'calendar'
 API_VERSION = 'v3'
 CLIENT_SECRETS_FILE = os.environ['client_secrets_file']
 
-# Liz Calendar
-LIZ_MINDFUL_CALENDAR = os.environ["liz_mindful_calendar"]
-LIZ_CALENDAR = os.environ["liz_calendar"]
-
 
 def get_random_string():
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(20))
     return result_str
+
+
+def credentials_to_dict(credentials):
+  return {'token': credentials.token,
+          'refresh_token': credentials.refresh_token,
+          'token_uri': credentials.token_uri,
+          'client_id': credentials.client_id,
+          'client_secret': credentials.client_secret,
+          'scopes': credentials.scopes}
 
 
 def start_verification(to, channel='sms'):
@@ -132,6 +137,26 @@ def check_verification(phone, code):
     return redirect("/verify")
 
 
+def item_event_tuples(items_list):
+    tuple_list = []
+    for item in items_list:
+        event = {
+                'summary': 'Return Deadline',
+                'description': f'Return Deadline for Item: <a href="http://localhost:5000/item/{item.item_id}">http://localhost:5000/item/{item.item_id}</a>',
+                'start': {
+                    'date': f'{item.return_deadline}'
+                },
+                'end': {
+                    'date': f'{item.return_deadline}'
+                },
+                'reminders': {
+                    'useDefault': True,
+                }
+            }
+        tuple_list.append((item, event))
+    return tuple_list
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return crud.get_user_by_id(user_id)
@@ -139,7 +164,8 @@ def load_user(user_id):
 
 @app.context_processor
 def inject_client_id():
-    return dict(client_id=CLIENT_ID, liz_calendar=LIZ_CALENDAR, liz_mindful_calendar=LIZ_MINDFUL_CALENDAR)
+    """ Inject variables into all HTML templates """
+    return dict(client_id=CLIENT_ID)
 
 
 @app.route("/")
@@ -152,7 +178,7 @@ def login_page():
 
 @app.route("/verify", methods=['GET', 'POST'])
 def verify():
-    # Verify a user on registration with their phone number
+    """ Verify a user on registration with their phone number  """
     if request.method == 'POST':
         phone = session.get('phone')
         code = request.form['code']
@@ -164,10 +190,11 @@ def verify():
 
 @app.route("/tokensignin", methods=['GET', 'POST'])
 def verify_token():
+    """ Sign in a user using Google Sign-In  """
     token = request.form.get('credential')
 
     try:
-        # Specify the CLIENT_ID of the app that accesses the backend:
+        # Specify the CLIENT_ID of the app that accesses the backend
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
 
         if not crud.get_user_by_email(idinfo['email']):
@@ -189,6 +216,7 @@ def verify_token():
 
 @app.route("/create_account", methods=["POST"])
 def register_user():
+    """ Create an account and start account verification """
     email = request.form.get("createEmail")
     user = crud.get_user_by_email(email)
 
@@ -198,7 +226,6 @@ def register_user():
         password = request.form.get("createPassword")
         first_name = request.form.get("firstName")
         
-        
         channel = request.form.get("channel")
         mobile_number = request.form.get("mobileNumber")
         phone = "+1" + "".join(mobile_number.split("-"))
@@ -206,8 +233,8 @@ def register_user():
         vsid = start_verification(phone, channel)
         
         if vsid is not None:
-                # the verification was sent to the user and the username is valid
-                # redirect to verification check
+                # the verification code is sent to the user and the username is valid
+                # redirect to verification check ("/verify")
                 user = crud.create_user(email, password, first_name)
                 crud.set_phone_number(user, phone)
                 today = datetime.date.today().isoformat()
@@ -220,6 +247,7 @@ def register_user():
 
 @app.route("/login", methods=['GET', 'POST'])
 def handle_login():
+    """ Login user via Flask login or start verification for unverified account """
     email = request.form.get("userEmail")
 
     password = request.form.get("userPassword")
@@ -255,6 +283,7 @@ def logout():
 @app.route("/dashboard")
 @flask_login.login_required
 def dashboard():
+    """ Display user's Dashboard of tracked Items """
     user = flask_login.current_user
     # Make sure tracked items are ordered by return_deadline
     tracked_items = [item for item in user.items if item.decision_status != "Complete"]
@@ -276,10 +305,10 @@ def dashboard():
     return render_template("dashboard.html", user=user, tracked_items=tracked_items, plans=plans, today=today, deltas=deltas)
 
 
-# For viewing user's historical data
 @app.route("/profile")
 @flask_login.login_required
 def show_profile():
+    """ User's Profile of Past Items """
     user = crud.get_user_by_id(flask_login.current_user.id)
     completed_items = [item for item in user.items if item.decision_status == "Complete"]
     # TO-DO
@@ -289,12 +318,8 @@ def show_profile():
 @app.route("/item/<item_id>")
 @flask_login.login_required
 def item_details(item_id):
-    # new_date = datetime.date.today().isoformat()
-    # today = datetime.date.fromisoformat(session["today"])
+    """ Item Details Page """
     today = datetime.date.today()
-    # if new_date != today:
-    #     session["today"] = new_date
-    #     today = datetime.date.fromisoformat(session["today"])
     item = crud.get_item_by_id(item_id)
     days_left = item.return_deadline - today
     all_scores = [sentiment.general_sentiment_score for sentiment in item.sentiments]
@@ -308,6 +333,7 @@ def item_details(item_id):
 @app.route("/add_item", methods=['POST'])
 @flask_login.login_required
 def add_item():
+    """ Add an item to be tracked by Mindful """
     user = crud.get_user_by_id(flask_login.current_user.id)
     return_deadline = request.form.get("return_deadline")
     return_type = request.form.get("return_type")
@@ -341,17 +367,19 @@ def add_item():
 def add_sentiment(item_id):
     item = crud.get_item_by_id(item_id)
     previous_sentiments = item.sentiments
-    new_date = datetime.date.today().isoformat()
-    today = datetime.date.fromisoformat(session["today"])
-    if new_date != today:
-        session["today"] = new_date
-        today = session["today"]
+    today = datetime.date.today().isoformat()
+
+    # Commenting out code that limits reflection entries to once per day per item
+    #
+    # today = datetime.date.fromisoformat(session["today"])
+    # if new_date != today:
+    #     session["today"] = new_date
+    #     today = session["today"]
     
-    if previous_sentiments:
-        for record in previous_sentiments[::]:
-            if record.date == today:
-                flash("Today's reflection has already been entered!", "alert-warning")
-                return redirect(f"/item/{item_id}")
+    # if previous_sentiments:
+    #     if previous_sentiments[-1].date == today:
+    #         flash("Today's reflection has already been entered!", "alert-warning")
+    #         return redirect(f"/item/{item_id}")
     
     entry = request.form.get("reflection")
     
@@ -366,8 +394,6 @@ def add_sentiment(item_id):
     except:
         flash("Unable to generate sentiment analysis from text entered, please try again.", "alert-warning")
         return redirect(f"/item/{item_id}")
-
-
     
     # For debugging
     # response_dump = json.dumps(response, indent=2)
@@ -448,6 +474,7 @@ def keep_item(item_id):
 
     return redirect(f"/profile")
 
+
 @app.route("/item/<item_id>/delete")
 @flask_login.login_required
 def delete_item(item_id):
@@ -493,6 +520,7 @@ def complete_plan(plan_id):
 @flask_login.login_required
 def send_offer(item_id):
     item = crud.get_item_by_id(item_id)
+    user = crud.get_user_by_id(flask_login.current_user.id)
 
     name = request.form.get("recipient_name")
     email = request.form.get("recipient_email")
@@ -501,7 +529,7 @@ def send_offer(item_id):
     offer_message = request.form.get("message")
     
     if not offer_message:
-        offer_message = f'Hi, {name}. This is the Gift plan default message.'
+        offer_message = f'Hello {name}, this is Mindful. {user.first_name} has been reflecting on their recent purchase from {item.retailer.name}, and has decided to give the item a second life. They would like to gift you this item! Feel free to let {{user.first_name}} know if you would like to accept or decline.'
     
     if mobile_input:
         phone_number = "+1" + "".join(mobile_input.split("-"))
@@ -516,7 +544,7 @@ def send_offer(item_id):
         from_email='lizcodingdev@gmail.com',
         to_emails=email,
         subject='Mindful Gift Offer',
-        html_content='<strong>and easy to do anywhere, even with Python</strong>')
+        html_content=offer_message)
         try:
             sg = SendGridAPIClient(SENDGRID_API_KEY)
             response = sg.send(message)
@@ -527,8 +555,6 @@ def send_offer(item_id):
             print(e.message)
     
     flash("Offer Sent!", "alert-success")
-    
-    # TO-DO: Twilio SendGrid for Gift Plan
 
     return redirect(f"/item/{item.item_id}")
 
@@ -556,7 +582,7 @@ def authorize_calendar():
 
   authorization_url, state = flow.authorization_url(
       # Enable offline access so that you can refresh an access token without
-      # re-prompting the user for permission. Recommended for web server apps.
+      # re-prompting the user for permission.
       access_type='offline',
       # Disable incremental authorization. Enable is recommended as a best practice.
       include_granted_scopes='false')
@@ -582,8 +608,6 @@ def oauth2callback():
   flow.fetch_token(authorization_response=authorization_response)
 
   # Store credentials in the session.
-  # ACTION ITEM: In a production app, you likely want to save these
-  #              credentials in a persistent database instead.
   credentials = flow.credentials
   session['credentials'] = credentials_to_dict(credentials)
 
@@ -613,9 +637,9 @@ def calendar():
     calendar = user.calendar[0]
 
     if calendar.items:
-        unadded_items = [item for item in user.items if item.return_deadline and item not in calendar.items]
+        unadded_items = [item for item in user.items if item.return_deadline and item.decision_status != 'Complete' and item not in calendar.items]
     else:
-        unadded_items = user.items
+        unadded_items = [item for item in user.items if item.decision_status != 'Complete']
     
     if unadded_items:
         # item_event tuples returns a tuple of (item, event)
@@ -625,49 +649,23 @@ def calendar():
             event = event_tuple[1]
             calendarId = calendar.calendar_id
             added_event = service.events().insert(calendarId=calendarId, body=event).execute()
-            crud.add_calendar_item(item, calendar)
+            crud.add_calendar_item(item, calendar, added_event)
+
+    removed_items = [item for item in calendar.items if item.decision_status == 'Complete']
+
+    for item in removed_items:
+        service.events().delete(calendarId='Mindful', eventId=f'{item.event_id}').execute()
+        crud.remove_item_from_calendar(item)
+
 
     # Save credentials back to session in case access token was refreshed.
-    # ACTION ITEM: In a production app, you likely want to save these
-    #              credentials in a persistent database instead.
     session['credentials'] = credentials_to_dict(credentials)
     
     return render_template("calendar.html", user=user, calendar_id=calendar.calendar_id, calendar_items=calendar.items)
 
 
-def credentials_to_dict(credentials):
-  return {'token': credentials.token,
-          'refresh_token': credentials.refresh_token,
-          'token_uri': credentials.token_uri,
-          'client_id': credentials.client_id,
-          'client_secret': credentials.client_secret,
-          'scopes': credentials.scopes}
-
-
-def item_event_tuples(items_list):
-    tuple_list = []
-    for item in items_list:
-        event = {
-                'summary': 'Return Deadline',
-                'description': f'Return Deadline for Item: <a href="http://localhost:5000/item/{item.item_id}">http://localhost:5000/item/{item.item_id}</a>',
-                'start': {
-                    'date': f'{item.return_deadline}'
-                },
-                'end': {
-                    'date': f'{item.return_deadline}'
-                },
-                'reminders': {
-                    'useDefault': True,
-                }
-            }
-        tuple_list.append((item, event))
-    return tuple_list
-
-
 if __name__ == "__main__":
     # When running locally, disable OAuthlib's HTTPs verification.
-    # ACTION ITEM for developers:
-    #     When running in production *do not* leave this option enabled.
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
     connect_to_db(app)
     app.run(host="0.0.0.0", debug=True)

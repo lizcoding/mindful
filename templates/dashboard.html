@@ -75,7 +75,7 @@
                     {% endif %}                     
                     <!-- <div class="info-banner" id="price-info">$185.00</div> -->
                 </div>
-                <a href="/item/{{item.item_id}}"><img class="img-src" src="{{item.images[0].cloudinary_url}}" alt=""></a>
+                <a href="/item/{{item.item_id}}" target="_blank"><img class="img-src" src="{{item.images[0].cloudinary_url}}" alt=""></a>
             </div>
     {% endfor %}
     </div>
@@ -95,29 +95,29 @@
             </div>
             <div class="modal-body">
                 <div class="d-flex">
-                <form action="/add_item" method="POST" enctype="multipart/form-data">
-                    <div class="form-group">
-                    <label for="retailer">Retailer: </label>
-                    <input type="text" name="retailer" required>
+                <form action="/add_item" method="POST" enctype="multipart/form-data" style="width: 100%">
+                    <div class="mb-2">
+                    <label for="retailer" class="form-label">Retailer </label>
+                    <input type="text" class="form-control" name="retailer" id="retailer"required>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="brand">Brand: </label>
-                        <input type="text" name="brand" required>
+                    <div class="mb-2">
+                        <label for="brand" class="form-label">Brand </label>
+                        <input type="text" class="form-control" name="brand" id="brand" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="return_deadline">Last day to return item: </label>
-                        <input type="date" name="return_deadline" min="{{today}}" required>
+                    <div class="mb-2">
+                        <label for="return_deadline" class="form-label">Last day to return item </label>
+                        <input type="date" class="form-control" name="return_deadline" id="return_deadline" min="{{today}}" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="Price">Price: </label>
-                        <input type="number" name="price" min="0" step="0.01" required>
+                    <div class="mb-2">
+                        <label for="price" class="form-label">Price </label>
+                        <input type="number" class="form-control" name="price" id="price" min="0" step="0.01" placeholder="$123.45" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Returns can be made: </label>
+                    <div class="mb-2">
+                        <label class="form-label">Return Type: </label>
                         <label>In-person</label>
                         <input type="radio" name="return_type" value="in person" required>
                         <label>By Mail</label>
@@ -128,24 +128,24 @@
                         <input type="radio" name="return_type" value="ineligible" required>
                     </div>
 
-                    <div class="form-group">
-                    <label>Reminders: </label>
-                    <label>Text</label>
+                    <div class="mb-2">
+                    <label class="form-label">Reminders: </label>
+                    <label class="form-label">Text</label>
                     <input type="checkbox" name="text" value="text">
-                    <label>Email</label>
+                    <label class="form-label">Email</label>
                     <input type="checkbox" name="email" value="email">
                     </div>
 
-                    <div class="form-group">
-                    <label for="returns_url">Returns URL: </label>
-                    <input type="url" placeholder="https://" pattern="https://.*" name="returns_url" required>
+                    <div class="mb-2">
+                    <label for="returns_url" class="form-label">Returns URL </label>
+                    <input type="url" class="form-control" id="returns_url" name="returns_url" placeholder="https://example.com" pattern="https://.*" required>
                     </div>
 
-                    <div class="form-group">
-                    <label for="image">Upload Item Image: </label>
-                    <input type="file" name="image" required>
+                    <div class="mb-2">
+                    <label for="image" class="form-label">Upload Item Image </label>
+                    <input type="file" class="form-control-file" id="image" name="image" required>
                     </div>
-                    <div class="form-group"><button type="submit" class="btn btn-primary">Add Item</button></div>
+                    <div class="d-flex mb-2 mt-2"><button type="submit" class="btn btn-primary" style="width: 100%">Add Item</button></div>
                 </form>
             </div>
             </div>

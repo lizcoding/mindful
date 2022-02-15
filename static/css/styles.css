@@ -125,8 +125,7 @@ lottie-player {
 }
 
 #map {
-    border-radius: 0.3rem;
-    border: 2px solid rgb(33, 37, 41, 0.70);
+    border-radius: 0.25rem;
 }
 
 nav > a {
@@ -202,14 +201,14 @@ nav > a {
 
 .reflection-results, .event {
     padding: 1em;
-    border: 2px solid rgb(33, 37, 41, 0.65);
+    /* border: 1px solid rgb(33, 37, 41, 0.65); */
     color: #212529;
     background-color: #e5e7e785;
     /* border: solid 2px rgb(94, 43, 255, 0.5); */
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     font-weight: 400;
     font-family: 'Roboto', 'sans-serif';
-    margin-bottom: 1em;
+    margin-bottom: 1.5rem;
 }
 
 .event {
@@ -219,25 +218,27 @@ nav > a {
 #negative-sentiment-style {
     color: #721c24;
     background-color: #f8d7da;
-    border: 2px solid #721c24;
+    /* border: 1px solid #721c24; */
 }
+
 
 #neutral-sentiment-style {
     color: #856404;
     background-color: #fff3cd;
-    color: #856404;
+    /* border: 1px solid #856404; */
+
 }
 
 #positive-sentiment-style {
     color: #155724;
     background-color: #d4edda;
-    color: #155724;
+    /* border: 1px solid #155724; */
 }
 
 #about-sentiment-style {
     color: #004085;
     background-color: #cce5ff;
-    border-color: #004085;
+    /* border: 1px solid #004085; */
 }
 
 .sentiment-styles {
@@ -246,14 +247,14 @@ nav > a {
 
 #item-details {
     padding: 1em;
-    border: 2px solid rgb(33, 37, 41, 0.65);
+    /* border: 1px solid rgb(33, 37, 41, 0.65); */
     color: #212529;
-    background-color: #e5e7e785;
+    background-color: #e5e7e7;
     /* border: solid 2px rgb(94, 43, 255, 0.5); */
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     font-weight: 400;
     font-family: 'Roboto', 'sans-serif';
-    margin-bottom: 1em;
+    margin-bottom: 1.5rem;
     height: 132px;
 }
 
@@ -314,17 +315,19 @@ nav > a {
 
 #reflection-entry {
     padding: 1em;
-    border: 2px solid rgb(33, 37, 41, 0.65);
+    /* border: 1px solid rgb(33, 37, 41, 0.65); */
     color: #212529;
-    background-color: #e5e7e785;
+    background-color: #e5e7e7;
     /* border: solid 2px rgb(94, 43, 255, 0.5); */
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     font-weight: 400;
     font-style: italic;
     font-family: 'Roboto', 'sans-serif';
-    margin-bottom: 1em;
-    height: 285px;
+    margin-bottom: 1.5rem;
+    /* height: 285px; */
+    flex: 1;
     overflow: scroll;
+    max-height: 530px;
 }
 
 #events-list {
@@ -343,8 +346,8 @@ nav > a {
 }
 
 .btn-group.plan-buttons {
-    margin-top: 1.25rem;
-    gap: 1rem;
+    margin-top: 1rem;
+    /* gap: 1rem; */
 }
 
 /* #return-deadline-display {
@@ -361,10 +364,6 @@ nav > a {
     margin-bottom: 0.3rem;
 } */
 
-.item-buttons, .plan-buttons {
-    padding-bottom: 0.25rem;
-}
-
 #login-page {
     padding: 3em;
     padding-bottom: 0rem;
@@ -377,8 +376,8 @@ nav > a {
     padding-top: 2em;
     position: relative;
     overflow: scroll;
-    padding-left: 18%;
-    padding-right: 18%;
+    /* padding-left: 18%;
+    padding-right: 18%; */
 }
 
 /* 
@@ -522,7 +521,7 @@ div.gm-style-iw-d > div > h2 {
 }
 
 .resell-logo {
-    width: 4.99rem;
+    width: 6.9rem;
     margin-bottom: -0.5rem;
     margin-top: 0.25rem;
 }

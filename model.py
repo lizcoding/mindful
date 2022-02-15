@@ -71,6 +71,7 @@ class Item(db.Model):
     user_id = db.Column(db.String(50), db.ForeignKey("users.id"), nullable=False)
     retailer_id = db.Column(db.Integer, db.ForeignKey("retailers.retailer_id"), nullable=False)
     calendar_id = db.Column(db.String(200), db.ForeignKey("calendars.calendar_id"))
+    event_id = db.Column(db.String(200))
     return_deadline = db.Column(db.Date, nullable=False)
     return_type = db.Column(db.String(10))
     text_reminder = db.Column(db.Boolean, default=False)

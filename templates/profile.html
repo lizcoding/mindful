@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-between">
         <div class="flex-column">
             <h4 class="dashboard-h4">YOU'VE BEEN MINDFUL, {{ user.first_name }}!</h4>
-            <h1 id="dashboard-h1">Profile</h1>
+            <h1 id="dashboard-h1">Past Items</h1>
         </div>
     </div>
 
@@ -25,7 +25,6 @@
     </div> 
     
     -->
-    <h4 class="dashboard-h4" style="padding-left: 0.5rem">PAST ITEMS</h4>
     {% if completed_items %}
         <div class="img-container">
             {% for item in completed_items %}         
